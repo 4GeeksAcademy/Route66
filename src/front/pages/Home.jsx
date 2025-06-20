@@ -4,49 +4,83 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 export const Home = () => {
 
-	const { store, dispatch } = useGlobalReducer()
+	// const { store, dispatch } = useGlobalReducer()
 
-	const loadMessage = async () => {
-		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL
+	// const loadMessage = async () => {
+	// 	try {
+	// 		const backendUrl = import.meta.env.VITE_BACKEND_URL
 
-			if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+	// 		if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
 
-			const response = await fetch(backendUrl + "/api/hello")
-			const data = await response.json()
+	// 		const response = await fetch(backendUrl + "/api/hello")
+	// 		const data = await response.json()
 
-			if (response.ok) dispatch({ type: "set_hello", payload: data.message })
+	// 		if (response.ok) dispatch({ type: "set_hello", payload: data.message })
 
-			return data
+	// 		return data
 
-		} catch (error) {
-			if (error.message) throw new Error(
-				`Could not fetch the message from the backend.
-				Please check if the backend is running and the backend port is public.`
-			);
-		}
+	// 	} catch (error) {
+	// 		if (error.message) throw new Error(
+	// 			`Could not fetch the message from the backend.
+	// 			Please check if the backend is running and the backend port is public.`
+	// 		);
+	// 	}
 
-	}
+	// }
 
-	useEffect(() => {
-		loadMessage()
-	}, [])
+	// useEffect(() => {
+	// 	loadMessage()
+	// }, [])
 
 	return (
-		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
-			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
-			</p>
-			<div className="alert alert-info">
-				{store.message ? (
-					<span>{store.message}</span>
-				) : (
-					<span className="text-danger">
-						Loading message from the backend (make sure your python 🐍 backend is running)...
-					</span>
-				)}
+		<div className= "container text-center">
+		<form className="row g-3">
+			<div className="col-md-6">
+				<label htmlhtmlFor="inputEmail4" className="form-label">Email</label>
+				<input type="email" className="form-control" id="inputEmail4" />
 			</div>
+			<div className="col-md-6">
+				<label htmlFor="inputPassword4" className="form-label">Password</label>
+				<input type="password" className="form-control" id="inputPassword4" />
+			</div>
+			<div className="col-12">
+				<label htmlFor="inputAddress" className="form-label">Address</label>
+				<input type="text" className="form-control" id="inputAddress" placeholder="1234 Main St" />
+			</div>
+			<div className="col-12">
+				<label htmlFor="inputAddress2" className="form-label">Address 2</label>
+				<input type="text" className="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor" />
+			</div>
+			<div className="col-md-6">
+				<label htmlFor="inputCity" className="form-label">City</label>
+				<input type="text" className="form-control" id="inputCity" />
+			</div>
+			<div className="col-md-4">
+				<label htmlFor="inputState" className="form-label">State</label>
+				<select id="inputState" className="form-select">
+					<option selected>Choose...</option>
+					<option>...</option>
+				</select>
+			</div>
+			<div className="col-md-2">
+				<label htmlFor="inputZip" className="form-label">Zip</label>
+				<input type="text" className="form-control" id="inputZip" />
+			</div>
+			<div className="col-12">
+				<div className="form-check">
+					<input className="form-check-input" type="checkbox" id="gridCheck" />
+					<label className="form-check-label" htmlFor="gridCheck">
+						Check me out
+					</label>
+				</div>
+			</div>
+			<div className="col-12">
+				<button type="submit" className="btn btn-primary">Sign in</button>
+			</div>
+		</form>
 		</div>
-	);
-}; 
+	)
+}
+
+
+
