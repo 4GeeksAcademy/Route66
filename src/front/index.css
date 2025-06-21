@@ -13,3 +13,8 @@ body{
     border-color: red;
     color: white 
 }
+
+#titulo{
+    color: rgb(23, 23, 133);
+    font-size: 30px;
+}
