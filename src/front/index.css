@@ -1,0 +1,15 @@
+body{
+    background-color: rgba(204, 203, 203, 0.377);
+}
+
+.boton{
+    background-color: rgb(14, 14, 199);
+    border-color: rgb(14, 14, 199);
+    color: white 
+}
+
+.boton:hover{
+    background-color: red;
+    border-color: red;
+    color: white 
+}
