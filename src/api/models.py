@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 import enum
-from sqlalchemy import String, Boolean, Enum as PgEnum, ForeignKey, Column, Table
+from sqlalchemy import String, Boolean, Enum as PgEnum, ForeignKey, DateTime
+from datetime import datetime, timezone
+from dateutil.relativedelta import relativedelta
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -10,6 +12,14 @@ db = SQLAlchemy()
 class Roles(enum.Enum):
     BROKER = "broker"
     CARRIER = "carrier"
+
+
+def default_end_date():
+    return datetime.now(timezone.utc) + relativedelta(months=1)
+
+
+def now_utc():
+    return datetime.now(timezone.utc)
 
 
 class User(db.Model):
@@ -46,7 +56,9 @@ class User(db.Model):
         back_populates="accepted_carrier",
         foreign_keys="[Load.carrier_id]"
     )
-    load_requests_sent: Mapped[list["LoadRequest"]] = relationship(back_populates="carrier")
+    load_requests_sent: Mapped[list["LoadRequest"]
+                               ] = relationship(back_populates="carrier")
+    subscription: Mapped["Subscription"] = relationship(back_populates="user")
 
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
@@ -56,7 +68,7 @@ class User(db.Model):
 
     def serialize(self, detail_level="full"):
         if detail_level == "minimal":
-            return {"id": self.id, "company_name": self.company_name}
+            return {"id": self.id, "company_name": self.company_name, "full_name": self.full_name}
         elif detail_level == "medium":
             return {
                 "id": self.id,
@@ -88,6 +100,7 @@ class User(db.Model):
                 "broker_loads": [load.serialize() for load in self.broker_loads],
                 "requests_accepted": [load.serialize() for load in self.requests_accepted],
                 "load_requests_sent": [load.serialize() for load in self.load_requests_sent],
+                "subscription": self.subscription.serialize() if self.subscription else None,
             }
 
 
@@ -115,7 +128,8 @@ class Load(db.Model):
         foreign_keys=[carrier_id]
     )
 
-    load_requests: Mapped[list["LoadRequest"]] = relationship(back_populates="load")
+    load_requests: Mapped[list["LoadRequest"]
+                          ] = relationship(back_populates="load")
 
     def serialize(self):
         return {
@@ -157,4 +171,37 @@ class LoadRequest(db.Model):
             "vehicle": self.vehicle,
             "price_offer": self.price_offer,
             "status": self.status,
+        }
+
+
+class Subscription(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id"), nullable=False, unique=True)
+    start_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=now_utc)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=now_utc)
+    end_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=default_end_date)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), onupdate=now_utc)
+    status: Mapped[str] = mapped_column(String(120), nullable=False)
+    auto_renew: Mapped[bool] = mapped_column(
+        Boolean(), nullable=False, default=True)
+    is_active: Mapped[bool] = mapped_column(Boolean(), default=True)
+
+    user: Mapped["User"] = relationship(back_populates="subscription")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user.serialize(detail_level="minimal"),
+            "start_date": self.start_date.isoformat() if self.start_date else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "end_date": self.end_date.isoformat() if self.end_date else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "status": self.status,
+            "auto_renew": self.auto_renew,
+            "is_active": self.is_active,
         }
