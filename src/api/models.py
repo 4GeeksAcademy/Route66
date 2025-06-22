@@ -233,7 +233,7 @@ class Plan(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "role_type": self.role_type,
+            "role": self.role,
             "price": self.price,
             "currency": self.currency,
             "description": self.description,
