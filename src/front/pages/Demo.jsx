@@ -1,6 +1,5 @@
 // Import necessary components from react-router-dom and other parts of the application.
 import { Link } from "react-router-dom";
-import useGlobalReducer from "../hooks/useGlobalReducer";  // Custom hook for accessing the global state.
 import { useState } from "react";
 
 
@@ -16,20 +15,18 @@ export const Demo = () => {
 		city: "",
 		zip: "",
 		trucks: "",
+		state:"choose",
 	})
 
 	function handleChange(e) {
-		const { name, value } = e.target;
+		const { name,type, value, checked } = e.target;
+
+		const newValue= type === "checkbox" ? checked : value
 		setFormulario({
 			...formulario,
-			[name]: value,
+			[name]: newValue,
 		});
 	}
-
-
-
-
-	const { store, dispatch } = useGlobalReducer()
 
 
 
@@ -113,7 +110,12 @@ export const Demo = () => {
 				</div>
 				<div className="col-md-4">
 					<label htmlFor="inputState" className="form-label fw-bold text-primary-emphasis">State</label>
-					<select id="inputState" className="form-select border border-danger">
+					<select 
+					id="inputState" 
+					className="form-select border border-danger"
+					name="state"
+					onChange={handleChange}
+					value={formulario.state}>
 						<option selected>Choose</option>
 						<option>Alabama</option>
 						<option>Arizona</option>
@@ -174,20 +176,38 @@ export const Demo = () => {
 					</div>
 					<div className="col-2">
 						<div className="form-check">
-							<input className="form-check-input" type="checkbox" id="gridCheck" />
-							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
+							<input 
+							className="form-check-input" 
+							type="checkbox" 
+							id="gridCheckOpen"
+							name="isOpen"
+							onChange={handleChange}
+							checked={formulario.isOpen} />
+							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheckOpen">
 								Open
 							</label>
 						</div>
 						<div className="form-check">
-							<input className="form-check-input" type="checkbox" id="gridCheck" />
-							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
+							<input 
+							className="form-check-input" 
+							type="checkbox" 
+							id="gridCheckEnclose"
+							name="isEnclose"
+							onChange={handleChange}
+							checked={formulario.isEnclose} />
+							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheckEnclose">
 								Enclose
 							</label>
 						</div>
 						<div className="form-check">
-							<input className="form-check-input" type="checkbox" id="gridCheck" />
-							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
+							<input 
+							className="form-check-input" 
+							type="checkbox" 
+							id="gridCheckBoth"
+							name="isBoth"
+							onChange={handleChange}
+							checked={formulario.isBoth} />
+							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheckBoth">
 								Both
 							</label>
 						</div>

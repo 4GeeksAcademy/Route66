@@ -65,6 +65,21 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0  # avoid cache memory
     return response
 
+@app.route('/signUp/register_carrier', methods=['POST'])
+def register_carrier(user_id, email):
+    data = request_get_json
+
+
+    
+    # user=User.query.get(user_id)
+    # email_user=User.query.get(email)
+    # if user exist:
+    #     return jsonify("msg": "Usuario ya registrado"), 403
+    # if email_user exist:
+    #     return jsonify("msg": "Correo ya registrado"), 403
+    
+
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
