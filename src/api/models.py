@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 import enum
 from sqlalchemy import String, Boolean, Enum as PgEnum, ForeignKey, DateTime, Text
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -58,7 +58,8 @@ class User(db.Model):
     )
     load_requests_sent: Mapped[list["LoadRequest"]
                                ] = relationship(back_populates="carrier")
-    subscription: Mapped["Subscription"] = relationship(back_populates="user")
+    subscription: Mapped["Subscription"] = relationship(
+        back_populates="user", uselist=False)
 
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
@@ -166,8 +167,8 @@ class LoadRequest(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "carrier": self.carrier.serialize(detail_level="medium"),
-            "load": self.load.serialize(),
+            "carrier": self.carrier.serialize(detail_level="medium") if self.carrier else None,
+            "load": self.load.serialize() if self.load else None,
             "vehicle": self.vehicle,
             "price_offer": self.price_offer,
             "status": self.status,
@@ -195,11 +196,13 @@ class Subscription(db.Model):
 
     user: Mapped["User"] = relationship(back_populates="subscription")
     plan: Mapped["Plan"] = relationship(back_populates="subscriptions")
+    payments: Mapped[list["PaymentTransaction"]] = relationship(
+        back_populates="subscription")
 
     def serialize(self):
         return {
             "id": self.id,
-            "user": self.user.serialize(detail_level="minimal"),
+            "user": self.user.serialize(detail_level="minimal") if self.user else None,
             "start_date": self.start_date.isoformat() if self.start_date else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "end_date": self.end_date.isoformat() if self.end_date else None,
@@ -207,6 +210,8 @@ class Subscription(db.Model):
             "status": self.status,
             "auto_renew": self.auto_renew,
             "is_active": self.is_active,
+            "plan": self.plan.serialize() if self.plan else None,
+            "payments": [payment.serialize() for payment in self.payments],
         }
 
 
@@ -233,7 +238,7 @@ class Plan(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "role": self.role,
+            "role": self.role.value,
             "price": self.price,
             "currency": self.currency,
             "description": self.description,
@@ -242,4 +247,37 @@ class Plan(db.Model):
             "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "subscriptions": [subscription.serialize() for subscription in self.subscriptions],
+        }
+
+
+class PaymentTransaction(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    subscription_id: Mapped[int] = mapped_column(
+        ForeignKey("subscription.id"), nullable=False)
+    amount: Mapped[float] = mapped_column(nullable=False)
+    currency: Mapped[str] = mapped_column(String(120), nullable=False)
+    payment_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=now_utc)
+    status: Mapped[str] = mapped_column(String(120), nullable=False)
+    payment_method: Mapped[str] = mapped_column(String(120), nullable=False)
+    transaction_id_gateway: Mapped[str] = mapped_column(
+        String(120), nullable=False)
+    next_retry_date: Mapped[datetime] = mapped_column(DateTime(
+        timezone=True), default=lambda: datetime.now(timezone.utc) + timedelta(days=1))
+
+    subscription: Mapped["Subscription"] = relationship(
+        back_populates="payments")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "amount": self.amount,
+            "currency": self.currency,
+            "payment_date": self.payment_date.isoformat() if self.payment_date else None,
+            "status": self.status,
+            "payment_method": self.payment_method,
+            "transaction_id_gateway": self.transaction_id_gateway,
+            "next_retry_date": self.next_retry_date.isoformat() if self.next_retry_date else None,
+            "subscription": self.subscription.serialize() if self.subscription else None,
         }
