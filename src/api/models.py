@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 import enum
-from sqlalchemy import String, Boolean, Enum as PgEnum, ForeignKey, DateTime
+from sqlalchemy import String, Boolean, Enum as PgEnum, ForeignKey, DateTime, Text
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -178,6 +178,8 @@ class Subscription(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(
         ForeignKey("user.id"), nullable=False, unique=True)
+    plan_id: Mapped[int] = mapped_column(
+        ForeignKey("plan.id"), nullable=False)
     start_date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=now_utc)
     created_at: Mapped[datetime] = mapped_column(
@@ -192,6 +194,7 @@ class Subscription(db.Model):
     is_active: Mapped[bool] = mapped_column(Boolean(), default=True)
 
     user: Mapped["User"] = relationship(back_populates="subscription")
+    plan: Mapped["Plan"] = relationship(back_populates="subscriptions")
 
     def serialize(self):
         return {
@@ -204,4 +207,39 @@ class Subscription(db.Model):
             "status": self.status,
             "auto_renew": self.auto_renew,
             "is_active": self.is_active,
+        }
+
+
+class Plan(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    role: Mapped[Roles] = mapped_column(
+        PgEnum(Roles, name="roles", create_type=False), nullable=False)
+    price: Mapped[float] = mapped_column(nullable=False)
+    currency: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    max_screens: Mapped[int] = mapped_column(nullable=False)
+    can_view_loads: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean(), default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=now_utc)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), onupdate=now_utc)
+
+    subscriptions: Mapped[list["Subscription"]
+                          ] = relationship(back_populates="plan")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "role_type": self.role_type,
+            "price": self.price,
+            "currency": self.currency,
+            "description": self.description,
+            "max_screens": self.max_screens,
+            "can_view_loads": self.can_view_loads,
+            "is_active": self.is_active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
