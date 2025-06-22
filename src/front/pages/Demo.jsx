@@ -1,46 +1,115 @@
 // Import necessary components from react-router-dom and other parts of the application.
 import { Link } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";  // Custom hook for accessing the global state.
+import { useState } from "react";
+
 
 export const Demo = () => {
-  // Access the global state and dispatch function using the useGlobalReducer hook.
-  const { store, dispatch } = useGlobalReducer()
+	// Access the global state and dispatch function using the useGlobalReducer hook.
+	const [formulario, setFormulario] = useState({
+		fullName: "",
+		companyName: "",
+		numberMc: "",
+		email: "",
+		password: "",
+		address: "",
+		city: "",
+		zip: "",
+		trucks: "",
+	})
 
-  return (
-    <div className="container text-center border border-secondary-subtle border-4 pt-4 mt-4 bg-white rounded-3" style={{width:"40%", height: "100vh" }}>
+	function handleChange(e) {
+		const { name, value } = e.target;
+		setFormulario({
+			...formulario,
+			[name]: value,
+		});
+	}
+
+
+
+
+	const { store, dispatch } = useGlobalReducer()
+
+
+
+	return (
+		<div className="container text-center border border-secondary-subtle border-4 pt-4 mt-4 bg-white rounded-3" style={{ width: "40%", height: "100vh" }}>
 			<div className="mb-2 fw-bold" id="titulo">
-        CARRIER REGISTER
-      </div>
-      <form className="row g-3">
+				CARRIER REGISTER
+			</div>
+			<form className="row g-3">
 				<div className="col-md-6">
 					<label htmlhtmlFor="inputName" className="form-label fw-bold text-primary-emphasis">Full Name</label>
-					<input type="text" className="form-control border border-danger" id="inputName" />
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputName"
+						name="fullName"
+						value={formulario.fullName}
+						onChange={handleChange} />
 				</div>
 				<div className="col-md-6">
 					<label htmlhtmlFor="inputCompany" className="form-label fw-bold text-primary-emphasis">Company Name</label>
-					<input type="text" className="form-control border border-danger" id="inputCompany" />
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputCompany"
+						name="companyName"
+						value={formulario.companyName}
+						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
 					<label htmlhtmlFor="inputMc" className="form-label fw-bold text-primary-emphasis">MC/USDOT Number</label>
-					<input type="text" className="form-control border border-danger" id="inputMc" />
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputMc"
+						name="numberMc"
+						value={formulario.numberMc}
+						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
 					<label htmlhtmlFor="inputEmail4" className="form-label fw-bold text-primary-emphasis">Email</label>
-					<input type="email" className="form-control border border-danger" id="inputEmail4" />
+					<input
+						type="email"
+						className="form-control border border-danger"
+						id="inputEmail4"
+						name="email"
+						value={formulario.email}
+						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
 					<label htmlFor="inputPassword4" className="form-label fw-bold text-primary-emphasis">Password</label>
-					<input type="password" className="form-control border border-danger" id="inputPassword4" />
+					<input
+						type="password"
+						className="form-control border border-danger"
+						id="inputPassword4"
+						name="password"
+						value={formulario.password}
+						onChange={handleChange} />
 				</div>
 
 				<div className="col-6">
 					<label htmlFor="inputAddress" className="form-label fw-bold text-primary-emphasis">Address</label>
-					<input type="text" className="form-control border border-danger" id="inputAddress" placeholder="1234 Main St" />
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputAddress"
+						name="address"
+						value={formulario.address}
+						onChange={handleChange} />
 				</div>
 
 				<div className="col-md-6">
 					<label htmlFor="inputCity" className="form-label fw-bold text-primary-emphasis">City</label>
-					<input type="text" className="form-control border border-danger" id="inputCity" />
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputCity"
+						name="city"
+						value={formulario.city}
+						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
 					<label htmlFor="inputState" className="form-label fw-bold text-primary-emphasis">State</label>
@@ -80,43 +149,55 @@ export const Demo = () => {
 				</div>
 				<div className="col-md-4">
 					<label htmlFor="inputZip" className="form-label fw-bold text-primary-emphasis">Zip</label>
-					<input type="text" className="form-control border border-danger" id="inputZip" />
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputZip"
+						name="zip"
+						value={formulario.zip}
+						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
 					<label htmlhtmlFor="inputMc" className="form-label fw-bold text-primary-emphasis">Number of trucks</label>
-					<input type="text" className="form-control border border-danger" id="inputMc" />
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputMc"
+						name="trucks"
+						value={formulario.trucks}
+						onChange={handleChange} />
 				</div>
-                
-				<div className="text-start" style={{width:"50%" }}>
+
+				<div className="text-start" style={{ width: "50%" }}>
 					<div className="fs-5 fw-bold text-primary-emphasis" >
-					Tipe of transport?
+						Tipe of transport?
 					</div>
-				<div className="col-2">
-					<div className="form-check">
-						<input className="form-check-input" type="checkbox" id="gridCheck" />
-						<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
-							Open
-						</label>
+					<div className="col-2">
+						<div className="form-check">
+							<input className="form-check-input" type="checkbox" id="gridCheck" />
+							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
+								Open
+							</label>
+						</div>
+						<div className="form-check">
+							<input className="form-check-input" type="checkbox" id="gridCheck" />
+							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
+								Enclose
+							</label>
+						</div>
+						<div className="form-check">
+							<input className="form-check-input" type="checkbox" id="gridCheck" />
+							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
+								Both
+							</label>
+						</div>
 					</div>
-					<div className="form-check">
-						<input className="form-check-input" type="checkbox" id="gridCheck" />
-						<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
-							Enclose
-						</label>
-					</div>
-					<div className="form-check">
-						<input className="form-check-input" type="checkbox" id="gridCheck" />
-						<label className="form-check-label text-primary-emphasis" htmlFor="gridCheck">
-							Both
-						</label>
-					</div>
-				</div>
 				</div>
 				<div className="col-12">
-					<button type="submit" className="boton fs-4 rounded-3" style={{width:"150px", height: "50px" }}>Get started</button>
+					<button type="submit" className="boton fs-4 rounded-3" style={{ width: "150px", height: "50px" }}>Get started</button>
 				</div>
 			</form>
 		</div>
 	)
- 
+
 };
