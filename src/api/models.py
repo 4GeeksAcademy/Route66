@@ -12,14 +12,6 @@ class Roles(enum.Enum):
     CARRIER = "carrier"
 
 
-load_requests = Table(
-    "load_requests",
-    db.Model.metadata,
-    Column("carrier_id", ForeignKey("user.id"), primary_key=True),
-    Column("load_id", ForeignKey("load.id"), primary_key=True)
-)
-
-
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     company_name: Mapped[str] = mapped_column(
@@ -49,14 +41,12 @@ class User(db.Model):
         back_populates="broker",
         foreign_keys="[Load.broker_id]"
     )
-    requested_loads: Mapped[list["Load"]] = relationship(
-        secondary=load_requests,
-        back_populates="interested_carriers"
-    )
+
     requests_accepted: Mapped[list["Load"]] = relationship(
         back_populates="accepted_carrier",
         foreign_keys="[Load.carrier_id]"
     )
+    load_requests_sent: Mapped[list["LoadRequest"]] = relationship(back_populates="carrier")
 
     def set_password(self, password: str):
         self.password_hash = generate_password_hash(password)
@@ -96,9 +86,8 @@ class User(db.Model):
                 "is_active": self.is_active,
                 "rating": self.rating,
                 "broker_loads": [load.serialize() for load in self.broker_loads],
-                "requested_loads": [load.serialize() for load in self.requested_loads],
                 "requests_accepted": [load.serialize() for load in self.requests_accepted],
-
+                "load_requests_sent": [load.serialize() for load in self.load_requests_sent],
             }
 
 
@@ -125,10 +114,8 @@ class Load(db.Model):
         back_populates="requests_accepted",
         foreign_keys=[carrier_id]
     )
-    interested_carriers: Mapped[list["User"]] = relationship(
-        secondary=load_requests,
-        back_populates="requested_loads"
-    )
+
+    load_requests: Mapped[list["LoadRequest"]] = relationship(back_populates="load")
 
     def serialize(self):
         return {
@@ -143,5 +130,31 @@ class Load(db.Model):
             "status": self.status,
             "broker": self.broker.serialize(detail_level="medium") if self.broker else None,
             "accepted_carrier": self.accepted_carrier.serialize(detail_level="medium") if self.accepted_carrier else None,
-            "interested_carriers": [user.serialize(detail_level="medium") for user in self.interested_carriers],
+            "load_requests": [load.serialize() for load in self.load_requests],
+        }
+
+
+class LoadRequest(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    carrier_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id"), nullable=False)
+    load_id: Mapped[int] = mapped_column(
+        ForeignKey("load.id"), nullable=False)
+    vehicle: Mapped[str] = mapped_column(
+        String(120), nullable=False)
+    price_offer: Mapped[float] = mapped_column(nullable=True)
+    status: Mapped[str] = mapped_column(String(120), nullable=True)
+
+    carrier: Mapped["User"] = relationship(
+        "User", back_populates="load_requests_sent")
+    load: Mapped["Load"] = relationship("Load", back_populates="load_requests")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "carrier": self.carrier.serialize(detail_level="medium"),
+            "load": self.load.serialize(),
+            "vehicle": self.vehicle,
+            "price_offer": self.price_offer,
+            "status": self.status,
         }
