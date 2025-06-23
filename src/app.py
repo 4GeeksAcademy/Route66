@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -71,14 +71,22 @@ def register_carrier():
     if not data:
         return jsonify({"msg": "No se recibieron datos necesarios"}),400
     
-    required_fields=["user_id","email","password"]
+    required_fields=["user_id","email","password", "company_name", "full_name",
+                   "phone_number", "address", "city", "state", "zip"]
     if not all (field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}),400
     
-
     user_id = data['user_id']
     email = data['email']
     password = data['password']
+    company_name=data['company_name']
+    full_name=data['full_name']
+    phone_number=data['phone_number']
+    address=data['address']
+    city=data['city']
+    state=data['state']
+    zip=data['zip']
+    type_of_transport=data.get('type_of_transport', None)
     
     user_exist = User.query.filter_by(user_id=user_id).first()
     if user_exist:
@@ -88,9 +96,21 @@ def register_carrier():
     if email_exist:
         return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
     
+    new_user = User(
+            user_id=user_id, 
+            email=email, 
+            password_hash=password, 
+            company_name=company_name,
+            full_name=full_name,
+            phone_number= phone_number,
+            address=address,
+            city=city,
+            state=state,
+            zip=zip,
+            type_of_transport= type_of_transport)
+    db.session.add(new_user)
+    
     try:
-        new_user = User(user_id=user_id, email=email, password_hash=password)
-        db.session.add(new_user)
         db.session.commit()
         return jsonify({"msg": "Usuario registrado exitosamente."}), 201 
     except Exception as e:
