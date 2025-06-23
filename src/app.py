@@ -66,17 +66,36 @@ def serve_any_other_file(path):
     return response
 
 @app.route('/signUp/register_carrier', methods=['POST'])
-def register_carrier(user_id, email):
-    data = request_get_json
-
-
+def register_carrier():
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "No se recibieron datos necesarios"}),400
     
-    # user=User.query.get(user_id)
-    # email_user=User.query.get(email)
-    # if user exist:
-    #     return jsonify("msg": "Usuario ya registrado"), 403
-    # if email_user exist:
-    #     return jsonify("msg": "Correo ya registrado"), 403
+    required_fields=["user_id","email","password"]
+    if not all (field in data for field in required_fields):
+        return jsonify({"msg": "Faltan datos obligatorios"}),400
+    
+
+    user_id = data['user_id']
+    email = data['email']
+    password = data['password']
+    
+    user_exist = User.query.filter_by(user_id=user_id).first()
+    if user_exist:
+        return jsonify({"msg": "El nombre de usuario ya está en uso."}), 409
+    
+    email_exist = User.query.filter_by(email=email).first()
+    if email_exist:
+        return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
+    
+    try:
+        new_user = User(user_id=user_id, email=email, password_hash=password)
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"msg": "Usuario registrado exitosamente."}), 201 
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
     
 
 
