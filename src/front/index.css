@@ -3,18 +3,30 @@ body{
 }
 
 .boton{
-    background-color: rgb(14, 14, 199);
+    background-color: rgba(7, 7, 182, 0.952);
     border-color: rgb(14, 14, 199);
     color: white 
 }
 
 .boton:hover{
-    background-color: red;
-    border-color: red;
+    background-color: rgb(125, 125, 223);
+    border-color: rgb(125, 125, 223);
     color: white 
 }
 
 #titulo{
     color: rgb(221, 21, 21);
     font-size: 30px;
+}
+
+.botonUno{
+    background-color:rgb(14, 14, 199) ;
+    border-color: rgb(14, 14, 199);
+    color: white 
+}
+
+#botonDos{
+    background-color: rgb(221, 21, 21) ;
+    border-color: rgb(221, 21, 21);
+    color: white 
 }

@@ -10,7 +10,7 @@ from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-from flask_cors import CORS
+
 
 # from models import Person
 
@@ -18,7 +18,7 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
-CORS(app, resources={r"/signUp/*": {"origins": "https://potential-space-waddle-q749vqv57jr4hx7qg-3001.app.github.dev/"}})
+# CORS(app, resources={r"/signUp/*": {"origins": "https://potential-space-waddle-q749vqv57jr4hx7qg-3001.app.github.dev/"}})
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -66,70 +66,6 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
-
-@app.route('/signUp/register_carrier', methods=['POST'])
-def register_carrier():
-    data = request.get_json()
-    
-    if not data:
-        return jsonify({"msg": "No se recibieron datos necesarios"}), 400
-
-    required_fields = [
-        "email", "password", "company_name", "full_name", "mc_number",
-        "Usdot_number", "phone_number", "address", "city", "state", "zip"
-    ]
-    if not all(field in data for field in required_fields):
-        return jsonify({"msg": "Faltan datos obligatorios"}), 400
-
-    email = data['email']
-    password = data['password']
-    company_name = data['company_name']
-    full_name = data['full_name']
-    mc_number = data['mc_number']
-    usdot_number = data['Usdot_number']
-    phone_number = data['phone_number']
-    address = data['address']
-    city = data['city']
-    state = data['state']
-    zip_code = data['zip']
-    type_of_transport = data.get('type_of_transport', None)
-
-
-    if User.query.filter_by(email=email).first():
-        return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
-    if User.query.filter_by(phone_number=phone_number).first():
-        return jsonify({"msg": "El usuario con este número telefónico ya está registrado."}), 409
-    if User.query.filter_by(mc_number=mc_number).first():
-        return jsonify({"msg": "El MC Number ya está registrado."}), 409
-    if User.query.filter_by(usdot_number=usdot_number).first():
-        return jsonify({"msg": "El USDOT Number ya está registrado."}), 409
-
-    new_user = User(
-        email=email,
-        company_name=company_name,
-        full_name=full_name,
-        mc_number=mc_number,
-        usdot_number=usdot_number,
-        phone_number=phone_number,
-        address=address,
-        city=city,
-        state=state,
-        zip=zip_code,
-        type_of_transport=type_of_transport,
-        role="carrier"  
-    )
-    new_user.set_password(password) 
-
-    db.session.add(new_user)
-    try:
-        db.session.commit()
-        return jsonify({"msg": "Usuario registrado exitosamente."}), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
-    
-
-
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
