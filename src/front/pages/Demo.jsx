@@ -9,13 +9,17 @@ export const Demo = () => {
 		fullName: "",
 		companyName: "",
 		numberMc: "",
+		numberUsdot: "",
 		email: "",
 		password: "",
 		address: "",
 		city: "",
 		zip: "",
 		trucks: "",
-		state:"choose",
+		state:"",
+		isOpen: false, 
+		isEnclose: false,
+		isBoth: false,
 	})
 
 	function handleChange(e) {
@@ -28,6 +32,33 @@ export const Demo = () => {
 		});
 	}
 
+  async function registerCarrier(userData){
+  const url = 'https://potential-space-waddle-q749vqv57jr4hx7qg-3000.app.github.dev/signUp/register_carrier';
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const result = await response.json(); 
+
+    if (response.ok) {
+      console.log('Registro exitoso:');
+      return result;
+    } else {
+      console.error('Error en el registro:', result.msg);
+      alert(`Error al registrar: ${result.msg}`);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error de red o del servidor:', error);
+    return null;
+  }
+}
 
 
 	return (
@@ -37,7 +68,7 @@ export const Demo = () => {
 			</div>
 			<form className="row g-3">
 				<div className="col-md-6">
-					<label htmlhtmlFor="inputName" className="form-label fw-bold text-primary-emphasis">Full Name</label>
+					<label htmlFor="inputName" className="form-label fw-bold text-primary-emphasis">Full Name</label>
 					<input
 						type="text"
 						className="form-control border border-danger"
@@ -47,7 +78,7 @@ export const Demo = () => {
 						onChange={handleChange} />
 				</div>
 				<div className="col-md-6">
-					<label htmlhtmlFor="inputCompany" className="form-label fw-bold text-primary-emphasis">Company Name</label>
+					<label htmlFor="inputCompany" className="form-label fw-bold text-primary-emphasis">Company Name</label>
 					<input
 						type="text"
 						className="form-control border border-danger"
@@ -57,7 +88,7 @@ export const Demo = () => {
 						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
-					<label htmlhtmlFor="inputMc" className="form-label fw-bold text-primary-emphasis">MC/USDOT Number</label>
+					<label htmlFor="inputMc" className="form-label fw-bold text-primary-emphasis">MC</label>
 					<input
 						type="text"
 						className="form-control border border-danger"
@@ -67,7 +98,17 @@ export const Demo = () => {
 						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
-					<label htmlhtmlFor="inputEmail4" className="form-label fw-bold text-primary-emphasis">Email</label>
+					<label htmlFor="inputUsdot" className="form-label fw-bold text-primary-emphasis">USDOT Number</label>
+					<input
+						type="text"
+						className="form-control border border-danger"
+						id="inputUsdot"
+						name="numberUsdot"
+						value={formulario.numberUsdot}
+						onChange={handleChange} />
+				</div>
+				<div className="col-md-4">
+					<label htmlFor="inputEmail4" className="form-label fw-bold text-primary-emphasis">Email</label>
 					<input
 						type="email"
 						className="form-control border border-danger"
@@ -87,7 +128,7 @@ export const Demo = () => {
 						onChange={handleChange} />
 				</div>
 
-				<div className="col-6">
+				<div className="col-4">
 					<label htmlFor="inputAddress" className="form-label fw-bold text-primary-emphasis">Address</label>
 					<input
 						type="text"
@@ -98,7 +139,7 @@ export const Demo = () => {
 						onChange={handleChange} />
 				</div>
 
-				<div className="col-md-6">
+				<div className="col-md-4">
 					<label htmlFor="inputCity" className="form-label fw-bold text-primary-emphasis">City</label>
 					<input
 						type="text"
@@ -116,7 +157,7 @@ export const Demo = () => {
 					name="state"
 					onChange={handleChange}
 					value={formulario.state}>
-						<option selected>Choose</option>
+						<option>Choose</option>
 						<option>Alabama</option>
 						<option>Arizona</option>
 						<option>Arkansas</option>
@@ -160,11 +201,11 @@ export const Demo = () => {
 						onChange={handleChange} />
 				</div>
 				<div className="col-md-4">
-					<label htmlhtmlFor="inputMc" className="form-label fw-bold text-primary-emphasis">Number of trucks</label>
+					<label htmlFor="inputTrucks" className="form-label fw-bold text-primary-emphasis">Number of trucks</label>
 					<input
 						type="text"
 						className="form-control border border-danger"
-						id="inputMc"
+						id="inputTrucks"
 						name="trucks"
 						value={formulario.trucks}
 						onChange={handleChange} />
@@ -214,7 +255,11 @@ export const Demo = () => {
 					</div>
 				</div>
 				<div className="col-12">
-					<button type="submit" className="boton fs-4 rounded-3" style={{ width: "150px", height: "50px" }}>Get started</button>
+					<button 
+					type="button" 
+					className="boton fs-4 rounded-3" 
+					style={{ width: "150px", height: "50px" }}
+					onClick={()=>registerCarrier(formulario)}>Get started</button>
 				</div>
 			</form>
 		</div>

@@ -71,7 +71,7 @@ def register_carrier():
     if not data:
         return jsonify({"msg": "No se recibieron datos necesarios"}),400
     
-    required_fields=["user_id","email","password", "company_name", "full_name",
+    required_fields=["user_id","email","password", "company_name", "full_name","mc_number", "Usdot_number"
                    "phone_number", "address", "city", "state", "zip"]
     if not all (field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}),400
@@ -81,6 +81,8 @@ def register_carrier():
     password = data['password']
     company_name=data['company_name']
     full_name=data['full_name']
+    mc_number=data['mc_number']
+    Usdot_number=data['Usdot_number']
     phone_number=data['phone_number']
     address=data['address']
     city=data['city']
@@ -102,6 +104,8 @@ def register_carrier():
             password_hash=password, 
             company_name=company_name,
             full_name=full_name,
+            mc_number=mc_number,
+            Usdot_number=Usdot_number,
             phone_number= phone_number,
             address=address,
             city=city,
