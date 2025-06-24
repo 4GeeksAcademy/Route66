@@ -16,49 +16,73 @@ export const Demo = () => {
 		city: "",
 		zip: "",
 		trucks: "",
-		state:"",
-		isOpen: false, 
+		state: "",
+		isOpen: false,
 		isEnclose: false,
 		isBoth: false,
 	})
 
 	function handleChange(e) {
-		const { name,type, value, checked } = e.target;
+		const { name, type, value, checked } = e.target;
 
-		const newValue= type === "checkbox" ? checked : value
+		const newValue = type === "checkbox" ? checked : value
 		setFormulario({
 			...formulario,
 			[name]: newValue,
 		});
 	}
 
-  async function registerCarrier(userData){
-  const url = 'https://potential-space-waddle-q749vqv57jr4hx7qg-3000.app.github.dev/signUp/register_carrier';
+	async function registerCarrier(formulario) {
+	const transportType = formulario.isBoth
+		? "both"
+		: formulario.isOpen
+		? "open"
+		: formulario.isEnclose
+		? "enclose"
+		: null;
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
+	const userData = {
+		email: formulario.email,
+		password: formulario.password,
+		company_name: formulario.companyName,
+		full_name: formulario.fullName,
+		mc_number: formulario.numberMc,
+		Usdot_number: formulario.numberUsdot,
+		phone_number: formulario.phoneNumber,
+		address: formulario.address,
+		city: formulario.city,
+		state: formulario.state,
+		zip: formulario.zip,
+		type_of_transport: transportType,
+	};
 
-    const result = await response.json(); 
+	const url = 'https://potential-space-waddle-q749vqv57jr4hx7qg-3001.app.github.dev/signUp/register_carrier';
 
-    if (response.ok) {
-      console.log('Registro exitoso');
-      return result;
-    } else {
-      console.error('Error en el registro:', result.msg);
-      alert(`Error al registrar: ${result.msg}`);
-      return null;
-    }
-  } catch (error) {
-    console.error('Error de red o del servidor:', error);
-    return null;
-  }
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(userData),
+		});
+
+		const result = await response.json();
+
+		if (response.ok) {
+			console.log('Registro exitoso');
+			return result;
+		} else {
+			console.error('Error en el registro:', result.msg);
+			alert(`Error al registrar: ${result.msg}`);
+			return null;
+		}
+	} catch (error) {
+		console.error('Error de red o del servidor:', error);
+		return null;
+	}
 }
+console.log(registerCarrier(formulario))
 
 
 	return (
@@ -151,19 +175,19 @@ export const Demo = () => {
 				</div>
 				<div className="col-md-4">
 					<label htmlFor="inputState" className="form-label fw-bold text-primary-emphasis">State</label>
-					<select 
-					id="inputState" 
-					className="form-select border border-danger"
-					name="state"
-					onChange={handleChange}
-					value={formulario.state}>
+					<select
+						id="inputState"
+						className="form-select border border-danger"
+						name="state"
+						onChange={handleChange}
+						value={formulario.state}>
 						<option>Choose</option>
 						<option>Alabama</option>
 						<option>Arizona</option>
 						<option>Arkansas</option>
 						<option>California</option>
 						<option>Colorado</option>
-						<option>Delawere</option>
+						<option>Delaware</option>
 						<option>Florida</option>
 						<option>Georgia</option>
 						<option>Idaho</option>
@@ -171,14 +195,14 @@ export const Demo = () => {
 						<option>Indiana</option>
 						<option>Iowa</option>
 						<option>Kansas</option>
-						<option>Kentuchy</option>
+						<option>Kentucky</option>
 						<option>Maine</option>
 						<option>Maryland</option>
 						<option>Michigan</option>
 						<option>Nevada</option>
-						<option>New Hersey</option>
-						<option>New México</option>
-						<option>Nueva York</option>
+						<option>New Jersey</option>
+						<option>New Mexico</option>
+						<option>New York</option>
 						<option>Ohio</option>
 						<option>Oklahoma</option>
 						<option>Pennsilvanya</option>
@@ -217,37 +241,37 @@ export const Demo = () => {
 					</div>
 					<div className="col-2">
 						<div className="form-check">
-							<input 
-							className="form-check-input" 
-							type="checkbox" 
-							id="gridCheckOpen"
-							name="isOpen"
-							onChange={handleChange}
-							checked={formulario.isOpen} />
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="gridCheckOpen"
+								name="isOpen"
+								onChange={handleChange}
+								checked={formulario.isOpen} />
 							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheckOpen">
 								Open
 							</label>
 						</div>
 						<div className="form-check">
-							<input 
-							className="form-check-input" 
-							type="checkbox" 
-							id="gridCheckEnclose"
-							name="isEnclose"
-							onChange={handleChange}
-							checked={formulario.isEnclose} />
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="gridCheckEnclose"
+								name="isEnclose"
+								onChange={handleChange}
+								checked={formulario.isEnclose} />
 							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheckEnclose">
 								Enclose
 							</label>
 						</div>
 						<div className="form-check">
-							<input 
-							className="form-check-input" 
-							type="checkbox" 
-							id="gridCheckBoth"
-							name="isBoth"
-							onChange={handleChange}
-							checked={formulario.isBoth} />
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="gridCheckBoth"
+								name="isBoth"
+								onChange={handleChange}
+								checked={formulario.isBoth} />
 							<label className="form-check-label text-primary-emphasis" htmlFor="gridCheckBoth">
 								Both
 							</label>
@@ -255,14 +279,14 @@ export const Demo = () => {
 					</div>
 				</div>
 				<div className="col-12">
-					<button 
-					type="button" 
-					className="boton fs-4 rounded-3" 
-					style={{ width: "150px", height: "50px" }}
-					onClick={()=>registerCarrier(formulario)}>Get started</button>
+					<button
+						type="button"
+						className="boton fs-4 rounded-3"
+						style={{ width: "150px", height: "50px" }}
+						onClick={() => registerCarrier(formulario)}> Get started</button>
 				</div>
-			</form>
-		</div>
+			</form >
+		</div >
 	)
 
 };

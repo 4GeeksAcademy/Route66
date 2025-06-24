@@ -10,6 +10,7 @@ from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask_cors import CORS
 
 # from models import Person
 
@@ -17,6 +18,7 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
+CORS(app, resources={r"/signUp/*": {"origins": "https://potential-space-waddle-q749vqv57jr4hx7qg-3001.app.github.dev/"}})
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -92,7 +94,7 @@ def register_carrier():
     zip_code = data['zip']
     type_of_transport = data.get('type_of_transport', None)
 
-    # Validaciones de existencia
+
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
     if User.query.filter_by(phone_number=phone_number).first():
@@ -114,9 +116,9 @@ def register_carrier():
         state=state,
         zip=zip_code,
         type_of_transport=type_of_transport,
-        role="carrier"  # Asegúrate de que esté definido en tu Enum `Roles`
+        role="carrier"  
     )
-    new_user.set_password(password)  # <-- Aquí se hace el hash de la contraseña
+    new_user.set_password(password) 
 
     db.session.add(new_user)
     try:
