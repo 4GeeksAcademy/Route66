@@ -68,55 +68,60 @@ def serve_any_other_file(path):
 @app.route('/signUp/register_carrier', methods=['POST'])
 def register_carrier():
     data = request.get_json()
+    
     if not data:
-        return jsonify({"msg": "No se recibieron datos necesarios"}),400
-    
-    required_fields=["user_id","email","password", "company_name", "full_name","mc_number", "Usdot_number"
-                   "phone_number", "address", "city", "state", "zip"]
-    if not all (field in data for field in required_fields):
-        return jsonify({"msg": "Faltan datos obligatorios"}),400
-    
-    user_id = data['user_id']
+        return jsonify({"msg": "No se recibieron datos necesarios"}), 400
+
+    required_fields = [
+        "email", "password", "company_name", "full_name", "mc_number",
+        "Usdot_number", "phone_number", "address", "city", "state", "zip"
+    ]
+    if not all(field in data for field in required_fields):
+        return jsonify({"msg": "Faltan datos obligatorios"}), 400
+
     email = data['email']
     password = data['password']
-    company_name=data['company_name']
-    full_name=data['full_name']
-    mc_number=data['mc_number']
-    Usdot_number=data['Usdot_number']
-    phone_number=data['phone_number']
-    address=data['address']
-    city=data['city']
-    state=data['state']
-    zip=data['zip']
-    type_of_transport=data.get('type_of_transport', None)
-    
-    user_exist = User.query.filter_by(user_id=user_id).first()
-    if user_exist:
-        return jsonify({"msg": "El nombre de usuario ya está en uso."}), 409
-    
-    email_exist = User.query.filter_by(email=email).first()
-    if email_exist:
+    company_name = data['company_name']
+    full_name = data['full_name']
+    mc_number = data['mc_number']
+    usdot_number = data['Usdot_number']
+    phone_number = data['phone_number']
+    address = data['address']
+    city = data['city']
+    state = data['state']
+    zip_code = data['zip']
+    type_of_transport = data.get('type_of_transport', None)
+
+    # Validaciones de existencia
+    if User.query.filter_by(email=email).first():
         return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
-    
+    if User.query.filter_by(phone_number=phone_number).first():
+        return jsonify({"msg": "El usuario con este número telefónico ya está registrado."}), 409
+    if User.query.filter_by(mc_number=mc_number).first():
+        return jsonify({"msg": "El MC Number ya está registrado."}), 409
+    if User.query.filter_by(usdot_number=usdot_number).first():
+        return jsonify({"msg": "El USDOT Number ya está registrado."}), 409
+
     new_user = User(
-            user_id=user_id, 
-            email=email, 
-            password_hash=password, 
-            company_name=company_name,
-            full_name=full_name,
-            mc_number=mc_number,
-            Usdot_number=Usdot_number,
-            phone_number= phone_number,
-            address=address,
-            city=city,
-            state=state,
-            zip=zip,
-            type_of_transport= type_of_transport)
+        email=email,
+        company_name=company_name,
+        full_name=full_name,
+        mc_number=mc_number,
+        usdot_number=usdot_number,
+        phone_number=phone_number,
+        address=address,
+        city=city,
+        state=state,
+        zip=zip_code,
+        type_of_transport=type_of_transport,
+        role="carrier"  # Asegúrate de que esté definido en tu Enum `Roles`
+    )
+    new_user.set_password(password)  # <-- Aquí se hace el hash de la contraseña
+
     db.session.add(new_user)
-    
     try:
         db.session.commit()
-        return jsonify({"msg": "Usuario registrado exitosamente."}), 201 
+        return jsonify({"msg": "Usuario registrado exitosamente."}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500

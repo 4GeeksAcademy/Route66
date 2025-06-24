@@ -1,5 +1,5 @@
 // Import necessary components from react-router-dom and other parts of the application.
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useState } from "react";
 
 
@@ -47,7 +47,7 @@ export const Demo = () => {
     const result = await response.json(); 
 
     if (response.ok) {
-      console.log('Registro exitoso:');
+      console.log('Registro exitoso');
       return result;
     } else {
       console.error('Error en el registro:', result.msg);
