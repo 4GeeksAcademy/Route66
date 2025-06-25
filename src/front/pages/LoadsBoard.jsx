@@ -2,7 +2,8 @@ import React, { useEffect } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Box } from "@mui/material";
 import { Header } from "../components/Header.jsx";
-import logoImg from "../assets/img/route66logo1.jpg"
+import logoImg from "../assets/img/Route66logo.png"
+import { FilterBar } from "../components/FilterBar.jsx";
 
 export const LoadsBoard = () => {
 
@@ -10,9 +11,11 @@ export const LoadsBoard = () => {
 
 
     const imageStyle = {
-        height: 150,
-        width: 150,
+        height: '300px',
+        width: '200px',
         objectFit: 'contain',
+        position: 'relative',
+        bottom: '-4px',
     }
 
     const titleStyle = {
@@ -24,12 +27,12 @@ export const LoadsBoard = () => {
     const containerStyle = {
         px: 4,
         py: 3,
-        bgcolor: '#F9F9F9',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 2,
         borderBottom: '1px solid #ddd',
+        height: "120px"
     }
 
 
@@ -38,8 +41,9 @@ export const LoadsBoard = () => {
     // }, [])
 
     return (
-        <Box>
+        <Box sx={{ minHeight: '100vh' }}>
             <Header containerStyle={containerStyle} title="Loads Board" titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
+            <FilterBar />
         </Box>
     );
 };
