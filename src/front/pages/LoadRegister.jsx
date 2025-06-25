@@ -69,11 +69,12 @@ export const LoadRegister = () => {
 
 		return (
 			<div>
-				<div className="container text-center border border-secondary-subtle border-4 pt-4 mt-4 bg-white rounded-3" style={{ width: "70%", height: "350px" }}>
+				<div className="container text-center border border-secondary-subtle border-4 pt-4 mt-4 rounded-3 fs-5" id="formulario" style={{ width: "75%", height: "450px" }}>
 
 					<div className="mb-2 fw-bold" id="titulo">
 						LOAD REGISTER
 					</div>
+					
 					<form className="row g-3">
 						<div className="col-md-4">
 							<label htmlFor="inputYear" className="form-label fw-bold text-primary-emphasis">Vehicle Year</label>
@@ -105,7 +106,8 @@ export const LoadRegister = () => {
 								value={form.model}
 								onChange={handleChange} />
 						</div>
-						<div className="col-md-3">
+	
+						<div className="col-md-6">
 							<label htmlFor="inputPk" className="form-label fw-bold text-primary-emphasis">Pickup Location</label>
 							<input
 								type="text"
@@ -115,7 +117,7 @@ export const LoadRegister = () => {
 								value={form.pickupLocation}
 								onChange={handleChange} />
 						</div>
-						<div className="col-md-3">
+						<div className="col-md-6">
 							<label htmlFor="inputDelivery" className="form-label fw-bold text-primary-emphasis">Delivery Location</label>
 							<input
 								type="text"
@@ -125,7 +127,7 @@ export const LoadRegister = () => {
 								value={form.deliveryLocation}
 								onChange={handleChange} />
 						</div>
-						<div className="col-md-3">
+						<div className="col-md-6">
 							<label htmlFor="inputPayment" className="form-label fw-bold text-primary-emphasis">Payment</label>
 							<input
 								type="text"
@@ -135,7 +137,7 @@ export const LoadRegister = () => {
 								value={form.payment}
 								onChange={handleChange} />
 						</div>
-						<div className="col-md-3">
+						<div className="col-md-6">
 							<label htmlFor="inputDtd" className="form-label fw-bold text-primary-emphasis">Days to delivery</label>
 							<input
 								type="text"

@@ -32,7 +32,7 @@ export const router = createBrowserRouter(
       <Route path="/load_register" element={<LoadRegister />} />
       <Route path="/principal" element={<Principal />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/registroBroker" element={<RegistroBroker />} />
+      {/* <Route path="/registroBroker" element={<RegistroBroker />} /> */}
     </Route>
   )
 );

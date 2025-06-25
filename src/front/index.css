@@ -12,7 +12,13 @@
 
 #titulo{
     color: rgb(221, 21, 21);
-    font-size: 30px;}
+    font-size: 30px;
+  }
+
+#formulario{
+  background-color: rgba(189, 185, 185, 0.349);
+  font-family: Arial, Helvetica, sans-serif;
+}
     
 body {
   margin: 0;

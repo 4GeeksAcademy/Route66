@@ -38,12 +38,12 @@ def loads_register():
     
 
     required_fields=[
-        "vehicle_year", "vehicle_make", "vehicle_model", "pickup_location","delivery_location", "payment","days_to_deliver", "broker_id", "status"]
+        "vehicle_year", "vehicle_make", "vehicle_model", "pickup_location","delivery_location", "payment","days_to_deliver", "user_id", "status"]
     
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
     
-    broker_id =  data['broker_id']
+    user_id =  data['user_id']
     vehicle_year = data['vehicle_year']
     vehicle_make = data['vehicle_make']
     vehicle_model = data['vehicle_model']
@@ -54,7 +54,7 @@ def loads_register():
     status= data['status']
 
     new_load = Load(
-        broker_id = broker_id,
+        user_id = user_id,
         vehicle_year =vehicle_year,
         vehicle_make=vehicle_make,
         vehicle_model= vehicle_model,
