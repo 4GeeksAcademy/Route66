@@ -1,0 +1,20 @@
+body{
+    background-color: rgba(204, 203, 203, 0.377);
+}
+
+.boton{
+    background-color: rgba(7, 7, 182, 0.952);
+    border-color: rgb(14, 14, 199);
+    color: white 
+}
+
+.boton:hover{
+    background-color: rgb(125, 125, 223);
+    border-color: rgb(125, 125, 223);
+    color: white 
+}
+
+#titulo{
+    color: rgb(221, 21, 21);
+    font-size: 30px;
+}
