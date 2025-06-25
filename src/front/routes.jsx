@@ -12,6 +12,7 @@ import { Demo } from "./pages/Demo";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
 import RegistroBroker from "./pages/RegistroBroker";
+import RegistroCarrier from "./pages/RegistroCarrier";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,6 +32,7 @@ export const router = createBrowserRouter(
       <Route path="/principal" element={<Principal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/registroBroker" element={<RegistroBroker />} />
+      <Route path="/registroCarrier" element={<RegistroCarrier />} />
     </Route>
   )
 );
