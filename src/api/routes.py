@@ -35,6 +35,7 @@ def loads_register():
     data = request.get_json()
     if not data:
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
+    
 
     required_fields=[
         "vehicle_year", "vehicle_make", "vehicle_model", "pickup_location","delivery_location", "payment","days_to_deliver", "broker_id", "status"]
