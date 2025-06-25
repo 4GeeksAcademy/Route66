@@ -29,8 +29,7 @@ def register_carrier():
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
 
     required_fields=[
-        "email", "password", "company_name", "full_name", "mc_number",
-        ,"phone_number", "address", "city", "state", "zip"]
+        "email", "password", "company_name", "full_name", "mc_number","phone_number", "address", "city", "state", "zip"]
     
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400

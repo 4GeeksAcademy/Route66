@@ -90,8 +90,6 @@ export const Register = () => {
 		}
 	}
 
-	// console.log(registerCarrier(formulario))
-
 
 	return (
 		<>
