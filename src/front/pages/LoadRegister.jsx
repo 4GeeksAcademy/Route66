@@ -33,7 +33,7 @@ export const LoadRegister = () => {
 			vehicle_year:form.year,
 			vehicle_make:form.make,
 			vehicle_model:form.model,
-			pickup_Location:form.pickupLocation,
+			pickup_location:form.pickupLocation,
 			delivery_location:form.deliveryLocation,
 			payment:form.payment,
 			days_to_deliver:form.daysToDeliver,

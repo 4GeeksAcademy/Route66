@@ -25,11 +25,9 @@ def handle_hello():
 
 
 @api.route('/load_register', methods=['POST'])
-@jwt_required()
 def loads_register():
-    claims = get_jwt()
-    user_role = claims.get("role") 
-
+   
+    user_role="broker"
     if user_role != "broker":
         return jsonify({"msg": "No tienes permiso para registrar cargas"}), 403
     
@@ -39,25 +37,31 @@ def loads_register():
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
 
     required_fields=[
-        "vehicle_year", "vehicle_make", "vehicle_model", "pickup_Location", "payment","days_to_deliver"]
+        "vehicle_year", "vehicle_make", "vehicle_model", "pickup_location","delivery_location", "payment","days_to_deliver", "broker_id", "status"]
     
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
     
+    broker_id =  data['broker_id']
     vehicle_year = data['vehicle_year']
     vehicle_make = data['vehicle_make']
     vehicle_model = data['vehicle_model']
-    pickup_Location = data['pickup_Location']
+    pickup_location = data['pickup_location']
+    delivery_location = data['delivery_location']
     payment = data['payment']
     days_to_deliver = data['days_to_deliver']
+    status= data['status']
 
     new_load = Load(
+        broker_id = broker_id,
         vehicle_year =vehicle_year,
         vehicle_make=vehicle_make,
         vehicle_model= vehicle_model,
-        pickup_Location=pickup_Location,
+        pickup_location=pickup_location,
+        delivery_location= delivery_location,
         payment=payment,
-        days_to_deliver=days_to_deliver
+        days_to_deliver=days_to_deliver,
+        status=status
         )
 
     db.session.add(new_load)
