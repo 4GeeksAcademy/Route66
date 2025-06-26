@@ -4,16 +4,23 @@ export const Navbar = () => {
 
 	return (
 		<nav className="navbar navbar-light bg-light">
-			<div className="container">
+			{
+				/*
+				<div className="container">
 				<Link to="/">
-					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
+					<span className="navbar-brand mb-0 h1">
+						<img src="route66 logo 1.jpg" alt="logo" style={{width: "80px", height: "80px"}} className="rounded-4"/>
+					</span>
 				</Link>
 				<div className="ml-auto">
-					<Link to="/demo">
+					<Link to="/register">
 						<button className="btn btn-primary">Check the Context in action</button>
 					</Link>
 				</div>
 			</div>
+				*/
+			}
+
 		</nav>
 	);
 };
