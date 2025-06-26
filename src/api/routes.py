@@ -26,7 +26,11 @@ def handle_hello():
 
 @api.route('/load_register', methods=['POST'])
 def loads_register():
-   
+@jwt_required()
+def loads_register():
+    jwt_data = get_jwt()
+    user_role = jwt_data.get("role")
+
     user_role="broker"
     if user_role != "broker":
         return jsonify({"msg": "No tienes permiso para registrar cargas"}), 403
@@ -38,12 +42,12 @@ def loads_register():
     
 
     required_fields=[
-        "vehicle_year", "vehicle_make", "vehicle_model", "pickup_location","delivery_location", "payment","days_to_deliver", "user_id", "status"]
+        "vehicle_year", "vehicle_make", "vehicle_model", "pickup_location","delivery_location", "payment","days_to_deliver", "status"]
     
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
     
-    user_id =  data['user_id']
+    user_id =  get_jwt_identity(),
     vehicle_year = data['vehicle_year']
     vehicle_make = data['vehicle_make']
     vehicle_model = data['vehicle_model']
