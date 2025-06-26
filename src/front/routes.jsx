@@ -34,7 +34,7 @@ export const router = createBrowserRouter(
      
       <Route path="/loadsboard" element={<LoadsBoard />} />
 
-      <Route path="/registe" element={<Register />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/principal" element={<Principal />} />
       <Route path="/login" element={<Login />} />
     </Route>

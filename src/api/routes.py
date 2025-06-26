@@ -24,7 +24,6 @@ def handle_hello():
     return jsonify(response_body), 200
 
 @api.route('/load_register', methods=['POST'])
-def loads_register():
 @jwt_required()
 def loads_register():
     jwt_data = get_jwt()

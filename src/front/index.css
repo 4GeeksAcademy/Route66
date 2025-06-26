@@ -11,12 +11,12 @@
 }
 
 #titulo{
-    color: rgb(221, 21, 21);
+    color: white;
     font-size: 30px;
   }
 
 #formulario{
-  background-color: rgba(189, 185, 185, 0.349);
+  background-color:#002244;
   font-family: Arial, Helvetica, sans-serif;
 }
 
