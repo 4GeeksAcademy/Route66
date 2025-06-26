@@ -75,7 +75,6 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0  # avoid cache memory
     return response
 
-<<<<<<< HomeLogin
 
 
 
@@ -118,8 +117,6 @@ def login():
         return jsonify({"error": str(error_trace)}), 400
 
 
-=======
->>>>>>> develop
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
