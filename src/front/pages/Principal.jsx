@@ -2,8 +2,13 @@ import rutaLogo from '../assets/img/route66_logo_1.jpg'
 import rutaCamiones from '../assets/img/camiones.jpg'
 
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Principal = () => {
+
+
+
+
 
     return (
         <div className="bg-light text-center">
