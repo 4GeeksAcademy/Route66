@@ -10,8 +10,9 @@ db = SQLAlchemy()
 
 
 class Roles(enum.Enum):
-    BROKER = "broker"
-    CARRIER = "carrier"
+    carrier = "carrier"
+    broker = "broker"
+    admin = "admin"
 
 
 def default_end_date():
