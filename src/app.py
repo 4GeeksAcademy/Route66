@@ -9,11 +9,12 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.DTOs.LoginDto import LoginDto
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_cors import CORS
+
 
 # from models import Person
 
@@ -21,7 +22,11 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
+<<<<<<< HomeLogin
 CORS(app)
+=======
+# CORS(app, resources={r"/signUp/*": {"origins": "https://potential-space-waddle-q749vqv57jr4hx7qg-3001.app.github.dev/"}})
+>>>>>>> develop
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -70,6 +75,7 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0  # avoid cache memory
     return response
 
+<<<<<<< HomeLogin
 
 
 
@@ -112,6 +118,8 @@ def login():
         return jsonify({"error": str(error_trace)}), 400
 
 
+=======
+>>>>>>> develop
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
