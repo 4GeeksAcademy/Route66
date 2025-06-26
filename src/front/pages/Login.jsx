@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from 'sweetalert2';
 
 const Login = () => {
 
@@ -9,18 +10,53 @@ const Login = () => {
         event.preventDefault(); // evita el comportamiento por defecto del navegador :contentReference[oaicite:2]{index=2}
 
 
-        if (email === 'broker@demo.com' && password === '654321') {
-            alert('Login exitoso como Broker');
-            window.location.href = 'dashboard.html'; // redirige al dashboard
-        } else {
-            alert('Credenciales inválidas. Usa: broker@demo.com / 654321');
-        }
+
+        const backendUrl = import.meta.env.VITE_BACKEND_URL
+        if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+
+        console.log(backendUrl);
+
+        let urlService = backendUrl + 'api/login';
+
+        fetch(urlService, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exitoso) {
+                    Swal.fire({
+                        title: '¡Bienvenido!',
+                        text: data.mensaje,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.mensaje,
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                }
+
+            })
+            .catch(error => console.error('Error al enviar datos:', error));
+
+
     };
 
     return (
         <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
             <div className="card p-4 shadow" style={{ maxWidth: '400px', width: '100%' }}>
-                <h3 className="mb-3 text-center">Broker Login</h3>
+                <h3 className="mb-3 text-center">Login</h3>
                 <form id="brokerForm" onSubmit={envioLogin}>
                     <div className="mb-3">
                         <input type="email"

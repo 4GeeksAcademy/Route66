@@ -55,6 +55,7 @@
             ],
             "index": "pypi",
             "version": "==1.44.1"
+
         },
         "colorama": {
             "hashes": [
@@ -388,6 +389,18 @@
         },
         "python-dotenv": {
             "hashes": [
+<<<<<<< HEAD
+=======
+                "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3",
+                "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "version": "==2.9.0.post0"
+        },
+        "python-dotenv": {
+            "hashes": [
+>>>>>>> 7928f95429b87594a9a831e180352ccac37cda63
                 "sha256:31f23644fe2602f88ff55e1f5c79ba497e01224ee7737937930c448e4d0e24dc",
                 "sha256:a8a6399716257f45be6a007360200409fce5cda2661e3dec71d23dc15f6189ab"
             ],

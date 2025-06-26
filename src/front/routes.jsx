@@ -9,10 +9,10 @@ import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { LoadRegister } from "./pages/LoadRegister";
-// import { Demo } from "./pages/Demo";
+import { LoadsBoard } from "./pages/LoadsBoard";
+import { Register } from "./pages/Register";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
-import RegistroBroker from "./pages/RegistroBroker";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,14 +25,18 @@ export const router = createBrowserRouter(
     // Root Route: All navigation will start from here.
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
 
-      {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
       <Route path="/" element={<Home />} />
       <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
-      {/* <Route path="/demo" element={<Demo />} /> */}
+      
       <Route path="/load_register" element={<LoadRegister />} />
       <Route path="/principal" element={<Principal />} />
       <Route path="/login" element={<Login />} />
-      {/* <Route path="/registroBroker" element={<RegistroBroker />} /> */}
+     
+      <Route path="/loadsboard" element={<LoadsBoard />} />
+
+      <Route path="/registe" element={<Register />} />
+      <Route path="/principal" element={<Principal />} />
+      <Route path="/login" element={<Login />} />
     </Route>
   )
 );

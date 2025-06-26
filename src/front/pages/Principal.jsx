@@ -2,8 +2,13 @@ import rutaLogo from '../assets/img/route66_logo_1.jpg'
 import rutaCamiones from '../assets/img/camiones.jpg'
 
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Principal = () => {
+
+
+
+
 
     return (
         <div className="bg-light text-center">
@@ -36,7 +41,11 @@ const Principal = () => {
                                     I'm  a Broker
                                 </Link>
                             </li>
-                            <li><a className="dropdown-item" href="#">I'm a Carrier</a></li>
+                            <li>
+                                <Link to={'/registroCarrier'}>
+                                    I'm  a Carrier
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -52,8 +61,16 @@ const Principal = () => {
                         Get Started
                     </button>
                     <ul className="dropdown-menu dropdown-menu-center">
-                        <li><a className="dropdown-item" href="#">I'm a Broker</a></li>
-                        <li><a className="dropdown-item" href="#">I'm a Carrier</a></li>
+                        <li>
+                            <Link to={'/registroBroker'}>
+                                I'm  a Broker
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to={'/registroCarrier'}>
+                                I'm  a Carrier
+                            </Link>
+                        </li>
                     </ul>
                 </div>
             </main>
