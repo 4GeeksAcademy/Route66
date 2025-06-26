@@ -1,6 +1,7 @@
 import React, { useEffect } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { DataGrid } from '@mui/x-data-grid';
 import { Header } from "../components/Header.jsx";
 import logoImg from "../assets/img/Route66logo.png"
 import { FilterBar } from "../components/FilterBar.jsx";
@@ -35,6 +36,35 @@ export const LoadsBoard = () => {
         height: "120px"
     }
 
+    const columns = [
+        { field: 'id', headerName: 'ID', width: 90 },
+        { field: 'vehicleYear', headerName: 'Vehicle year', width: 220 },
+        { field: 'vehicleMake', headerName: 'Vehicle make', width: 220 },
+        { field: 'vehicleModel', headerName: 'Vehicle model', width: 219 },
+        { field: 'pickup', headerName: 'Pickup', width: 170 },
+        { field: 'delivery', headerName: 'Delivery', width: 170 },
+        { field: 'payment', headerName: 'Payment ($)', width: 130 },
+        { field: 'daysToDelivery', headerName: 'Days to delivery', width: 130 },
+        { field: 'status', headerName: 'Status', width: 150 },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 170,
+            renderCell: () => <Button variant="contained" color="error">Request</Button>
+        }
+    ];
+
+    const rows = [
+        { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
+        { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
+        { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200},
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+
+
+    ];
+
 
     // useEffect(() => {
 
@@ -44,6 +74,21 @@ export const LoadsBoard = () => {
         <Box sx={{ minHeight: '100vh' }}>
             <Header containerStyle={containerStyle} title="Loads Board" titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
             <FilterBar />
+            <Box sx={{}}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    sx={{
+                        bgcolor: 'white',
+                        borderRadius: 2,
+                        px: 2,
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#0e397e',
+                            fontWeight: 'bold',
+                        }
+                    }}
+                />
+            </Box>
         </Box>
     );
 };
