@@ -35,12 +35,12 @@ const Principal = () => {
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li>
-                                <Link to={'/register'}>
+                                <Link to={'/register?role=broker'}>
                                     I'm a broker
                                 </Link>
                             </li>
                             <li>
-                                <Link to={'/register'}>
+                                <Link to={'/register?role=carrier'}>
                                     I'm  a Carrier
                                 </Link>
                             </li>

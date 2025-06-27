@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+
 const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
   <>
     <div className="col-md-4">
@@ -74,6 +75,7 @@ export const Register = () => {
   };
 
   const [formulario, setFormulario] = useState(initialFormState);
+  const [alerta, setAlerta] = useState({ mensaje: "", tipo: "" });
 
   function handleChange(e) {
     const { name, type, value, checked } = e.target;
@@ -107,129 +109,137 @@ export const Register = () => {
       });
 
 
-    let result;
-    try {
-      result = await res.json();
-    } catch {
-      result = { msg: "Error inesperado del servidor" };
-    }  
+      let result;
+      try {
+        result = await res.json();
+      } catch {
+        result = { msg: "Error inesperado del servidor" };
+      }
       if (res.ok) {
-        console.log('Registro exitoso');
+        setAlerta({ mensaje: "Registro exitoso", tipo: "success" });
         setFormulario(initialFormState);
         return result;
       } else {
-        alert(`Error al registrar: ${result.msg}`);
+        setAlerta({ mensaje: `Error al registrar: ${result.msg}`, tipo: "danger" });
         return null;
       }
     } catch (err) {
-      console.error('Error de red o servidor:', err);
-      return null;
+      setAlerta({ mensaje: "Error de red o servidor. Inténtalo más tarde.", tipo: "danger" });
     }
   }
 
   async function registerBroker(data) {
-  const userData = {
-    email: data.email,
-    password: data.password,
-    company_name: data.companyName,
-    full_name: data.fullName,
-    mc_number: data.numberMc,
-    phone_number: data.phoneNumber,
-    address: data.address,
-    city: data.city,
-    state: data.state,
-    zip: data.zip,
-    role: role
-  };
+    const userData = {
+      email: data.email,
+      password: data.password,
+      company_name: data.companyName,
+      full_name: data.fullName,
+      mc_number: data.numberMc,
+      phone_number: data.phoneNumber,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+      zip: data.zip,
+      role: role
+    };
 
-  try {
-    const res = await fetch(`${backendUrl}/api/signup/broker`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
+    try {
+      const res = await fetch(`${backendUrl}/api/signup/broker`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
 
-    const result = await res.json();
-    if (res.ok) {
-      console.log('Registro de broker exitoso');
-      setFormulario(initialFormState);
-      return result;
-    } else {
-      alert(`Error al registrar broker: ${result.msg}`);
+      const result = await res.json();
+      if (res.ok) {
+        setAlerta({ mensaje: "Registro de broker exitoso", tipo: "success" });
+        setFormulario(initialFormState);
+        return result;
+      } else {
+        setAlerta({ mensaje: `Error al registrar broker: ${result.msg}`, tipo: "danger" });
+        return null;
+      }
+    } catch (err) {
+      setAlerta({ mensaje: "Error de red o servidor. Inténtalo más tarde.", tipo: "danger" });
       return null;
     }
-  } catch (err) {
-    console.error('Error de red o servidor (broker):', err);
-    return null;
   }
-}
+
 
 
   return (
-    <div id="formulario" className="container border border-2 rounded-4 p-4 mt-5" style={{ width: "40%", height: "70%" }} >
-      <div className="mb-2 fw-bold border-bottom border-danger border-3" id="titulo">REGISTER</div>
-      <form className="row g-3 mb-3">
-        <div className="col-md-4">
-          <label htmlFor="inputName" className="form-label text-light">Full Name</label>
-          <input type="text" className="form-control shadow-sm" id="inputName" name="fullName" value={formulario.fullName} onChange={handleChange} />
+    <div>
+      {alerta.mensaje && (
+        <div className={`alert alert-${alerta.tipo} fw-bold`} role="alert">
+          {alerta.mensaje}
         </div>
-        <div className="col-md-4">
-          <label htmlFor="inputCompany" className="form-label text-light">Company Name</label>
-          <input type="text" className="form-control shadow-sm" id="inputCompany" name="companyName" value={formulario.companyName} onChange={handleChange} />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="inputPhoneNumber" className="form-label text-light">Phone Number</label>
-          <input type="text" className="form-control shadow-sm" id="inputPhoneNumber" name="phoneNumber" value={formulario.phoneNumber} onChange={handleChange} />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="inputMc" className="form-label text-light">MC</label>
-          <input type="text" className="form-control shadow-sm" id="inputMc" name="numberMc" value={formulario.numberMc} onChange={handleChange} />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="inputEmail4" className="form-label text-light">Email</label>
-          <input type="email" className="form-control shadow-sm" id="inputEmail4" name="email" value={formulario.email} onChange={handleChange} />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="inputPassword4" className="form-label text-light">Password</label>
-          <input type="password" className="form-control shadow-sm" id="inputPassword4" name="password" value={formulario.password} onChange={handleChange} />
-        </div>
-        <div className="col-4">
-          <label htmlFor="inputAddress" className="form-label text-light">Address</label>
-          <input type="text" className="form-control shadow-sm" id="inputAddress" name="address" value={formulario.address} onChange={handleChange} />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="inputCity" className="form-label text-light">City</label>
-          <input type="text" className="form-control shadow-sm" id="inputCity" name="city" value={formulario.city} onChange={handleChange} />
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="inputState" className="form-label text-light">State</label>
-          <select id="inputState" className="form-control shadow-sm" name="state" value={formulario.state} onChange={handleChange}>
-            <option>Choose</option>
-            {['Alabama', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Delaware', 'Florida', 'Georgia', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Maine', 'Maryland', 'Michigan', 'Nevada', 'New Jersey', 'New Mexico', 'New York', 'Ohio', 'Oklahoma', 'Pennsilvanya', 'South Carolina', 'Tennessee', 'Texas', 'Utah', 'Virginia', 'Washington'].map(state => (
-              <option key={state}>{state}</option>
-            ))}
-          </select>
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="inputZip" className="form-label text-light">Zip</label>
-          <input type="text" className="form-control shadow-sm" id="inputZip" name="zip" value={formulario.zip} onChange={handleChange} />
-        </div>
+      )}
 
-        {role === "carrier" && <InputsSoloParaCarriers formulario={formulario} handleChange={handleChange} />}
+      <div id="formulario" className="container border border-2 rounded-4 p-4 mt-5" style={{ width: "40%", height: "70%" }} >
+        <div className="mb-2 fw-bold border-bottom border-danger border-3" id="titulo">REGISTER</div>
+        <form className="row g-3 mb-3">
+          <div className="col-md-4">
+            <label htmlFor="inputName" className="form-label text-light">Full Name</label>
+            <input type="text" className="form-control shadow-sm" id="inputName" name="fullName" value={formulario.fullName} onChange={handleChange} />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputCompany" className="form-label text-light">Company Name</label>
+            <input type="text" className="form-control shadow-sm" id="inputCompany" name="companyName" value={formulario.companyName} onChange={handleChange} />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputPhoneNumber" className="form-label text-light">Phone Number</label>
+            <input type="text" className="form-control shadow-sm" id="inputPhoneNumber" name="phoneNumber" value={formulario.phoneNumber} onChange={handleChange} />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputMc" className="form-label text-light">MC</label>
+            <input type="text" className="form-control shadow-sm" id="inputMc" name="numberMc" value={formulario.numberMc} onChange={handleChange} />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputEmail4" className="form-label text-light">Email</label>
+            <input type="email" className="form-control shadow-sm" id="inputEmail4" name="email" value={formulario.email} onChange={handleChange} />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputPassword4" className="form-label text-light">Password</label>
+            <input type="password" className="form-control shadow-sm" id="inputPassword4" name="password" value={formulario.password} onChange={handleChange} />
+          </div>
+          <div className="col-4">
+            <label htmlFor="inputAddress" className="form-label text-light">Address</label>
+            <input type="text" className="form-control shadow-sm" id="inputAddress" name="address" value={formulario.address} onChange={handleChange} />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputCity" className="form-label text-light">City</label>
+            <input type="text" className="form-control shadow-sm" id="inputCity" name="city" value={formulario.city} onChange={handleChange} />
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputState" className="form-label text-light">State</label>
+            <select id="inputState" className="form-control shadow-sm" name="state" value={formulario.state} onChange={handleChange}>
+              <option>Choose</option>
+              {['Alabama', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Delaware', 'Florida', 'Georgia', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Maine', 'Maryland', 'Michigan', 'Nevada', 'New Jersey', 'New Mexico', 'New York', 'Ohio', 'Oklahoma', 'Pennsilvanya', 'South Carolina', 'Tennessee', 'Texas', 'Utah', 'Virginia', 'Washington'].map(state => (
+                <option key={state}>{state}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="inputZip" className="form-label text-light">Zip</label>
+            <input type="text" className="form-control shadow-sm" id="inputZip" name="zip" value={formulario.zip} onChange={handleChange} />
+          </div>
 
-        <div className="col-12">
-          <button type="button" className="btn btn-primary btn-lg fw-bold px-5" onClick={() => {
-            if (role === "carrier") {
-              registerCarrier(formulario);
-            } else {
-              registerBroker(formulario);
-            }
-          }}
-          >
-            Get Started
-          </button>
-        </div>
-      </form>
+          {role === "carrier" && <InputsSoloParaCarriers formulario={formulario} handleChange={handleChange} />}
+
+          <div className="col-12">
+            <button type="button" className="btn btn-primary btn-lg fw-bold px-5" onClick={() => {
+              if (role === "carrier") {
+                registerCarrier(formulario);
+              } else {
+                registerBroker(formulario);
+              }
+            }}
+            >
+              Get Started
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
