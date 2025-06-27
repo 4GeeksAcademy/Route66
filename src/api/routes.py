@@ -67,11 +67,10 @@ def loads_register():
 
     
 
-@api.route('/signup/broker', methods=['POST'])
-
-def register_broker():
+@api.route('/signup', methods=['POST'])
+def register():
     data = request.get_json()
-    
+
     if not data:
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
 
@@ -83,23 +82,21 @@ def register_broker():
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
 
-    role = data.get("role")
-    if role != "broker":
-        return jsonify({"msg": "Este endpoint es solo para registros tipo 'broker'"}), 400
-
     
     email = data['email']
     password = data['password']
     company_name = data['company_name']
     full_name = data['full_name']
     mc_number = data['mc_number']
+    if data["role"] == "carrier":
+        usdot_number = data['usdot_number']
     phone_number = data['phone_number']
     address = data['address']
     city = data['city']
     state = data['state']
     zip_code = data['zip']
+    type_of_transport = data.get('type_of_transport', None)
 
-    
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
     if User.query.filter_by(phone_number=phone_number).first():
@@ -118,7 +115,8 @@ def register_broker():
         city=city,
         state=state,
         zip=zip_code,
-        role=role
+        type_of_transport=type_of_transport,
+        role=data["role"]
     )
     new_user.set_password(password)
 
@@ -128,7 +126,32 @@ def register_broker():
         return jsonify({"msg": "Usuario broker registrado exitosamente."}), 201
     except Exception as e:
         db.session.rollback()
-        import traceback
-        print(traceback.format_exc())
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
 
+
+@api.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+
+    try:
+        usuario = LoginDto(
+            email=data['email'],
+            password=data['password']
+        )
+
+        exitoso = False
+        mensaje = ''
+        if usuario.email == 'broker@demo.com' and usuario.password == '654321':
+            exitoso = True
+            mensaje = 'Inicio sesion correcto'
+        else:
+            exitoso = False
+            mensaje = 'Inicio sesion incorrecto'
+
+        return jsonify({
+            "exitoso": exitoso,
+            "mensaje": mensaje
+        }), 200
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        return jsonify({"error": str(error_trace)}), 400
