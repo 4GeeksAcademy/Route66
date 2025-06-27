@@ -88,8 +88,8 @@ export const Register = () => {
       password: data.password,
       company_name: data.companyName,
       full_name: data.fullName,
-      mc_number: data.numberMc,
-      usdot_number: data.numberUsdot,
+      mc_number: data.mcNumber,
+      usdot_number: data.usdotNumber,
       phone_number: data.phoneNumber,
       address: data.address,
       city: data.city,
@@ -105,7 +105,14 @@ export const Register = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
       });
-      const result = await res.json();
+
+
+    let result;
+    try {
+      result = await res.json();
+    } catch {
+      result = { msg: "Error inesperado del servidor" };
+    }  
       if (res.ok) {
         console.log('Registro exitoso');
         setFormulario(initialFormState);
