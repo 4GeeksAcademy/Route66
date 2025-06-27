@@ -81,7 +81,7 @@ const Login = () => {
                     ← Back to Home
                 </Link>
                 <Link to={'/passwordReset'}>
-                    Olvido Contraseña
+                    Forgot Paswrod
                 </Link>
             </div>
         </div>

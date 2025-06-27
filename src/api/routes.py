@@ -85,30 +85,26 @@ def register_carrier():
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
     
 
-@api.route('/signup/login', methods=['POST'])
+@api.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     
     try:
-        usuario = LoginDto(
-            email=data['email'],
-            password=data['password']
-        )   
-
+  
         exitoso = False
         mensaje = ''
 
 
 
  
-        userBD = User.query.filter_by(email=usuario.email).first()
+        userBD = User.query.filter_by(email=data["email"]).first()
         
 
         if userBD is None:
             exitoso = True
             mensaje = 'Inicio sesion incorrecto'
         else:
-            exitoso = User.check_password(userBD,usuario.password)
+            exitoso = User.check_password(userBD,data["pasword"])
             if exitoso:
                 exitoso = False
                 mensaje = 'Inicio sesion correcto'
