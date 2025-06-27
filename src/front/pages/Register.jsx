@@ -29,10 +29,10 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
       />
     </div>
     <div className="text-start" style={{ width: "50%" }}>
-      <div className="fs-5 text-light border border-danger border-2">Type of transport?</div>
-      <div className="col-2">
+      <div className="fs-5 text-light border-bottom border-danger border-3 ">Type of transport?</div>
+      <div className="col-2 d-flex inline-block"  style={{ width: "150px" }}>
         {['Open', 'Enclose', 'Both'].map(type => (
-          <div className="form-check" key={type}>
+          <div className="form-check ms-3 mt-3" key={type}>
             <input
               className="form-check-input"
               type="checkbox"
@@ -175,7 +175,7 @@ export const Register = () => {
         </div>
       )}
 
-      <div id="formulario" className="container border border-2 rounded-4 p-4 mt-5" style={{ width: "40%", height: "70%" }} >
+      <div id="formulario" className="container border border-2 rounded-4 p-4 mt-5" style={{ width: "40%", height: "65%" }} >
         <div className="mb-2 fw-bold border-bottom border-danger border-3" id="titulo">REGISTER</div>
         <form className="row g-3 mb-3">
           <div className="col-md-4">

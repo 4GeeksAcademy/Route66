@@ -94,7 +94,7 @@ export const LoadRegister = () => {
 							onChange={handleChange} />
 					</div>
 					<div className="col-md-4">
-						<label htmlFor="inputMake" className="form-label fw-bold text-light">Vehicle Make</label>
+						<label htmlFor="inputMake" className="form-label text-light">Vehicle Make</label>
 						<input
 							type="text"
 							className="form-control shadow-sm"
