@@ -5,7 +5,7 @@ export const FilterBar = () => {
 
     return (
         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', gap: 2, bgcolor: '#0E397F' }}>
-            <Box sx={{ mt: 7, mb: 8, display: 'flex', justifyContent: 'center', gap: 2 }}>
+            <Box sx={{ mt: 6, mb: 2, display: 'flex', justifyContent: 'center', gap: 2 }}>
                 <TextField label="Search Pickup" variant="outlined" size="small" sx={{ bgcolor: 'white', borderRadius: 1 }} />
                 <TextField label="Search Delivery" variant="outlined" size="small" sx={{ bgcolor: 'white', borderRadius: 1 }} />
                 <Button variant="contained" sx={{ bgcolor: '#D32F2F' }}>
