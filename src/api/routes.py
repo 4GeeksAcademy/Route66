@@ -5,6 +5,8 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+from api.DTOs.LoginDto import LoginDto
+import traceback
 
 api = Blueprint('api', __name__)
 
@@ -21,16 +23,17 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+
 @api.route('/signup/carrier', methods=['POST'])
 def register_carrier():
     data = request.get_json()
-    
+
     if not data:
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
 
-    required_fields=[
-        "email", "password", "company_name", "full_name", "mc_number","phone_number", "address", "city", "state", "zip"]
-    
+    required_fields = [
+        "email", "password", "company_name", "full_name", "mc_number", "phone_number", "address", "city", "state", "zip"]
+
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
 
@@ -39,7 +42,7 @@ def register_carrier():
     company_name = data['company_name']
     full_name = data['full_name']
     mc_number = data['mc_number']
-    if data["role"]== "carrier": 
+    if data["role"] == "carrier":
         usdot_number = data['usdot_number']
     phone_number = data['phone_number']
     address = data['address']
@@ -47,7 +50,6 @@ def register_carrier():
     state = data['state']
     zip_code = data['zip']
     type_of_transport = data.get('type_of_transport', None)
-
 
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
@@ -70,9 +72,9 @@ def register_carrier():
         state=state,
         zip=zip_code,
         type_of_transport=type_of_transport,
-        role=data["role"]  
+        role=data["role"]
     )
-    new_user.set_password(password) 
+    new_user.set_password(password)
 
     db.session.add(new_user)
     try:
@@ -81,3 +83,31 @@ def register_carrier():
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
+
+
+@api.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+
+    try:
+        usuario = LoginDto(
+            email=data['email'],
+            password=data['password']
+        )
+
+        exitoso = False
+        mensaje = ''
+        if usuario.email == 'broker@demo.com' and usuario.password == '654321':
+            exitoso = True
+            mensaje = 'Inicio sesion correcto'
+        else:
+            exitoso = False
+            mensaje = 'Inicio sesion incorrecto'
+
+        return jsonify({
+            "exitoso": exitoso,
+            "mensaje": mensaje
+        }), 200
+    except Exception as e:
+        error_trace = traceback.format_exc()
+        return jsonify({"error": str(error_trace)}), 400
