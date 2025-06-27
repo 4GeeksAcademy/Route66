@@ -2,6 +2,8 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
+from sqlalchemy import Null, null
+from api.DTOs.LoginDto import LoginDto
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -72,7 +74,7 @@ def register_carrier():
         type_of_transport=type_of_transport,
         role=data["role"]  
     )
-    new_user.set_password(password) 
+    new_user.set_password(password)
 
     db.session.add(new_user)
     try:
@@ -81,3 +83,45 @@ def register_carrier():
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
+    
+
+@api.route('/signup/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    
+    try:
+        usuario = LoginDto(
+            email=data['email'],
+            password=data['password']
+        )   
+
+        exitoso = False
+        mensaje = ''
+
+
+
+ 
+        userBD = User.query.filter_by(email=usuario.email).first()
+        
+
+        if userBD is None:
+            exitoso = True
+            mensaje = 'Inicio sesion incorrecto'
+        else:
+            exitoso = User.check_password(userBD,usuario.password)
+            if exitoso:
+                exitoso = False
+                mensaje = 'Inicio sesion correcto'
+            else:
+                exitoso = True
+                mensaje = 'Inicio sesion incorrecto'
+        
+
+
+
+        return jsonify({
+            "exitoso": exitoso,
+            "mensaje": mensaje
+        }), 200
+    except Exception as e:
+        return jsonify({"msg": "Error al realizar login", "error": str(e)}), 500

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 
 const Login = () => {
@@ -76,7 +77,12 @@ const Login = () => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Log In</button>
                 </form>
-                <a href="index.html" className="btn btn-link mt-3">← Back to Home</a>
+                <Link to={'/principal'}>
+                    ← Back to Home
+                </Link>
+                <Link to={'/passwordReset'}>
+                    Olvido Contraseña
+                </Link>
             </div>
         </div>
     );

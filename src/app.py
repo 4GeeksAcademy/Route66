@@ -22,11 +22,9 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
-<<<<<<< HomeLogin
+
 CORS(app)
-=======
-# CORS(app, resources={r"/signUp/*": {"origins": "https://potential-space-waddle-q749vqv57jr4hx7qg-3001.app.github.dev/"}})
->>>>>>> develop
+
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -74,47 +72,6 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
-
-
-
-
-@app.route('/prueba', methods=['GET'])
-def prueba():
-    return jsonify({
-        'mensaje': '¡Hola desde Flask!',
-        'estado': 'exitoso'
-    })
-
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    
-    try:
-        usuario = LoginDto(
-            email=data['email'],
-            password=data['password']
-        )   
-
-        exitoso = False
-        mensaje = ''
-        if usuario.email == 'broker@demo.com' and usuario.password == '654321':
-            exitoso = True
-            mensaje = 'Inicio sesion correcto'
-        else:
-            exitoso = False
-            mensaje = 'Inicio sesion incorrecto'
-        
-
-
-
-        return jsonify({
-            "exitoso": exitoso,
-            "mensaje": mensaje
-        }), 200
-    except Exception as e:
-        error_trace = traceback.format_exc()
-        return jsonify({"error": str(error_trace)}), 400
 
 
 # this only runs if `$ python src/main.py` is executed
