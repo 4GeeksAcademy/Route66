@@ -106,9 +106,6 @@ def login():
         else:
             exitoso = False
             mensaje = 'Inicio sesion incorrecto'
-        
-
-
 
         return jsonify({
             "exitoso": exitoso,

@@ -29,7 +29,7 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
       />
     </div>
     <div className="text-start" style={{ width: "50%" }}>
-      <div className="fs-5 text-light">Type of transport?</div>
+      <div className="fs-5 text-light border border-danger border-2">Type of transport?</div>
       <div className="col-2">
         {['Open', 'Enclose', 'Both'].map(type => (
           <div className="form-check" key={type}>
