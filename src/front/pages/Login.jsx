@@ -31,7 +31,12 @@ const Login = () => {
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 if (data.exitoso) {
+                    //Inicio sesion con exito
+
+                    localStorage.setItem("TOKEN", data.token);
+
                     Swal.fire({
                         title: '¡Bienvenido!',
                         text: data.mensaje,
