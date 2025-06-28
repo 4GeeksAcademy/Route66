@@ -12,6 +12,7 @@ from api.models import db, User, Load
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+from werkzeug.security import check_password_hash
 
 api = Blueprint('api', __name__)
 
@@ -34,10 +35,13 @@ def handle_hello():
 def loads_register():
     jwt_data = get_jwt()
     user_role = jwt_data.get("role")
+
     if user_role != "broker":
         return jsonify({"msg": "No tienes permiso para registrar cargas"}), 403
 
-    user_id = get_jwt_identity()
+    # Convertimos la identidad (user_id) a entero, porque se envió como string en el token
+    user_id = int(get_jwt_identity())
+
     data = request.get_json()
     if not data:
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
@@ -47,6 +51,7 @@ def loads_register():
         "pickup_location", "delivery_location", "payment",
         "days_to_deliver"
     ]
+
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
 
@@ -58,17 +63,22 @@ def loads_register():
             vehicle_model=data['vehicle_model'],
             pickup_location=data['pickup_location'],
             delivery_location=data['delivery_location'],
-            payment=data['payment'],
-            days_to_deliver=data['days_to_deliver'],
-            status=data['status']
+            payment=float(data['payment']),
+            days_to_deliver=int(data['days_to_deliver']),
+            status="pendiente"  # Asignación por defecto ya que el campo es requerido
         )
+
         db.session.add(new_load)
         db.session.commit()
+
         return jsonify({"msg": "Carga registrada exitosamente."}), 201
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"msg": "Error al registrar la carga", "error": str(e)}), 500
+        return jsonify({
+            "msg": "Error al registrar la carga",
+            "error": str(e)
+        }), 500
 
 
 @api.route('/signup/carrier', methods=['POST'])
@@ -185,37 +195,17 @@ def register_broker():
 @api.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data or not data.get("email") or not data.get("password"):
+        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
 
-    try:
-        exitoso = False
-        mensaje = ''
-        token = ''
+    user = User.query.filter_by(email=data["email"]).first()
 
-        userBD = User.query.filter_by(email=data["email"]).first()
+    if not user or not check_password_hash(user.password_hash, data["password"]):
+        return jsonify({"msg": "Credenciales inválidas"}), 401
 
-        if userBD is None:
-            exitoso = False
-            mensaje = 'Inicio sesion incorrecto'
-        else:
-            passwordCorrecto = User.check_password(userBD, data["password"])
-            if passwordCorrecto:
-                exitoso = True
-                mensaje = 'Inicio sesion correcto'
-                print(userBD)
+    access_token = create_access_token(
+        identity=str(user.id),  # ← conversión necesaria
+        additional_claims={"role": user.role.value}
+    )
 
-                access_token = create_access_token(
-                    identity=userBD.email,
-                    additional_claims={"role": userBD.role.value})
-                token = access_token
-
-            else:
-                exitoso = False
-                mensaje = 'Inicio sesion incorrecto'
-
-        return jsonify({
-            "exitoso": exitoso,
-            "mensaje": mensaje,
-            "token": token
-        }), 200
-    except Exception as e:
-        return jsonify({"msg": "Error al realizar login", "error": str(e)}), 500
+    return jsonify(access_token=access_token), 200
