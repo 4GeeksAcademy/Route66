@@ -39,7 +39,6 @@ def loads_register():
     if user_role != "broker":
         return jsonify({"msg": "No tienes permiso para registrar cargas"}), 403
 
-    # Convertimos la identidad (user_id) a entero, porque se envió como string en el token
     user_id = int(get_jwt_identity())
 
     data = request.get_json()
@@ -65,7 +64,7 @@ def loads_register():
             delivery_location=data['delivery_location'],
             payment=float(data['payment']),
             days_to_deliver=int(data['days_to_deliver']),
-            status="pendiente"  # Asignación por defecto ya que el campo es requerido
+            status="pendiente"  
         )
 
         db.session.add(new_load)
@@ -204,7 +203,7 @@ def login():
         return jsonify({"msg": "Credenciales inválidas"}), 401
 
     access_token = create_access_token(
-        identity=str(user.id),  # ← conversión necesaria
+        identity=str(user.id), 
         additional_claims={"role": user.role.value}
     )
 
