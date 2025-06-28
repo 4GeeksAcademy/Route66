@@ -37,15 +37,13 @@ export const LoadsBoard = () => {
     }
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'vehicleYear', headerName: 'Vehicle year', width: 220 },
-        { field: 'vehicleMake', headerName: 'Vehicle make', width: 220 },
-        { field: 'vehicleModel', headerName: 'Vehicle model', width: 219 },
-        { field: 'pickup', headerName: 'Pickup', width: 170 },
-        { field: 'delivery', headerName: 'Delivery', width: 170 },
+        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'vehicleYear', headerName: 'Vehicle year', width: 150 },
+        { field: 'vehicleMake', headerName: 'Vehicle make', width: 150 },
+        { field: 'vehicleModel', headerName: 'Vehicle model', width: 150 },
+        { field: 'pickup', headerName: 'Pickup', width: 150 },
+        { field: 'delivery', headerName: 'Delivery', width: 150 },
         { field: 'payment', headerName: 'Payment ($)', width: 130 },
-        { field: 'daysToDelivery', headerName: 'Days to delivery', width: 130 },
-        { field: 'status', headerName: 'Status', width: 150 },
         {
             field: 'actions',
             headerName: 'Actions',
@@ -61,8 +59,13 @@ export const LoadsBoard = () => {
         { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
         { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
         { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-
-
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
     ];
 
 
@@ -74,18 +77,13 @@ export const LoadsBoard = () => {
         <Box sx={{ minHeight: '100vh' }}>
             <Header containerStyle={containerStyle} title="Loads Board" titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
             <FilterBar />
-            <Box sx={{}}>
+            <Box sx={{ margin: 'auto', display: 'inline-block' }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
                     sx={{
                         bgcolor: 'white',
                         borderRadius: 2,
-                        px: 2,
-                        '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: '#0e397e',
-                            fontWeight: 'bold',
-                        }
                     }}
                 />
             </Box>

@@ -8,7 +8,7 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
-from api.models import db, User,Load
+from api.models import db, User, Load
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
@@ -70,7 +70,6 @@ def loads_register():
         db.session.rollback()
         return jsonify({"msg": "Error al registrar la carga", "error": str(e)}), 500
 
-    
 
 @api.route('/signup/carrier', methods=['POST'])
 def register_carrier():
@@ -79,11 +78,10 @@ def register_carrier():
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
 
     required_fields = [
-        "email", "password", "company_name", "full_name", "mc_number", "phone_number", "address", "city", "state", "zip"]
+        "email", "password", "company_name", "full_name", "mc_number", "phone_number", "address", "city", "state", "zip", "usdot_number"]
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
 
-    
     email = data['email']
     password = data['password']
     company_name = data['company_name']
@@ -104,7 +102,6 @@ def register_carrier():
     if User.query.filter_by(mc_number=mc_number).first():
         return jsonify({"msg": "El MC Number ya está registrado."}), 409
 
-    
     new_user = User(
         email=email,
         company_name=company_name,
@@ -116,7 +113,9 @@ def register_carrier():
         state=state,
         zip=zip_code,
         type_of_transport=type_of_transport,
-        role="carrier"
+        role="carrier",
+        usdot_number=usdot_number,
+
     )
     new_user.set_password(password)
 
@@ -127,7 +126,8 @@ def register_carrier():
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
-      
+
+
 @api.route('/signup/broker', methods=['POST'])
 def register_broker():
     data = request.get_json()

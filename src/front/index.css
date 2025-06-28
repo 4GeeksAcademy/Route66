@@ -4,10 +4,10 @@
     color: white 
 }
 
-.boton:hover{
-    background-color: rgb(125, 125, 223);
-    border-color: rgb(125, 125, 223);
-    color: white 
+.boton:hover {
+  background-color: rgb(125, 125, 223);
+  border-color: rgb(125, 125, 223);
+  color: white;
 }
 
 #titulo{
@@ -19,17 +19,6 @@
   background-color:#09437ee7;
   font-family: Arial, Helvetica, sans-serif;
 }
-
-/* .botonUno{
-    background-color:rgb(14, 14, 199) ;
-    border-color: rgb(14, 14, 199);
-    color: white 
-} */
-
-/* #botonDos{
-    background-color: rgb(221, 21, 21) ;
-    border-color: rgb(221, 21, 21);
-    color: white} */
 
 body{
 
@@ -85,7 +74,6 @@ h1 {
   margin: 30px 0;
 }
 
-
 .cta-button {
   background-color: #d62828;
   color: white;
@@ -97,7 +85,11 @@ h1 {
   cursor: pointer;
 }
 
-
 .imgCamionesPrincipal {
-    border-radius: 3% !important;
+  border-radius: 3% !important;
+}
+
+.MuiDataGrid-columnHeader {
+  background-color: #0e397e !important;
+  color: white;
 }
