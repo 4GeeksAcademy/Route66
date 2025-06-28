@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
 
 export const Header = ({
     title = "Title",
@@ -24,23 +25,18 @@ export const Header = ({
 
                 {location.pathname === "/" ? (
                     <nav className="d-flex align-items-center gap-3">
-                        <div className="dropdown">
-                            <button className="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Log In
-                            </button>
-                            <ul className="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <Link to="/login">Log In</Link>
-                                </li>
-                            </ul>
-                        </div>
+                        <Button variant="contained" endIcon={<LoginIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+                            navigate("/login");
+                        }}>
+                            Login
+                        </Button>
                         <div className="dropdown">
                             <button className="btn btn-danger fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Started
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <Link to="/registroBroker">I'm a Broker</Link>
+                                    <Link to="/register">I'm a Broker</Link>
                                 </li>
                                 <li>
                                     <Link to="/registroCarrier">I'm a Carrier</Link>
