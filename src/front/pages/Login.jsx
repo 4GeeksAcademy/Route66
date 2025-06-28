@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Swal from 'sweetalert2';
 
 const Login = () => {
@@ -30,7 +31,12 @@ const Login = () => {
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 if (data.exitoso) {
+                    //Inicio sesion con exito
+
+                    localStorage.setItem("TOKEN", data.token);
+
                     Swal.fire({
                         title: '¡Bienvenido!',
                         text: data.mensaje,
@@ -76,7 +82,12 @@ const Login = () => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Log In</button>
                 </form>
-                <a href="index.html" className="btn btn-link mt-3">← Back to Home</a>
+                <Link to={'/principal'}>
+                    ← Back to Home
+                </Link>
+                <Link to={'/passwordReset'}>
+                    Forgot Paswrod
+                </Link>
             </div>
         </div>
     );

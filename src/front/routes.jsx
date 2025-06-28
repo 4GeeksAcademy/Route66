@@ -13,6 +13,8 @@ import { LoadsBoard } from "./pages/LoadsBoard";
 import { Register } from "./pages/Register";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
+import RegistroCarrier from "./pages/RegistroCarrier";
+import PasswordReset from "./pages/PaswordReset";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,6 +36,8 @@ export const router = createBrowserRouter(
       <Route path="/register" element={<Register />} />
       <Route path="/principal" element={<Principal />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/passwordReset" element={<PasswordReset />} />
+      <Route path="/registroCarrier" element={<RegistroCarrier />} />
     </Route>
   )
 );
