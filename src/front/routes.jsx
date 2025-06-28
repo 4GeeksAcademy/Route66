@@ -6,12 +6,8 @@ import {
   Route,
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
-import { Home } from "./pages/Home";
-import { Single } from "./pages/Single";
-
 import { LoadsBoard } from "./pages/LoadsBoard";
 import { Register } from "./pages/Register";
-// import { RegistroCarrier } from "./pages/RegistroCarrier";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
 
@@ -27,15 +23,10 @@ export const router = createBrowserRouter(
 
     // Root Route: All navigation will start from here.
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
-
-      <Route path="/" element={<Home />} />
-      <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
-      <Route path="/loadsboard" element={<LoadsBoard />} />
-
+      <Route path="/" element={<Principal />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/principal" element={<Principal />} />
       <Route path="/login" element={<Login />} />
-
+      <Route path="/loadsboard" element={<LoadsBoard />} />
     </Route>
   )
 );
