@@ -6,12 +6,15 @@ import {
   Route,
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
+import { Home } from "./pages/Home";
+import { Single } from "./pages/Single";
+import { LoadRegister } from "./pages/LoadRegister";
 import { LoadsBoard } from "./pages/LoadsBoard";
 import { Register } from "./pages/Register";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
-
-
+import RegistroCarrier from "./pages/RegistroCarrier";
+import PasswordReset from "./pages/PaswordReset";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,9 +27,12 @@ export const router = createBrowserRouter(
     // Root Route: All navigation will start from here.
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
       <Route path="/" element={<Principal />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/load_register" element={<LoadRegister />} />
       <Route path="/login" element={<Login />} />
       <Route path="/loadsboard" element={<LoadsBoard />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/passwordReset" element={<PasswordReset />} />
     </Route>
   )
 );

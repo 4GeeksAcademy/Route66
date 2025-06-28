@@ -33,7 +33,6 @@ const Principal = () => {
     }
 
 
-
     return (
         <div className="bg-light text-center d-flex flex-column" style={{ minHeight: '100vh'}}>
             <Header containerStyle={containerStyle} title="ROUTE 66" titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
@@ -62,12 +61,12 @@ const Principal = () => {
                         </button>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li>
-                                <Link to={'/registroBroker'}>
-                                    I'm  a Broker
+                                <Link to={'/register?role=broker'}>
+                                    I'm a broker
                                 </Link>
                             </li>
                             <li>
-                                <Link to={'/registroCarrier'}>
+                                <Link to={'/register?role=carrier'}>
                                     I'm  a Carrier
                                 </Link>
                             </li>
@@ -88,13 +87,13 @@ const Principal = () => {
                     </button>
                     <ul className="dropdown-menu dropdown-menu-center">
                         <li>
-                            <Link to={'/registroBroker'}>
-                                I'm  a Broker
+                            <Link to="/register?role=broker" className="dropdown-item text-danger fw-bold">
+                                I'm a Broker
                             </Link>
                         </li>
                         <li>
-                            <Link to={'/registroCarrier'}>
-                                I'm  a Carrier
+                            <Link to="/register?role=carrier" className="dropdown-item text-danger fw-bold">
+                                I'm a Carrier
                             </Link>
                         </li>
                     </ul>

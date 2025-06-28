@@ -13,7 +13,7 @@ from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-
+from flask_jwt_extended import JWTManager
 
 # from models import Person
 
@@ -21,6 +21,10 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
+
+app.config['JWT_SECRET_KEY'] = 'una_clave_super_segura'
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
+jwt = JWTManager(app)
 
 app.url_map.strict_slashes = False
 
@@ -62,6 +66,8 @@ def sitemap():
     return send_from_directory(static_file_dir, 'index.html')
 
 # any other endpoint will try to serve it like a static file
+
+
 @app.route('/<path:path>', methods=['GET'])
 def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
@@ -69,48 +75,6 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
-
-
-
-
-@app.route('/prueba', methods=['GET'])
-def prueba():
-    return jsonify({
-        'mensaje': '¡Hola desde Flask!',
-        'estado': 'exitoso'
-    })
-
-
-# @app.route('/api/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
-    
-#     try:
-#         usuario = LoginDto(
-#             email=data['email'],
-#             password=data['password']
-#         )   
-
-#         exitoso = False
-#         mensaje = ''
-#         if usuario.email == 'broker@demo.com' and usuario.password == '654321':
-#             exitoso = True
-#             mensaje = 'Inicio sesion correcto'
-#         else:
-#             exitoso = False
-#             mensaje = 'Inicio sesion incorrecto'
-        
-
-
-
-#         return jsonify({
-#             "exitoso": exitoso,
-#             "mensaje": mensaje
-#         }), 200
-#     except Exception as e:
-#         error_trace = traceback.format_exc()
-#         return jsonify({"error": str(error_trace)}), 400
-
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
