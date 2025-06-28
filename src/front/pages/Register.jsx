@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -30,7 +30,7 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
     </div>
     <div className="text-start" style={{ width: "50%" }}>
       <div className="fs-5 text-light border-bottom border-danger border-3 ">Type of transport?</div>
-      <div className="col-2 d-flex inline-block"  style={{ width: "150px" }}>
+      <div className="col-2 d-flex inline-block" style={{ width: "150px" }}>
         {['Open', 'Enclose', 'Both'].map(type => (
           <div className="form-check ms-3 mt-3" key={type}>
             <input
@@ -52,9 +52,7 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
 );
 
 export const Register = () => {
-  const [searchParams] = useSearchParams();
-  const roleFromUrl = searchParams.get("role") || "carrier";
-  const [role, setRole] = useState(roleFromUrl);
+  const {role} = useParams()
 
   const initialFormState = {
     fullName: "",
@@ -90,8 +88,8 @@ export const Register = () => {
       password: data.password,
       company_name: data.companyName,
       full_name: data.fullName,
-      mc_number: data.mcNumber,
-      usdot_number: data.usdotNumber,
+      mc_number: data.numberMc,
+      usdot_number: data.numberUsdot,
       phone_number: data.phoneNumber,
       address: data.address,
       city: data.city,
@@ -100,6 +98,7 @@ export const Register = () => {
       type_of_transport: transportType,
       role: role
     };
+    console.log(userData);
 
     try {
       const res = await fetch(`${backendUrl}/api/signup/carrier`, {

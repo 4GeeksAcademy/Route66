@@ -36,10 +36,10 @@ export const Header = ({
                             </button>
                             <ul className="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <Link to="/register">I'm a Broker</Link>
+                                    <Link to="/register/broker">I'm a Broker</Link>
                                 </li>
                                 <li>
-                                    <Link to="/registroCarrier">I'm a Carrier</Link>
+                                    <Link to="/register/carrier">I'm a Carrier</Link>
                                 </li>
                             </ul>
                         </div>
