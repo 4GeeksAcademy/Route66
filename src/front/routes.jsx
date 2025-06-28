@@ -8,14 +8,11 @@ import {
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
-
+import { LoadRegister } from "./pages/LoadRegister";
 import { LoadsBoard } from "./pages/LoadsBoard";
 import { Register } from "./pages/Register";
-// import { RegistroCarrier } from "./pages/RegistroCarrier";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
-
-
 import RegistroCarrier from "./pages/RegistroCarrier";
 import PasswordReset from "./pages/PaswordReset";
 
@@ -32,16 +29,15 @@ export const router = createBrowserRouter(
 
       <Route path="/" element={<Home />} />
       <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
-
+      <Route path="/load_register" element={<LoadRegister />} />
+      <Route path="/principal" element={<Principal />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/loadsboard" element={<LoadsBoard />} />
-
-      <Route path="/registe" element={<Register />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/principal" element={<Principal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/passwordReset" element={<PasswordReset />} />
-
       <Route path="/registroCarrier" element={<RegistroCarrier />} />
-
     </Route>
   )
 );

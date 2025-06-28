@@ -12,11 +12,11 @@ export const LoadsBoard = () => {
 
 
     const imageStyle = {
-        height: '300px',
+        height: '180px',
         width: '200px',
         objectFit: 'contain',
         position: 'relative',
-        bottom: '-4px',
+        bottom: '-20px',
     }
 
     const titleStyle = {
@@ -58,7 +58,7 @@ export const LoadsBoard = () => {
         { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
         { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
         { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200},
+        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
         { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
         { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
 
