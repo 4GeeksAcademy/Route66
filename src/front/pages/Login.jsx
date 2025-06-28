@@ -17,7 +17,7 @@ const Login = () => {
 
         console.log(backendUrl);
 
-        let urlService = backendUrl + 'api/login';
+        let urlService = backendUrl + '/api/login';
 
         fetch(urlService, {
             method: 'POST',
