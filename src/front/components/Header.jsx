@@ -71,6 +71,7 @@ export const Header = ({
     const SesionsButton = () => (
         <nav className="d-flex align-items-center gap-3">
             <Button variant="contained" endIcon={<LogoutIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+                localStorage.removeItem("TOKEN")
                 navigate("/");
             }}>
                 Logout
