@@ -12,8 +12,18 @@ export const LoadsBoard = () => {
     const navigate = useNavigate();
     // const { token } = store
     const [loads, setLoads] = useState([]);
+    const [filteredLoads, setFilteredLoads] = useState([]);
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem("TOKEN");
+
+    const handleFilterChange = ({ pickup, delivery }) => {
+        const filtered = loads.filter((load) => {
+            const matchesPickup = pickup ? load.pickup.toLowerCase().includes(pickup.toLowerCase()) : true;
+            const matchesDelivery = delivery ? load.delivery.toLowerCase().includes(delivery.toLowerCase()) : true;
+            return matchesPickup && matchesDelivery;
+        });
+        setFilteredLoads(filtered);
+    }
 
     useEffect(() => {
 
@@ -69,6 +79,7 @@ export const LoadsBoard = () => {
                 }))
 
                 setLoads(transformedRows);
+                setFilteredLoads(transformedRows);
                 setLoading(false);
             } catch (error) {
                 console.error("Error loading loads", error);
@@ -103,7 +114,7 @@ export const LoadsBoard = () => {
 
     return (
         <Box sx={{ minHeight: '100vh' }}>
-            <FilterBar />
+            <FilterBar onFilterChange={handleFilterChange} />
             {loading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
                     <CircularProgress />
@@ -111,7 +122,7 @@ export const LoadsBoard = () => {
             ) : (
                 <Box sx={{ margin: 'auto', display: 'inline-block' }}>
                     <DataGrid
-                        rows={loads}
+                        rows={filteredLoads}
                         columns={columns}
                         sx={{
                             bgcolor: 'white',
