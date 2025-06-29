@@ -1,6 +1,8 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import select
+from unittest import result
 from flask import Flask, request, jsonify, url_for, Blueprint
 from sqlalchemy import Null, null
 from api.DTOs.LoginDto import LoginDto
@@ -64,7 +66,7 @@ def loads_register():
             delivery_location=data['delivery_location'],
             payment=float(data['payment']),
             days_to_deliver=int(data['days_to_deliver']),
-            status="pendiente"  
+            status="Pending"
         )
 
         db.session.add(new_load)
@@ -78,6 +80,31 @@ def loads_register():
             "msg": "Error al registrar la carga",
             "error": str(e)
         }), 500
+
+
+@api.route('/loads', methods=['GET'])
+@jwt_required()
+def get_loads():
+    try:
+        jwt_data = get_jwt()
+        user_role = jwt_data.get("role")
+
+        if user_role != "carrier":
+            return jsonify({"msg": "You do not have permission to view all loads"}), 403
+
+        loads_query = db.session.execute(select(Load)).scalars().all()
+        if not loads_query:
+            return jsonify({"msg": "No registered loads found"}), 404
+
+        loads = [load.serialize() for load in loads_query]
+
+        return jsonify({
+            "msg": "ok",
+            "results": loads,
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
 
 
 @api.route('/signup/carrier', methods=['POST'])
@@ -203,7 +230,7 @@ def login():
         return jsonify({"msg": "Credenciales inválidas"}), 401
 
     access_token = create_access_token(
-        identity=str(user.id), 
+        identity=str(user.id),
         additional_claims={"role": user.role.value}
     )
 
