@@ -21,7 +21,8 @@ export const Layout = () => {
     const titleStyle = {
         color: '#1C355E',
         fontWeight: 700,
-        fontSize: '5rem'
+        fontSize: '5rem',
+        cursor: 'pointer',
     }
 
     const containerStyle = {

@@ -83,7 +83,7 @@ export const Header = ({
         <Box sx={containerStyle}>
             <Box component="img" src={imgUrl} alt={imgAlt} sx={imgStyle} onClick={() => navigate("/")} />
             <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h1" sx={titleStyle}>
+                <Typography variant="h1" sx={titleStyle} onClick={() => navigate("/")}>
                     {title}
                 </Typography>
 
