@@ -35,7 +35,7 @@ const Principal = () => {
 
     return (
         <div className="bg-light text-center d-flex flex-column" style={{ minHeight: '100vh'}}>
-            <Header containerStyle={containerStyle} title="ROUTE 66" titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
+            {/* <Header containerStyle={containerStyle} title="ROUTE 66" titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" /> */}
             {/* <header className="bg-white border-bottom border-4 border-primary py-3 px-4 d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center gap-3">
                     <img src={rutaLogo} alt="Route 66 Logo" className="img-fluid" style={{ width: '15%', height: '15%' }} />

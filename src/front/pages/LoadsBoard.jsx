@@ -75,7 +75,6 @@ export const LoadsBoard = () => {
 
     return (
         <Box sx={{ minHeight: '100vh' }}>
-            <Header containerStyle={containerStyle} title="Loads Board" titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
             <FilterBar />
             <Box sx={{ margin: 'auto', display: 'inline-block' }}>
                 <DataGrid
