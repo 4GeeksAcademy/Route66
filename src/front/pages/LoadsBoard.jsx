@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { FilterBar } from "../components/FilterBar.jsx";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,31 @@ export const LoadsBoard = () => {
     const [filteredLoads, setFilteredLoads] = useState([]);
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem("TOKEN");
+    const [selectedLoad, setSelectedLoad] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = (load) => {
+        setSelectedLoad(load);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedLoad(null);
+    };
+
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
 
     const handleFilterChange = ({ pickup, delivery }) => {
         const filtered = loads.filter((load) => {
@@ -24,6 +49,7 @@ export const LoadsBoard = () => {
         });
         setFilteredLoads(filtered);
     }
+
 
     useEffect(() => {
 
@@ -108,7 +134,14 @@ export const LoadsBoard = () => {
             field: 'actions',
             headerName: 'Actions',
             width: 170,
-            renderCell: () => <Button variant="contained" color="error">Request</Button>
+            renderCell: (params) =>
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleOpenModal(params.row)}
+                >
+                    Request
+                </Button>
         }
     ];
 
