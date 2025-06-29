@@ -12,6 +12,7 @@ import { Register } from "./pages/Register";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
 import PasswordReset from "./pages/PaswordReset";
+import ProfileBroker from "./pages/ProfileBroker";
 
 export const router = createBrowserRouter(
       createRoutesFromElements(
@@ -30,6 +31,7 @@ export const router = createBrowserRouter(
                   <Route path="/register/:role" element={<Register />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/passwordReset" element={<PasswordReset />} />
+                  <Route path="/profile_broker" element={<ProfileBroker />} />
             </Route>
       )
 );

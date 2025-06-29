@@ -64,7 +64,7 @@ def loads_register():
             delivery_location=data['delivery_location'],
             payment=float(data['payment']),
             days_to_deliver=int(data['days_to_deliver']),
-            status="pendiente"  
+            status="pendiente"
         )
 
         db.session.add(new_load)
@@ -203,8 +203,32 @@ def login():
         return jsonify({"msg": "Credenciales inválidas"}), 401
 
     access_token = create_access_token(
-        identity=str(user.id), 
+        identity=str(user.id),
         additional_claims={"role": user.role.value}
     )
 
     return jsonify(access_token=access_token), 200
+
+
+
+@api.route('/me', methods=['GET'])
+@jwt_required()
+def get_current_user():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    return jsonify({
+        "fullName": user.full_name,
+        "companyName": user.company_name,
+        "email": user.email,
+        "phoneNumber": user.phone_number,
+        "address": user.address,
+        "city": user.city,
+        "state": user.state,
+        "zip": user.zip,
+        "role": user.role.value
+    }), 200
+
