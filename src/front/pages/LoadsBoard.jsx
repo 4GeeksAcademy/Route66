@@ -1,40 +1,42 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Box, Button } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
-import { Header } from "../components/Header.jsx";
-import logoImg from "../assets/img/Route66logo.png"
 import { FilterBar } from "../components/FilterBar.jsx";
+import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 export const LoadsBoard = () => {
+    const { store, dispatch } = useGlobalReducer()
+    const navigate = useNavigate()
+    // const { token } = store
+    const [loads, setLoads] = useState()
+    const token = localStorage.getItem("TOKEN")
 
-    // const { store, dispatch } = useGlobalReducer()
+    useEffect(() => {
+
+        if (!token) {
+            Swal.fire({
+                title: '¡Unauthorized!',
+                text: 'You are not authorized to be on this page, you will be redirected to Login',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            navigate("/login")
+            return
+        }
 
 
-    const imageStyle = {
-        height: '180px',
-        width: '200px',
-        objectFit: 'contain',
-        position: 'relative',
-        bottom: '-20px',
-    }
+        const loadsFetch = async () => {
 
-    const titleStyle = {
-        color: '#1C355E',
-        fontWeight: 700,
-        fontSize: '5rem'
-    }
+        }
 
-    const containerStyle = {
-        px: 4,
-        py: 3,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-        borderBottom: '1px solid #ddd',
-        height: "120px"
-    }
+
+
+
+    }, [])
+
+
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -70,7 +72,16 @@ export const LoadsBoard = () => {
 
 
     // useEffect(() => {
-
+    // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTE1NzU1NCwianRpIjoiMmMzYmRlNTctZmJmYy00NTY4LTg0MDgtNjk2N2I0NTM3YzNiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjYiLCJuYmYiOjE3NTExNTc1NTQsImNzcmYiOiJjMGExYWYzNC02YTljLTQ0MmYtYWQ0Yi01YjQxMDA0MjA1ZjciLCJleHAiOjE3NTExNTg0NTQsInJvbGUiOiJicm9rZXIifQ.aEcjbK45a5ubiYZ2n8l35jHuhL3UDIqwtCtjciZhriw"
+    //         {
+    //     "vehicle_year": "2025",
+    //     "vehicle_make": "Toyoca",
+    //     "vehicle_model": "Corolla",
+    //     "pickup_location": "Chicago, IL",
+    //     "delivery_location": "Phoenix, AZ",
+    //     "payment": "1500",
+    //     "days_to_deliver": "2"
+    // }
     // }, [])
 
     return (
