@@ -5,38 +5,85 @@ import { DataGrid } from '@mui/x-data-grid';
 import { FilterBar } from "../components/FilterBar.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export const LoadsBoard = () => {
-    const { store, dispatch } = useGlobalReducer()
-    const navigate = useNavigate()
+    const { store, dispatch } = useGlobalReducer();
+    const navigate = useNavigate();
     // const { token } = store
-    const [loads, setLoads] = useState()
-    const token = localStorage.getItem("TOKEN")
+    const [loads, setLoads] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const token = localStorage.getItem("TOKEN");
 
     useEffect(() => {
 
-        if (!token) {
-            Swal.fire({
-                title: '¡Unauthorized!',
-                text: 'You are not authorized to be on this page, you will be redirected to Login',
-                icon: 'warning',
-                confirmButtonText: 'Aceptar'
-            });
-            navigate("/login")
-            return
-        }
-
-
         const loadsFetch = async () => {
 
+            if (!token) {
+                Swal.fire({
+                    title: '¡Unauthorized!',
+                    text: 'You are not authorized to be on this page, you will be redirected to Login',
+                    icon: 'warning',
+                    confirmButtonText: 'Aceptar'
+                });
+                navigate("/login");
+                return;
+            }
+
+            try {
+                setLoading(true);
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                const response = await fetch(`${backendUrl}api/loads`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                });
+
+                if (!response.ok) {
+                    Swal.fire({
+                        title: '¡Error!',
+                        text: data.msg || 'Error loading loads',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!data.results || !Array.isArray(data.results)) {
+                    setLoads([]);
+                    return;
+                }
+
+                const transformedRows = data.results.map(load => ({
+                    id: load.id,
+                    vehicleYear: load.vehicle_year,
+                    vehicleMake: load.vehicle_make,
+                    vehicleModel: load.vehicle_model,
+                    pickup: load.pickup_location,
+                    delivery: load.delivery_location,
+                    payment: `$${load.payment}`
+                }))
+
+                setLoads(transformedRows);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error loading loads", error);
+                Swal.fire({
+                    title: '¡ERROR!',
+                    text: 'Error loading loads',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
         }
 
+        loadsFetch();
 
-
-
-    }, [])
-
-
+    }, [token, navigate])
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -54,49 +101,25 @@ export const LoadsBoard = () => {
         }
     ];
 
-    const rows = [
-        { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
-        { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
-        { id: 101, vehicleYear: '2025', vehicleMake: 'information', vehicleModel: 'Wagon', pickup: 'Chicago, IL', delivery: 'Phoenix, AZ', payment: 1500 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-        { id: 102, vehicleYear: '2024', vehicleMake: 'information', vehicleModel: 'Pickup Truck', pickup: 'Dallas, TX', delivery: 'Miami, FL', payment: 1200 },
-    ];
-
-
-    // useEffect(() => {
-    // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTE1NzU1NCwianRpIjoiMmMzYmRlNTctZmJmYy00NTY4LTg0MDgtNjk2N2I0NTM3YzNiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjYiLCJuYmYiOjE3NTExNTc1NTQsImNzcmYiOiJjMGExYWYzNC02YTljLTQ0MmYtYWQ0Yi01YjQxMDA0MjA1ZjciLCJleHAiOjE3NTExNTg0NTQsInJvbGUiOiJicm9rZXIifQ.aEcjbK45a5ubiYZ2n8l35jHuhL3UDIqwtCtjciZhriw"
-    //         {
-    //     "vehicle_year": "2025",
-    //     "vehicle_make": "Toyoca",
-    //     "vehicle_model": "Corolla",
-    //     "pickup_location": "Chicago, IL",
-    //     "delivery_location": "Phoenix, AZ",
-    //     "payment": "1500",
-    //     "days_to_deliver": "2"
-    // }
-    // }, [])
-
     return (
         <Box sx={{ minHeight: '100vh' }}>
             <FilterBar />
-            <Box sx={{ margin: 'auto', display: 'inline-block' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    sx={{
-                        bgcolor: 'white',
-                        borderRadius: 2,
-                    }}
-                />
-            </Box>
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <Box sx={{ margin: 'auto', display: 'inline-block' }}>
+                    <DataGrid
+                        rows={loads}
+                        columns={columns}
+                        sx={{
+                            bgcolor: 'white',
+                            borderRadius: 2,
+                        }}
+                    />
+                </Box>
+            )}
         </Box>
     );
 };
