@@ -1,16 +1,14 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-import select
-from unittest import result
 from flask import Flask, request, jsonify, url_for, Blueprint
-from sqlalchemy import Null, null
+from sqlalchemy import Null, null, select, and_
 from api.DTOs.LoginDto import LoginDto
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
-from api.models import db, User, Load
+from api.models import db, User, Load, LoadRequest
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
@@ -103,6 +101,55 @@ def get_loads():
             "results": loads,
         }), 200
 
+    except Exception as e:
+        return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
+
+
+@api.route('/requestload', methods=['POST'])
+@jwt_required()
+def create_load_request():
+    try:
+        jwt_data = get_jwt()
+        user_role = jwt_data.get("role")
+
+        if user_role != "carrier":
+            return jsonify({"msg": "You do not have permission to post a request."}), 403
+
+        data = request.get_json()
+        print(data)
+        if not data:
+            return jsonify({"msg": "No data provided"}), 400
+
+        carrier_id = int(get_jwt_identity())
+        load_id = data.get("load_id")
+        price_offer = data.get("price_offer", "0")
+        status = "Pending"
+
+        if not load_id:
+            return jsonify({"msg": "Missing required fields"}), 400
+
+        existing_request = db.session.execute(select(LoadRequest).where(and_(
+            LoadRequest.carrier_id == carrier_id, LoadRequest.load_id == load_id))).scalars().first()
+        
+        load = db.session.get(Load, load_id)
+        if not load:
+            return jsonify({"msg": "Load not found"}), 404
+
+        if existing_request:
+            return jsonify({"msg": "You already have a request in this load"}), 409
+        
+
+        new_loadrequest = LoadRequest(
+            carrier_id=carrier_id,
+            load_id=load_id,
+            price_offer=price_offer,
+            status=status
+        )
+
+        db.session.add(new_loadrequest)
+        db.session.commit()
+        return jsonify({"msg": "Request created",
+                        "request": new_loadrequest.serialize()}), 201
     except Exception as e:
         return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
 
@@ -234,4 +281,8 @@ def login():
         additional_claims={"role": user.role.value}
     )
 
-    return jsonify(access_token=access_token), 200
+    return jsonify({
+        "user": user.serialize(),
+        "access_token": access_token,
+        "exitoso": True
+    }), 200
