@@ -17,6 +17,7 @@ from flask_migrate import Migrate
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
 # from models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
