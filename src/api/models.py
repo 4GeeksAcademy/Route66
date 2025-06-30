@@ -133,8 +133,8 @@ class Load(db.Model):
     load_requests: Mapped[list["LoadRequest"]
                           ] = relationship(back_populates="load")
 
-    def serialize(self):
-        return {
+    def serialize(self, detail_level="full"):
+        data = {
             "id": self.id,
             "vehicle_year": self.vehicle_year,
             "vehicle_make": self.vehicle_make,
@@ -143,11 +143,14 @@ class Load(db.Model):
             "delivery_location": self.delivery_location,
             "payment": self.payment,
             "days_to_deliver": self.days_to_deliver,
-            "status": self.status,
-            "broker": self.broker.serialize(detail_level="medium") if self.broker else None,
-            "accepted_carrier": self.accepted_carrier.serialize(detail_level="medium") if self.accepted_carrier else None,
-            "load_requests": [load.serialize() for load in self.load_requests],
         }
+
+        if detail_level == "full":
+            data["load_requests"] = [
+                request.serialize(detail_level="basic") for request in self.load_requests
+            ]
+
+        return data
 
 
 class LoadRequest(db.Model):
@@ -165,15 +168,21 @@ class LoadRequest(db.Model):
         "User", back_populates="load_requests_sent")
     load: Mapped["Load"] = relationship("Load", back_populates="load_requests")
 
-    def serialize(self):
-        return {
+    def serialize(self, detail_level="full"):
+        data = {
             "id": self.id,
-            "carrier": self.carrier.serialize(detail_level="medium") if self.carrier else None,
-            "load": self.load.serialize() if self.load else None,
             "vehicle": self.vehicle,
             "price_offer": self.price_offer,
-            "status": self.status,
+            "status": self.status
         }
+
+        if detail_level != "basic":
+            data["carrier"] = self.carrier.serialize(
+                detail_level="medium") if self.carrier else None
+            data["load"] = self.load.serialize(
+                detail_level="basic") if self.load else None
+
+        return data
 
 
 class Subscription(db.Model):
