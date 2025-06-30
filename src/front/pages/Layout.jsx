@@ -1,6 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom/dist"
 import ScrollToTop from "../components/ScrollToTop"
-import { Navbar } from "../components/Navbar"
 import { Footer } from "../components/Footer"
 import { Header } from "../components/Header"
 import logoImg from "../assets/img/Route66logo.png"

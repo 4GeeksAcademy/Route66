@@ -163,7 +163,7 @@ export const LoadsBoard = () => {
     ];
 
     return (
-        <Box sx={{ minHeight: '100vh' }}>
+        <Box sx={{ minHeight: '79.2vh' }}>
             <FilterBar onFilterChange={handleFilterChange} />
             {loading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>

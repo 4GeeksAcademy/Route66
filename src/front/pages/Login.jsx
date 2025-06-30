@@ -48,7 +48,7 @@ const Login = () => {
     };
 
     return (
-        <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ height: '88vh' }}>
+        <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ minHeight: '79.2vh' }}>
             <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '900px', width: '100%' }}>
                 <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center p-0">
                     <img

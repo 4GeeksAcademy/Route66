@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Principal = () => {
 
     return (
-        <div className="bg-light text-center d-flex flex-column" style={{ minHeight: '100vh' }}>
+        <div className="bg-light text-center d-flex flex-column" style={{ minHeight: '79.2vh' }}>
             <main className="py-5 px-3" style={{ alignItems: 'center' }}>
                 <h1 className="mb-4">Efficient Freight Shipping Solutions</h1>
                 <div className="mb-4">

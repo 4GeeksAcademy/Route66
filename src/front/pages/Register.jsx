@@ -132,8 +132,8 @@ export const Register = () => {
   }
 
   return (
-    <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ height: '88vh' }}>
-      <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '1000px', width: '100%' }}>
+    <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ minHeight: '79.2vh' }}>
+      <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '1200px', width: '100%' }}>
         <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center p-0">
           <img
             src={rutaCamiones}
@@ -150,7 +150,7 @@ export const Register = () => {
             </div>
           )}
 
-          <div className="border border-2 rounded-4 p-4" style={{background: '#1C355E'}}>
+          <div className="border border-2 rounded-4 p-4" style={{ background: '#0f2e43' }}>
             <div className="mb-2 fw-bold text-light border-bottom border-danger border-3 fs-4">Register</div>
             <form className="row g-3 mb-3">
               <div className="col-md-6">
@@ -204,7 +204,7 @@ export const Register = () => {
               <div className="col-12 text-center mt-3">
                 <button
                   type="button"
-                  className="btn btn-primary btn-lg fw-bold px-5"
+                  className="btn btn-danger btn-lg fw-bold px-5"
                   onClick={handleRegister}
                   disabled={loading}
                 >
