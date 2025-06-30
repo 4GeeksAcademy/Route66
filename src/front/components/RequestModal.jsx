@@ -13,7 +13,7 @@ export const RequestModal = ({ open, onClose, load }) => {
         }
         try {
             const backendUrl = import.meta.env.VITE_BACKEND_URL;
-            const response = await fetch(`${backendUrl}api/requestload`, {
+            const response = await fetch(`${backendUrl}/api/requestload`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,8 +40,7 @@ export const RequestModal = ({ open, onClose, load }) => {
                 });
                 onClose();
             }
-            
-            console.log(data);
+
         } catch (error) {
             console.error("Error al cargar los usuarios", error);
             Swal.fire({
@@ -78,7 +77,7 @@ export const RequestModal = ({ open, onClose, load }) => {
                 </Typography>
                 <TextField
                     label="Offer (optional)"
-                    placeholder={`Suggested: $${load?.payment}`}
+                    placeholder={`Suggested: ${load?.payment}`}
                     variant="outlined"
                     value={offer}
                     onChange={(e) => setOffer(e.target.value)}

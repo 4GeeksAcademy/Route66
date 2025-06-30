@@ -116,7 +116,6 @@ def create_load_request():
             return jsonify({"msg": "You do not have permission to post a request."}), 403
 
         data = request.get_json()
-        print(data)
         if not data:
             return jsonify({"msg": "No data provided"}), 400
 
