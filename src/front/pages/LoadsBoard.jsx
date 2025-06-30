@@ -7,6 +7,7 @@ import { RequestModal } from "../components/RequestModal.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import CircularProgress from '@mui/material/CircularProgress';
+import { jwtDecode } from "jwt-decode";
 
 export const LoadsBoard = () => {
     const { store, dispatch } = useGlobalReducer();
@@ -51,6 +52,33 @@ export const LoadsBoard = () => {
                     icon: 'warning',
                     confirmButtonText: 'Aceptar'
                 });
+                navigate("/login");
+                return;
+            }
+
+            let decodedToken;
+            try {
+                decodedToken = jwtDecode(token);
+            } catch (e) {
+                Swal.fire({
+                    title: '¡Error!',
+                    text: 'authentication error',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                localStorage.removeItem("TOKEN");
+                navigate("/login");
+                return;
+            }
+
+            if (decodedToken.role !== "carrier") {
+                Swal.fire({
+                    title: 'Access Denied',
+                    text: 'Only carriers can access the Loads Board.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                localStorage.removeItem("TOKEN");
                 navigate("/login");
                 return;
             }

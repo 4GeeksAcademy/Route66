@@ -157,7 +157,7 @@ class LoadRequest(db.Model):
     load_id: Mapped[int] = mapped_column(
         ForeignKey("load.id"), nullable=False)
     vehicle: Mapped[str] = mapped_column(
-        String(120), nullable=False)
+        String(120), nullable=True)
     price_offer: Mapped[float] = mapped_column(nullable=True)
     status: Mapped[str] = mapped_column(String(120), nullable=True)
 
