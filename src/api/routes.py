@@ -211,7 +211,7 @@ def login():
 
 
 
-@api.route('/me', methods=['GET'])
+@api.route('/profile/broker', methods=['GET'])
 @jwt_required()
 def get_current_user():
     user_id = get_jwt_identity()
