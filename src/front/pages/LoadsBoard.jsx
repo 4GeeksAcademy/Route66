@@ -3,6 +3,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { FilterBar } from "../components/FilterBar.jsx";
+import { RequestModal } from "../components/RequestModal.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -28,18 +29,6 @@ export const LoadsBoard = () => {
         setSelectedLoad(null);
     };
 
-
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-    };
 
     const handleFilterChange = ({ pickup, delivery }) => {
         const filtered = loads.filter((load) => {
@@ -164,6 +153,7 @@ export const LoadsBoard = () => {
                     />
                 </Box>
             )}
+            <RequestModal open={isModalOpen} onClose={handleCloseModal} load={selectedLoad} />
         </Box>
     );
 };
