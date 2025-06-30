@@ -7,11 +7,14 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ProfileBroker = () => {
+
+  const { userId } = useParams();
 
   const [userData, setUserData] = useState({
     fullName: '',
@@ -34,7 +37,7 @@ const ProfileBroker = () => {
       }
 
       try {
-        const response = await fetch(`${backendUrl}/api/usuario`, {
+        const response = await fetch(`${backendUrl}/api/profile/broker`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -55,7 +58,7 @@ const ProfileBroker = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [userId]);
 
     
   return (
@@ -94,6 +97,9 @@ const ProfileBroker = () => {
         </CardContent>
         <CardActions>
           <Button size="small">Start Load Register</Button>
+        </CardActions>
+        <CardActions>
+          <Button size="small">Edit information</Button>
         </CardActions>
       </Card>
     </Box>

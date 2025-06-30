@@ -194,19 +194,31 @@ def register_broker():
 def login():
     data = request.get_json()
     if not data or not data.get("email") or not data.get("password"):
-        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+        return jsonify({
+            "exitoso": False,
+            "mensaje": "Email y contraseña son requeridos."
+        }), 400
 
     user = User.query.filter_by(email=data["email"]).first()
 
     if not user or not check_password_hash(user.password_hash, data["password"]):
-        return jsonify({"msg": "Credenciales inválidas"}), 401
+        return jsonify({
+            "exitoso": False,
+            "mensaje": "Credenciales inválidas. Por favor, verifica tu email y contraseña." 
+        }), 401 
 
     access_token = create_access_token(
         identity=str(user.id),
-        additional_claims={"role": user.role.value}
+        additional_claims={
+            "role": user.role.value, 
+            "user_id": str(user.id)  
+        }
     )
-
-    return jsonify(access_token=access_token), 200
+    return jsonify({
+        "exitoso": True,  
+        "mensaje": "Inicio de sesión exitoso.", 
+        "token": access_token 
+    }), 200
 
 
 

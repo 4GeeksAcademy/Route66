@@ -29,9 +29,8 @@ export const router = createBrowserRouter(
                   <Route path="/login" element={<Login />} />
                   <Route path="/loadsboard" element={<LoadsBoard />} />
                   <Route path="/register/:role" element={<Register />} />
-                  <Route path="/login" element={<Login />} />
                   <Route path="/passwordReset" element={<PasswordReset />} />
-                  <Route path="/profile_broker" element={<ProfileBroker />} />
+                  <Route path="/profile/broker/:userId" element={<ProfileBroker />} />
             </Route>
       )
 );
