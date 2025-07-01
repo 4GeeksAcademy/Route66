@@ -1,18 +1,16 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Snackbar from '@mui/material/Snackbar'; 
-import MuiAlert from '@mui/material/Alert'; 
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
+import { Box, Card, CardContent, CardHeader, Typography, Grid, TextField, Avatar } from '@mui/material';
+import { blue } from '@mui/material/colors';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+// const userInitial = data.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
 
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -39,7 +37,7 @@ const ProfileBroker = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-    
+
     useEffect(() => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('access_token');
@@ -71,9 +69,9 @@ const ProfileBroker = () => {
         };
 
         fetchUserData();
-    }, [userId]); 
+    }, [userId]);
 
-    
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUserData(prevData => ({
@@ -82,7 +80,7 @@ const ProfileBroker = () => {
         }));
     };
 
-    
+
     const showSnackbar = (message, severity) => {
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
@@ -96,7 +94,7 @@ const ProfileBroker = () => {
         setSnackbarOpen(false);
     };
 
-    
+
     const handleUpdateProfile = async () => {
         const token = localStorage.getItem('access_token');
         if (!token) {
@@ -106,14 +104,14 @@ const ProfileBroker = () => {
         }
 
         try {
-           
+
             const response = await fetch(`${backendUrl}/api/profile/broker`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(userData) 
+                body: JSON.stringify(userData)
             });
 
             if (!response.ok) {
@@ -122,8 +120,8 @@ const ProfileBroker = () => {
             }
 
             const updatedData = await response.json();
-            setUserData(updatedData); 
-            setIsEditing(false); 
+            setUserData(updatedData);
+            setIsEditing(false);
             showSnackbar('Perfil actualizado con éxito.', 'success');
         } catch (err) {
             console.error('Error al actualizar el perfil:', err.message);
@@ -132,22 +130,37 @@ const ProfileBroker = () => {
     };
 
     return (
-        <Box  sx={{
-                padding: 4,
-                backgroundColor: '#f5f5f5',
-                minHeight: '100vh',
-                display: 'flex',            
-                justifyContent: 'center',   
-                alignItems: 'center',       
-                flexDirection: 'column'    
-            }}>
+        <Box sx={{
+            padding: 4,
+            backgroundColor: '#f5f5f5',
+            minHeight: '100vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column'
+        }}>
             <Card sx={{
-                    minWidth: 275,
-                    maxWidth: 800,
-                    width: '90%',  
-                    boxShadow: 3,
+                minWidth: 275,
+                maxWidth: 800,
+                width: '90%',
+                boxShadow: 3,
+
+            }}>
+                <CardHeader
+                    title={
+                        <Typography variant="h5" sx={{ fontSize: '2rem', textAlign: 'left' }}>
+                            Mi perfil
+                        </Typography>
+                    }
                     
-                }}>
+                    action={ 
+                        <Avatar sx={{fontSize: '2rem', bgcolor: blue[800] }}> 
+                            P{/* {userInitial} */}
+                        </Avatar>
+                    }
+                    
+
+                />
                 <CardContent>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6} md={4}>
@@ -155,9 +168,9 @@ const ProfileBroker = () => {
                                 label="Full Name"
                                 variant="standard"
                                 fullWidth
-                                name="fullName" 
+                                name="fullName"
                                 value={userData.fullName}
-                                onChange={handleInputChange} 
+                                onChange={handleInputChange}
                                 disabled={!isEditing}
                             />
                         </Grid>
@@ -252,9 +265,9 @@ const ProfileBroker = () => {
                 <CardActions>
                     {!isEditing ? (
                         <Button
-                            size="medium" 
+                            size="medium"
                             variant="outlined"
-                            color="primary"   
+                            color="primary"
                             onClick={() => setIsEditing(true)}
                             startIcon={<EditIcon />}
                         >
