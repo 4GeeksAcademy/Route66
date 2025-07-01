@@ -287,27 +287,77 @@ def login():
     }), 200
 
 
-@api.route('/profile/broker', methods=['GET'])
+@api.route('/profile/broker', methods=['GET', 'PUT'])
 @jwt_required()
-def get_current_user():
-    user_id = get_jwt_identity()
+def handle_broker_profile():
+    user_id = get_jwt_identity() 
     user = User.query.get(user_id)
 
     if not user:
         return jsonify({"msg": "Usuario no encontrado"}), 404
 
-    return jsonify({
-        "fullName": user.full_name,
-        "companyName": user.company_name,
-        "email": user.email,
-        "phoneNumber": user.phone_number,
-        "address": user.address,
-        "city": user.city,
-        "state": user.state,
-        "zip": user.zip,
-        "role": user.role.value
-    }), 200
+    
+    if request.method == 'GET':
+        return jsonify({
+            "fullName": user.full_name,
+            "companyName": user.company_name,
+            "email": user.email,
+            "phoneNumber": user.phone_number,
+            "address": user.address,
+            "city": user.city,
+            "state": user.state,
+            "zip": user.zip,
+            "role": user.role.value 
+        }), 200
 
+    
+    elif request.method == 'PUT':
+        data = request.get_json() 
+
+        if not data:
+            return jsonify({"msg": "No se recibieron datos para actualizar"}), 400
+
+        try:
+            if 'fullName' in data:
+                user.full_name = data['fullName']
+            if 'companyName' in data:
+                user.company_name = data['companyName']
+            if 'email' in data:
+                if '@' not in data['email'] or '.' not in data['email']:
+                    return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
+                user.email = data['email']
+            if 'phoneNumber' in data:
+                user.phone_number = data['phoneNumber']
+            if 'address' in data:
+                user.address = data['address']
+            if 'city' in data:
+                user.city = data['city']
+            if 'state' in data:
+                user.state = data['state']
+            if 'zip' in data:
+                user.zip = data['zip']
+
+            db.session.commit() 
+
+            return jsonify({
+                "msg": "Perfil actualizado con éxito",
+                "fullName": user.full_name,
+                "companyName": user.company_name,
+                "email": user.email,
+                "phoneNumber": user.phone_number,
+                "address": user.address,
+                "city": user.city,
+                "state": user.state,
+                "zip": user.zip,
+                "role": user.role.value
+            }), 200
+
+        except Exception as e:
+            db.session.rollback() 
+            print(f"Error al actualizar el perfil del usuario: {e}")
+            return jsonify({"msg": "Error interno del servidor al actualizar el perfil"}), 500
+
+    return jsonify({"msg": "Método no permitido"}), 405
 
 
    

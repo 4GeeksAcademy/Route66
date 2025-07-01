@@ -30,7 +30,7 @@ export const router = createBrowserRouter(
                   <Route path="/loadsboard" element={<LoadsBoard />} />
                   <Route path="/register/:role" element={<Register />} />
                   <Route path="/passwordReset" element={<PasswordReset />} />
-                  <Route path="/profile/broker/:userId" element={<ProfileBroker />} />
+                  <Route path="/profile/broker/" element={<ProfileBroker />} />
             </Route>
       )
 );
