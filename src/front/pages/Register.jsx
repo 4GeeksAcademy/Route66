@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import rutaCamiones from '../assets/img/camiones.jpg';
+
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
   <>
     <div className="col-md-4">
@@ -48,7 +51,10 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
     </div>
   </>
 );
+
+
 export const Register = () => {
+
   const { role } = useParams();
   const navigate = useNavigate();
   const initialFormState = {
@@ -68,6 +74,7 @@ export const Register = () => {
     isEnclose: false,
     isBoth: false,
   };
+
   const [formulario, setFormulario] = useState(initialFormState);
   const [alerta, setAlerta] = useState({ mensaje: "", tipo: "" });
   const [loading, setLoading] = useState(false);
@@ -76,6 +83,7 @@ export const Register = () => {
     const newValue = type === "checkbox" ? checked : value;
     setFormulario(prev => ({ ...prev, [name]: newValue }));
   }
+
   async function handleRegister() {
     setLoading(true);
     const transportType = formulario.isBoth ? "both" : formulario.isOpen ? "open" : formulario.isEnclose ? "enclose" : null;
@@ -121,6 +129,8 @@ export const Register = () => {
       setLoading(false);
     }
   }
+
+  
   return (
     <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ minHeight: '79.2vh' }}>
       <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '1200px', width: '100%' }}>

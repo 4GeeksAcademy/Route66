@@ -6,7 +6,7 @@ from sqlalchemy import select, and_
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
-from api.models import db, User, Load, LoadRequest
+from api.models import db, User, Load, LoadRequest,Roles
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from werkzeug.security import check_password_hash
 
@@ -359,5 +359,97 @@ def handle_broker_profile():
 
     return jsonify({"msg": "Método no permitido"}), 405
 
+
+@api.route('/api/profile/carrier', methods=['GET', 'PUT']) 
+@jwt_required()
+def handle_carrier_profile():
+    user_id = get_jwt_identity() 
+    user = db.session.get(User, user_id)
+
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+    
+    
+    if user.role != Roles.carrier:
+        return jsonify({"msg": "No tienes permiso para acceder a este perfil de carrier"}), 403
+
+    if request.method == 'GET':
+        return jsonify({
+            "fullName": user.full_name,
+            "companyName": user.company_name,
+            "email": user.email,
+            "phoneNumber": user.phone_number,
+            "address": user.address,
+            "city": user.city,
+            "state": user.state,
+            "zip": user.zip,
+            "role": user.role.value,
+            "numberUsdot": user.number_usdot,
+            "trucks": user.trucks,
+            "isOpen": user.is_open,
+            "isOpen": user.is_open,
+            "isEnclose": user.is_enclose,
+            "typeOfTransport": user.type_of_transport
+        }), 200
+
+    elif request.method == 'PUT':
+        data = request.get_json() 
+        if not data:
+            return jsonify({"msg": "No se recibieron datos para actualizar"}), 400
+
+        try:
+    
+            if 'fullName' in data: user.full_name = data['fullName']
+            if 'companyName' in data: user.company_name = data['companyName']
+            
+            
+            if 'email' in data and data['email'] != user.email: 
+                if not ("@" in data['email'] and "." in data['email']):
+                    return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
+                if User.query.filter(and_(User.email == data['email'], User.id != user.id)).first():
+                    return jsonify({"msg": "Este correo electrónico ya está registrado por otro usuario"}), 409
+                user.email = data['email']
+
+            if 'phoneNumber' in data: user.phone_number = data['phoneNumber']
+            if 'address' in data: user.address = data['address']
+            if 'city' in data: user.city = data['city']
+            if 'state' in data: user.state = data['state']
+            if 'zip' in data: user.zip = data['zip']
+            if 'numberUsdot' in data: user.number_usdot = data['numberUsdot']
+            if 'trucks' in data: user.trucks = data['trucks']
+            if 'isOpen' in data: user.is_open = data['isOpen']
+            if 'isEnclose' in data: user.is_enclose = data['isEnclose']
+            if 'isBoth' in data: user.is_both = data['isBoth']
+            if 'typeOfTransport' in data: user.type_of_transport = data['typeOfTransport']
+
+            db.session.commit() 
+
+            return jsonify({
+                "msg": "Perfil de Carrier actualizado con éxito",
+                "fullName": user.full_name,
+                "companyName": user.company_name,
+                "email": user.email,
+                "phoneNumber": user.phone_number,
+                "address": user.address,
+                "city": user.city,
+                "state": user.state,
+                "zip": user.zip,
+                "role": user.role.value,
+                "numberUsdot": user.number_usdot,
+                "trucks": user.trucks,
+                "isOpen": user.is_open,
+                "isEnclose": user.is_enclose,
+                "isBoth": user.is_both,
+                "typeOfTransport": user.type_of_transport
+            }), 200
+
+        except Exception as e:
+            db.session.rollback() 
+            print(f"Error al actualizar el perfil del carrier: {e}")
+            import traceback
+            print(traceback.format_exc())
+            return jsonify({"msg": "Error interno del servidor al actualizar el perfil de carrier"}), 500
+
+    return jsonify({"msg": "Método no permitido"}), 405
 
    
