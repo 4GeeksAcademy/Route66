@@ -86,13 +86,15 @@ export const LoadsBoard = () => {
             try {
                 setLoading(true);
                 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                const response = await fetch(`${backendUrl}api/loads`, {
+                const response = await fetch(`${backendUrl}/api/loads`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
                 });
+
+                const data = await response.json();
 
                 if (!response.ok) {
                     Swal.fire({
@@ -103,8 +105,6 @@ export const LoadsBoard = () => {
                     });
                     return;
                 }
-
-                const data = await response.json();
 
                 if (!data.results || !Array.isArray(data.results)) {
                     setLoads([]);
