@@ -15,6 +15,7 @@
             }
         ]
     },
+<<<<<<< HEAD
     "default": {
         "alembic": {
             "hashes": [
@@ -512,5 +513,8 @@
             "version": "==3.1.2"
         }
     },
+=======
+    "default": {},
+>>>>>>> b738ab7c721991e07402d32a34a97767d45cc35b
     "develop": {}
 }

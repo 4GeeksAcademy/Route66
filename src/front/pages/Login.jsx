@@ -1,168 +1,95 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import { jwtDecode } from 'jwt-decode';
-import { Link, useNavigate } from "react-router-dom"; 
+import rutaCamiones from '../assets/img/camiones.jpg';
+
 
 const Login = () => {
-    const navigate = useNavigate(); // 
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const envioLogin = async (event) => { 
-        event.preventDefault(); 
-
+    const navigate = useNavigate();
+    const envioLogin = async (event) => {
+        event.preventDefault();
         const backendUrl = import.meta.env.VITE_BACKEND_URL;
-        if (!backendUrl) {
-            console.error("VITE_BACKEND_URL is not defined in .env file");
-            Swal.fire({
-                title: 'Error de Configuración',
-                text: 'La URL del backend no está definida. Por favor, contacta al administrador.',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-
-        console.log("URL del Backend:", backendUrl);
-
-        let urlService = backendUrl + '/api/login';
-
-        try { 
-            const response = await fetch(urlService, {
+        if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined");
+        try {
+            const response = await fetch(`${backendUrl}/api/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
             });
-
-            let data;
-            try {
-                data = await response.json(); 
-            } catch (jsonError) {
-                console.error("Error al parsear JSON de la respuesta:", jsonError);
+            const data = await response.json();
+            if (data.exitoso) {
+                localStorage.setItem("User", JSON.stringify(data));
+                localStorage.setItem("TOKEN", data.access_token);
                 Swal.fire({
-                    title: 'Error de Servidor',
-                    text: 'Respuesta inválida del servidor. Inténtalo más tarde.',
-                    icon: 'error',
+                    title: '¡Bienvenido!',
+                    text: data.mensaje,
+                    icon: 'success',
                     confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            console.log("Datos de respuesta del Backend:", data);
-
-            if (response.ok && data.exitoso) { 
-                localStorage.setItem("access_token", data.token);
-
-                try {
-                    const decodedToken = jwtDecode(data.token); 
-                    const userRole = decodedToken.role; 
-                    const userId = decodedToken.user_id || decodedToken.sub; 
-
-                    console.log("Token decodificado (payload):", decodedToken);
-                    console.log("Rol extraído:", userRole);
-                    console.log("ID extraído:", userId);
-
-                    Swal.fire({
-                        title: '¡Bienvenido!',
-                        text: data.mensaje || 'Inicio de sesión exitoso.',
-                        icon: 'success',
-                        timer: 1000,
-                        showConfirmButton: false 
-                    });
-
-                    if (userRole === "broker") {
-                        console.log(`Redirigiendo a /profile/broker/${userId}`);
-                        navigate(`/profile/broker/${userId}`);
-                    } else if (userRole === "carrier") {
-                        console.log(`Redirigiendo a /profile/carrier/${userId}`);
-                        navigate(`/profile/carrier/${userId}`);
-                    } else {
-                        
-                        console.log("Rol desconocido, redirigiendo a /dashboard");
-                        Swal.fire({
-                            title: 'Rol Desconocido',
-                            text: 'Tu rol de usuario no se reconoce para redireccionamiento específico.',
-                            icon: 'info',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        navigate('/dashboard');
-                    }
-                    
-
-                } catch (decodeError) {
-                    console.error('Error al decodificar el token JWT o al extraer datos:', decodeError);
-                    Swal.fire({
-                        title: 'Error de Autenticación',
-                        text: 'Ha ocurrido un problema al procesar tu sesión. Por favor, intenta de nuevo.',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-
+                }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
             } else {
-                
                 Swal.fire({
-                    title: 'Error de Login',
-                    text: data.mensaje || 'Credenciales inválidas. Por favor, verifica tu email y contraseña.',
-                    icon: 'warning',
+                    title: 'Error',
+                    text: data.mensaje,
+                    icon: 'error',
                     confirmButtonText: 'Aceptar'
                 });
             }
         } catch (error) {
-            
-            console.error('Error al intentar iniciar sesión:', error);
-            Swal.fire({
-                title: 'Error de Conexión',
-                text: 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet o intenta más tarde.',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
+            console.error("Error al enviar datos:", error);
+            Swal.fire("Oops!", "Error en el servidor", "error");
         }
     };
-
     return (
-        <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
-            <div className="card p-4 shadow" style={{ maxWidth: '400px', width: '100%' }}>
-                <h3 className="mb-3 text-center">Login</h3>
-                <form id="brokerForm" onSubmit={envioLogin}>
-                    <div className="mb-3">
-                        <input type="email"
-                            className="form-control"
-                            placeholder="Email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)} />
+        <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ minHeight: '79.2vh' }}>
+            <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '900px', width: '100%' }}>
+                <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center p-0">
+                    <img
+                        src={rutaCamiones}
+                        alt="Camiones"
+                        className="img-fluid"
+                        style={{ height: '100%', objectFit: 'cover' }}
+                    />
+                </div>
+                <div className="col-md-6 p-5">
+                    <h2 className="mb-4 text-center text-primary fw-bold">Login</h2>
+                    <form onSubmit={envioLogin}>
+                        <div className="mb-3">
+                            <input
+                                type="email"
+                                className="form-control"
+                                placeholder="Email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <input
+                                type="password"
+                                className="form-control"
+                                placeholder="Password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                        <button type="submit" className="btn btn-danger w-100 fw-bold">
+                            Log In
+                        </button>
+                    </form>
+                    <div className="mt-4 d-flex justify-content-between">
+                        <Link to="/" className="text-decoration-none text-muted">
+                            ← Back to Home
+                        </Link>
+                        <Link to="/passwordReset" className="text-decoration-none text-muted">
+                            Forgot Password?
+                        </Link>
                     </div>
-                    <div className="mb-3">
-                        <input type="password"
-                            className="form-control"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required />
-                    </div>
-                    <button type="submit" className="btn btn-primary w-100">
-                        Log In
-                    </button>
-                </form>
-                <div className="d-flex justify-content-between mt-3">
-                    <Link to={'/principal'}>
-                        ← Back to Home
-                    </Link>
-                    <Link to={'/passwordReset'}>
-                        Forgot Password
-                    </Link>
                 </div>
             </div>
         </div>
     );
-}
-
+};
 export default Login;
