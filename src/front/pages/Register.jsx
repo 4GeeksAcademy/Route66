@@ -13,8 +13,8 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
         type="text"
         className="form-control shadow-sm"
         id="inputUsdot"
-        name="numberUsdot"
-        value={formulario.numberUsdot}
+        name="usdotNumber"
+        value={formulario.usdotNumber}
         onChange={handleChange}
       />
     </div>
@@ -70,6 +70,7 @@ export const Register = () => {
     zip: "",
     trucks: "",
     state: "",
+    trucks:"",
     isOpen: false,
     isEnclose: false,
     isBoth: false,
@@ -86,7 +87,7 @@ export const Register = () => {
 
   async function handleRegister() {
     setLoading(true);
-    const transportType = formulario.isBoth ? "both" : formulario.isOpen ? "open" : formulario.isEnclose ? "enclose" : null;
+    const typeOfTransport = formulario.isBoth ? "both" : formulario.isOpen ? "open" : formulario.isEnclose ? "enclose" : null;
     const userData = {
       email: formulario.email,
       password: formulario.password,
@@ -101,8 +102,9 @@ export const Register = () => {
       role: role
     };
     if (role === "carrier") {
-      userData.usdot_number = formulario.numberUsdot;
-      userData.type_of_transport = transportType;
+      userData.usdot_number = formulario.usdotNumber;
+      userData.type_of_transport = typeOfTransport ;
+      userData.trucks = formulario.trucks;
     }
     try {
       const res = await fetch(`${backendUrl}/api/signup/${role}`, {

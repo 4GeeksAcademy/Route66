@@ -171,6 +171,8 @@ def register_carrier():
     state = data['state']
     zip_code = data['zip']
     type_of_transport = data.get('type_of_transport', None)
+    number_of_trucks= data.get('number_of_trucks')
+    
 
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "El usuario con este correo electrónico ya está registrado."}), 409
@@ -192,6 +194,7 @@ def register_carrier():
         type_of_transport=type_of_transport,
         role="carrier",
         usdot_number=usdot_number,
+        number_of_trucks=number_of_trucks,
 
     )
     new_user.set_password(password)
@@ -199,7 +202,7 @@ def register_carrier():
     db.session.add(new_user)
     try:
         db.session.commit()
-        return jsonify({"msg": "Usuario broker registrado exitosamente."}), 201
+        return jsonify({"msg": "Usuario carrier registrado exitosamente."}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
@@ -360,7 +363,7 @@ def handle_broker_profile():
     return jsonify({"msg": "Método no permitido"}), 405
 
 
-@api.route('/api/profile/carrier', methods=['GET', 'PUT']) 
+@api.route('profile/carrier', methods=['GET', 'PUT']) 
 @jwt_required()
 def handle_carrier_profile():
     user_id = get_jwt_identity() 
@@ -384,12 +387,13 @@ def handle_carrier_profile():
             "state": user.state,
             "zip": user.zip,
             "role": user.role.value,
-            "numberUsdot": user.number_usdot,
-            "trucks": user.trucks,
-            "isOpen": user.is_open,
+            "usdotNumber": user.usdot_number,
+            "number_of_trucks": user.number_of_trucks,
             "isOpen": user.is_open,
             "isEnclose": user.is_enclose,
-            "typeOfTransport": user.type_of_transport
+            "isBoth":user.is_both,
+            "typeOfTransport": user.type_of_transport,
+            'numberOfTrucks':user.number_of_trucks 
         }), 200
 
     elif request.method == 'PUT':
@@ -415,12 +419,13 @@ def handle_carrier_profile():
             if 'city' in data: user.city = data['city']
             if 'state' in data: user.state = data['state']
             if 'zip' in data: user.zip = data['zip']
-            if 'numberUsdot' in data: user.number_usdot = data['numberUsdot']
+            if 'usdotNumber' in data: user.usdot_number = data['usdotNumber']
             if 'trucks' in data: user.trucks = data['trucks']
             if 'isOpen' in data: user.is_open = data['isOpen']
             if 'isEnclose' in data: user.is_enclose = data['isEnclose']
             if 'isBoth' in data: user.is_both = data['isBoth']
             if 'typeOfTransport' in data: user.type_of_transport = data['typeOfTransport']
+            if 'numberOfTrucks' in data: user.number_of_trucks = data['numberOfTrucks']
 
             db.session.commit() 
 
@@ -435,12 +440,13 @@ def handle_carrier_profile():
                 "state": user.state,
                 "zip": user.zip,
                 "role": user.role.value,
-                "numberUsdot": user.number_usdot,
+                "usdotNumber": user.usdot_number,
                 "trucks": user.trucks,
                 "isOpen": user.is_open,
                 "isEnclose": user.is_enclose,
                 "isBoth": user.is_both,
-                "typeOfTransport": user.type_of_transport
+                "typeOfTransport": user.type_of_transport,
+                "numberOfTrucks": user.number_of_trucks
             }), 200
 
         except Exception as e:
