@@ -3,7 +3,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { FilterBar } from "../components/FilterBar.jsx";
-import { RequestModal } from "../components/RequestModal.jsx";
+import { RequestsBoardModal } from "../components/RequestsBoardModal.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -95,6 +95,7 @@ export const BrokerLoadsBoard = () => {
                 });
 
                 const data = await response.json();
+                console.log(data);
 
                 if (!response.ok) {
                     Swal.fire({
@@ -105,7 +106,7 @@ export const BrokerLoadsBoard = () => {
                     });
                     return;
                 }
-                
+
                 if (!data.results || !Array.isArray(data.results)) {
                     setLoads([]);
                     return;
@@ -118,7 +119,8 @@ export const BrokerLoadsBoard = () => {
                     vehicleModel: load.vehicle_model,
                     pickup: load.pickup_location,
                     delivery: load.delivery_location,
-                    payment: `$${load.payment}`
+                    payment: `$${load.payment}`,
+                    load_requests: load.load_requests || [],
                 }))
 
                 setLoads(transformedRows);
@@ -157,7 +159,7 @@ export const BrokerLoadsBoard = () => {
                     color="error"
                     onClick={() => handleOpenModal(params.row)}
                 >
-                    Request
+                    See Requests
                 </Button>
         }
     ];
@@ -181,7 +183,7 @@ export const BrokerLoadsBoard = () => {
                     />
                 </Box>
             )}
-            <RequestModal open={isModalOpen} onClose={handleCloseModal} load={selectedLoad} />
+            <RequestsBoardModal open={isModalOpen} onClose={handleCloseModal} load={selectedLoad} />
         </Box>
     );
 };
