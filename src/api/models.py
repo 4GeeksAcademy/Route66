@@ -149,7 +149,7 @@ class Load(db.Model):
 
         if detail_level == "full":
             data["load_requests"] = [
-                request.serialize(detail_level="basic") for request in self.load_requests
+                request.serialize(detail_level="full") for request in self.load_requests
             ]
 
         return data
