@@ -113,7 +113,7 @@ def get_my_loads():
         jwt_data = get_jwt()
         user_role = jwt_data.get("role")
         user_id = int(get_jwt_identity())
-    
+
         if user_role != "broker":
             return jsonify({"msg": "You do not have permission to view loads"}), 403
 
@@ -122,7 +122,7 @@ def get_my_loads():
         if not loads_query:
             return jsonify({"msg": "No loads found"}), 404
 
-        loads = [load.serialize() for load in loads_query]
+        loads = [load.serialize(detail_level="full") for load in loads_query]
 
         return jsonify({
             "msg": "ok",
