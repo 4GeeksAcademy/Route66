@@ -422,7 +422,6 @@ def handle_carrier_profile():
             if 'state' in data: user.state = data['state']
             if 'zip' in data: user.zip = data['zip']
             if 'usdotNumber' in data: user.usdot_number = data['usdotNumber']
-            if 'trucks' in data: user.trucks = data['trucks']
             if 'typeOfTransport' in data: user.type_of_transport = data['typeOfTransport']
             if 'numberOfTrucks' in data: user.number_of_trucks = data['numberOfTrucks']
 
@@ -440,7 +439,6 @@ def handle_carrier_profile():
                 "zip": user.zip,
                 "role": user.role.value,
                 "usdotNumber": user.usdot_number,
-                "trucks": user.trucks,
                 "typeOfTransport": user.type_of_transport,
                 "numberOfTrucks": user.number_of_trucks
             }), 200
