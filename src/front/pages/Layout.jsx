@@ -36,7 +36,7 @@ export const Layout = () => {
 
     return (
         <div className="d-flex flex-column min-vh-100">
-            <Header containerStyle={containerStyle} title={location.pathname === "/loadsboard" ? "Loads Board" : "ROUTE 66"} titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
+            <Header containerStyle={containerStyle} title={location.pathname === "/loadsboard" ? "Loads Board" : location.pathname === "/myloads" ? "My loads" : "ROUTE 66"} titleStyle={titleStyle} imgStyle={imageStyle} imgUrl={logoImg} imgAlt="Route66 logo" />
             <Outlet className="flex-grow-1" />
             <Footer />
         </div>

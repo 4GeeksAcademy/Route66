@@ -2,6 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 export const Header = ({
     title = "Title",
@@ -70,6 +71,11 @@ export const Header = ({
 
     const SesionsButton = () => (
         <nav className="d-flex align-items-center gap-3">
+            <Button variant="contained" endIcon={<AccountBoxIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+                navigate("/profile/:role");
+            }}>
+                Profile
+            </Button>
             <Button variant="contained" endIcon={<LogoutIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
                 localStorage.removeItem("TOKEN")
                 localStorage.removeItem("User")

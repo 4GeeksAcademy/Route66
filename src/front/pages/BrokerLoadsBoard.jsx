@@ -3,13 +3,13 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { FilterBar } from "../components/FilterBar.jsx";
-import { RequestModal } from "../components/RequestModal.jsx";
+import { RequestsBoardModal } from "../components/RequestsBoardModal.jsx";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import CircularProgress from '@mui/material/CircularProgress';
 import { jwtDecode } from "jwt-decode";
 
-export const LoadsBoard = () => {
+export const BrokerLoadsBoard = () => {
     const { store, dispatch } = useGlobalReducer();
     const navigate = useNavigate();
     // const { token } = store
@@ -71,7 +71,7 @@ export const LoadsBoard = () => {
                 return;
             }
 
-            if (decodedToken.role !== "carrier") {
+            if (decodedToken.role !== "broker") {
                 Swal.fire({
                     title: 'Access Denied',
                     text: 'Only carriers can access the Loads Board.',
@@ -86,7 +86,7 @@ export const LoadsBoard = () => {
             try {
                 setLoading(true);
                 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                const response = await fetch(`${backendUrl}/api/loads`, {
+                const response = await fetch(`${backendUrl}/api/brokerloads`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -95,6 +95,7 @@ export const LoadsBoard = () => {
                 });
 
                 const data = await response.json();
+                console.log(data);
 
                 if (!response.ok) {
                     Swal.fire({
@@ -118,7 +119,8 @@ export const LoadsBoard = () => {
                     vehicleModel: load.vehicle_model,
                     pickup: load.pickup_location,
                     delivery: load.delivery_location,
-                    payment: `$${load.payment}`
+                    payment: `$${load.payment}`,
+                    load_requests: load.load_requests || [],
                 }))
 
                 setLoads(transformedRows);
@@ -157,7 +159,7 @@ export const LoadsBoard = () => {
                     color="error"
                     onClick={() => handleOpenModal(params.row)}
                 >
-                    Request
+                    See Requests
                 </Button>
         }
     ];
@@ -181,7 +183,7 @@ export const LoadsBoard = () => {
                     />
                 </Box>
             )}
-            <RequestModal open={isModalOpen} onClose={handleCloseModal} load={selectedLoad} />
+            <RequestsBoardModal open={isModalOpen} onClose={handleCloseModal} load={selectedLoad} />
         </Box>
     );
 };

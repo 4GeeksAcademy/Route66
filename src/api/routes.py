@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+from math import log
 from flask import Flask, request, jsonify, url_for, Blueprint
 from sqlalchemy import Null, null, select, and_
 from api.DTOs.LoginDto import LoginDto
@@ -105,6 +106,33 @@ def get_loads():
         return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
 
 
+@api.route('/brokerloads', methods=['GET'])
+@jwt_required()
+def get_my_loads():
+    try:
+        jwt_data = get_jwt()
+        user_role = jwt_data.get("role")
+        user_id = int(get_jwt_identity())
+
+        if user_role != "broker":
+            return jsonify({"msg": "You do not have permission to view loads"}), 403
+
+        loads_query = db.session.execute(select(Load).where(
+            Load.broker_id == user_id)).scalars().all()
+        if not loads_query:
+            return jsonify({"msg": "No loads found"}), 404
+
+        loads = [load.serialize(detail_level="full") for load in loads_query]
+
+        return jsonify({
+            "msg": "ok",
+            "results": loads,
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
+
+
 @api.route('/requestload', methods=['POST'])
 @jwt_required()
 def create_load_request():
@@ -129,14 +157,13 @@ def create_load_request():
 
         existing_request = db.session.execute(select(LoadRequest).where(and_(
             LoadRequest.carrier_id == carrier_id, LoadRequest.load_id == load_id))).scalars().first()
-        
+
         load = db.session.get(Load, load_id)
         if not load:
             return jsonify({"msg": "Load not found"}), 404
 
         if existing_request:
             return jsonify({"msg": "You already have a request in this load"}), 409
-        
 
         new_loadrequest = LoadRequest(
             carrier_id=carrier_id,
