@@ -11,7 +11,7 @@ const PasswordReset = () => {
     const envioReset = (event) => {
         event.preventDefault();
 
-
+        console.log(email);
 
 
     };

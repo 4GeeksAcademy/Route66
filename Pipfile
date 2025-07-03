@@ -21,6 +21,7 @@ flask-cors = "*"
 flask-jwt-extended = "*"
 flask-admin = "*"
 psycopg2 = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.13"

@@ -12,7 +12,7 @@ from api.models import db, User, Load, LoadRequest
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 api = Blueprint('api', __name__)
 
@@ -129,14 +129,13 @@ def create_load_request():
 
         existing_request = db.session.execute(select(LoadRequest).where(and_(
             LoadRequest.carrier_id == carrier_id, LoadRequest.load_id == load_id))).scalars().first()
-        
+
         load = db.session.get(Load, load_id)
         if not load:
             return jsonify({"msg": "Load not found"}), 404
 
         if existing_request:
             return jsonify({"msg": "You already have a request in this load"}), 409
-        
 
         new_loadrequest = LoadRequest(
             carrier_id=carrier_id,
@@ -284,4 +283,23 @@ def login():
         "user": user.serialize(),
         "access_token": access_token,
         "exitoso": True
+    }), 200
+
+
+@api.route('/passwordResetEmail', methods=['POST'])
+def passwordResetEmail():
+    data = request.get_json()
+    if not data or not data.get("email"):
+        return jsonify({"msg": "Email es requerido"}), 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+
+    if user == None:
+        return jsonify({"msg": "Email no existe"}), 400
+
+    emailEncrypt = generate_password_hash(data["email"])
+
+    return jsonify({
+        "msg": "Exito",
+        "encrypt": emailEncrypt
     }), 200
