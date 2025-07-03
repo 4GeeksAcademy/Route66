@@ -1,6 +1,8 @@
 // Import necessary components from react-router-dom and other parts of the application.
 //import { Link } from "react-router-dom";
 import { useState } from "react";
+import Swal from 'sweetalert2';
+
 
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
@@ -15,7 +17,7 @@ export const LoadRegister = () => {
 		deliveryLocation: "",
 		payment: "",
 		daysToDeliver: "",
-		status:""
+		status: ""
 	}
 
 	const [form, setForm] = useState(initialForm)
@@ -31,7 +33,7 @@ export const LoadRegister = () => {
 
 
 	async function registerLoad(form) {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("TOKEN");
 
 		const userData = {
 			vehicle_year: form.year,
@@ -41,11 +43,11 @@ export const LoadRegister = () => {
 			delivery_location: form.deliveryLocation,
 			payment: form.payment,
 			days_to_deliver: form.daysToDeliver,
-			status: form.status
+			status: "Pending"
 		};
 		console.log(userData);
 		try {
-			const response = await fetch(`${backendUrl}/api/load_register`,{
+			const response = await fetch(`${backendUrl}/api/load_register`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -57,7 +59,15 @@ export const LoadRegister = () => {
 			const result = await response.json();
 
 			if (response.ok) {
-				console.log('Registro de carga exitoso');
+				Swal.fire({
+					title: 'Load Sent!',
+					text: 'Your load has been submitted.',
+					icon: 'success',
+					confirmButtonText: 'Great',
+					didOpen: () => {
+						document.querySelector('.swal2-popup').style.zIndex = '1400';
+					}
+				});
 
 				setForm(initialForm);
 
