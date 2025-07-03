@@ -67,7 +67,7 @@ def loads_register():
             days_to_deliver=int(data['days_to_deliver']),
             status="Pending"
         )
-
+        print(new_load)
         db.session.add(new_load)
         db.session.commit()
 
