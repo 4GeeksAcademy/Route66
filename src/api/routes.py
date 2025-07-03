@@ -2,16 +2,17 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from sqlalchemy import Null, null
+from sqlalchemy import Null, null, select, and_
 from api.DTOs.LoginDto import LoginDto
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token
-from api.models import db, User,Load
+from api.models import db, User, Load, LoadRequest
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+from werkzeug.security import check_password_hash
 
 api = Blueprint('api', __name__)
 
@@ -34,10 +35,12 @@ def handle_hello():
 def loads_register():
     jwt_data = get_jwt()
     user_role = jwt_data.get("role")
+
     if user_role != "broker":
         return jsonify({"msg": "No tienes permiso para registrar cargas"}), 403
 
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
+
     data = request.get_json()
     if not data:
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
@@ -47,6 +50,7 @@ def loads_register():
         "pickup_location", "delivery_location", "payment",
         "days_to_deliver"
     ]
+
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
 
@@ -58,19 +62,96 @@ def loads_register():
             vehicle_model=data['vehicle_model'],
             pickup_location=data['pickup_location'],
             delivery_location=data['delivery_location'],
-            payment=data['payment'],
-            days_to_deliver=data['days_to_deliver'],
-            status=data['status']
+            payment=float(data['payment']),
+            days_to_deliver=int(data['days_to_deliver']),
+            status="Pending"
         )
+
         db.session.add(new_load)
         db.session.commit()
+
         return jsonify({"msg": "Carga registrada exitosamente."}), 201
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"msg": "Error al registrar la carga", "error": str(e)}), 500
+        return jsonify({
+            "msg": "Error al registrar la carga",
+            "error": str(e)
+        }), 500
 
-    
+
+@api.route('/loads', methods=['GET'])
+@jwt_required()
+def get_loads():
+    try:
+        jwt_data = get_jwt()
+        user_role = jwt_data.get("role")
+
+        if user_role != "carrier":
+            return jsonify({"msg": "You do not have permission to view all loads"}), 403
+
+        loads_query = db.session.execute(select(Load)).scalars().all()
+        if not loads_query:
+            return jsonify({"msg": "No registered loads found"}), 404
+
+        loads = [load.serialize() for load in loads_query]
+
+        return jsonify({
+            "msg": "ok",
+            "results": loads,
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
+
+
+@api.route('/requestload', methods=['POST'])
+@jwt_required()
+def create_load_request():
+    try:
+        jwt_data = get_jwt()
+        user_role = jwt_data.get("role")
+
+        if user_role != "carrier":
+            return jsonify({"msg": "You do not have permission to post a request."}), 403
+
+        data = request.get_json()
+        if not data:
+            return jsonify({"msg": "No data provided"}), 400
+
+        carrier_id = int(get_jwt_identity())
+        load_id = data.get("load_id")
+        price_offer = data.get("price_offer", "0")
+        status = "Pending"
+
+        if not load_id:
+            return jsonify({"msg": "Missing required fields"}), 400
+
+        existing_request = db.session.execute(select(LoadRequest).where(and_(
+            LoadRequest.carrier_id == carrier_id, LoadRequest.load_id == load_id))).scalars().first()
+        
+        load = db.session.get(Load, load_id)
+        if not load:
+            return jsonify({"msg": "Load not found"}), 404
+
+        if existing_request:
+            return jsonify({"msg": "You already have a request in this load"}), 409
+        
+
+        new_loadrequest = LoadRequest(
+            carrier_id=carrier_id,
+            load_id=load_id,
+            price_offer=price_offer,
+            status=status
+        )
+
+        db.session.add(new_loadrequest)
+        db.session.commit()
+        return jsonify({"msg": "Request created",
+                        "request": new_loadrequest.serialize()}), 201
+    except Exception as e:
+        return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
+
 
 @api.route('/signup/carrier', methods=['POST'])
 def register_carrier():
@@ -79,11 +160,10 @@ def register_carrier():
         return jsonify({"msg": "No se recibieron datos necesarios"}), 400
 
     required_fields = [
-        "email", "password", "company_name", "full_name", "mc_number", "phone_number", "address", "city", "state", "zip"]
+        "email", "password", "company_name", "full_name", "mc_number", "phone_number", "address", "city", "state", "zip", "usdot_number"]
     if not all(field in data for field in required_fields):
         return jsonify({"msg": "Faltan datos obligatorios"}), 400
 
-    
     email = data['email']
     password = data['password']
     company_name = data['company_name']
@@ -104,7 +184,6 @@ def register_carrier():
     if User.query.filter_by(mc_number=mc_number).first():
         return jsonify({"msg": "El MC Number ya está registrado."}), 409
 
-    
     new_user = User(
         email=email,
         company_name=company_name,
@@ -116,7 +195,9 @@ def register_carrier():
         state=state,
         zip=zip_code,
         type_of_transport=type_of_transport,
-        role="carrier"
+        role="carrier",
+        usdot_number=usdot_number,
+
     )
     new_user.set_password(password)
 
@@ -127,7 +208,8 @@ def register_carrier():
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al registrar el usuario.", "error": str(e)}), 500
-      
+
+
 @api.route('/signup/broker', methods=['POST'])
 def register_broker():
     data = request.get_json()
@@ -185,37 +267,21 @@ def register_broker():
 @api.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data or not data.get("email") or not data.get("password"):
+        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
 
-    try:
-        exitoso = False
-        mensaje = ''
-        token = ''
+    user = User.query.filter_by(email=data["email"]).first()
 
-        userBD = User.query.filter_by(email=data["email"]).first()
+    if not user or not check_password_hash(user.password_hash, data["password"]):
+        return jsonify({"msg": "Credenciales inválidas"}), 401
 
-        if userBD is None:
-            exitoso = False
-            mensaje = 'Inicio sesion incorrecto'
-        else:
-            passwordCorrecto = User.check_password(userBD, data["password"])
-            if passwordCorrecto:
-                exitoso = True
-                mensaje = 'Inicio sesion correcto'
-                print(userBD)
+    access_token = create_access_token(
+        identity=str(user.id),
+        additional_claims={"role": user.role.value}
+    )
 
-                access_token = create_access_token(
-                    identity=userBD.email,
-                    additional_claims={"role": userBD.role.value})
-                token = access_token
-
-            else:
-                exitoso = False
-                mensaje = 'Inicio sesion incorrecto'
-
-        return jsonify({
-            "exitoso": exitoso,
-            "mensaje": mensaje,
-            "token": token
-        }), 200
-    except Exception as e:
-        return jsonify({"msg": "Error al realizar login", "error": str(e)}), 500
+    return jsonify({
+        "user": user.serialize(),
+        "access_token": access_token,
+        "exitoso": True
+    }), 200
