@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
-import { useState, useEffect, useCallback } from 'react'; // Importamos useCallback
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -16,8 +16,8 @@ import {
   TextField,
   Avatar,
   FormControlLabel,
-  Checkbox,         
-  CircularProgress  
+  Checkbox,
+  CircularProgress
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
 
@@ -27,10 +27,9 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const UserProfileCard = () => {
+const CarrierProfileCard = () => {
   const { userId } = useParams();
 
-  
   const [userData, setUserData] = useState({
     fullName: '',
     companyName: '',
@@ -40,30 +39,29 @@ const UserProfileCard = () => {
     city: '',
     state: '',
     zip: '',
-    role: '', 
+    role: 'carrier', 
     numberUsdot: '',
     trucks: '',
     isOpen: false,
+    isEnclose: false,
     isBoth: false,
     typeOfTransport: ''
   });
 
-  const [initialUserData, setInitialUserData] = useState({}); 
+  const [initialUserData, setInitialUserData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
-  
   const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
 
-  
   const showSnackbar = useCallback((message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
-  }, []); 
+  }, []);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
@@ -72,25 +70,21 @@ const UserProfileCard = () => {
     setSnackbarOpen(false);
   };
 
-  
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchCarrierData = async () => {
       setLoading(true);
       const token = localStorage.getItem('access_token');
-      const role = localStorage.getItem('role'); 
+      
 
-      if (!token || !role) {
-        console.error('No se encontró el token o el rol del usuario en localStorage.');
-        showSnackbar('No estás autenticado o tu rol no se ha cargado. Por favor, inicia sesión.', 'error');
+      if (!token) {
+        console.error('No se encontró el token en localStorage.');
+        showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
         setLoading(false);
         return;
       }
 
-      
-      const endpoint = role === 'broker' ? '/api/profile/broker' : '/api/profile/carrier';
-
       try {
-        const response = await fetch(`${backendUrl}${endpoint}`, {
+        const response = await fetch(`${backendUrl}/api/profile/carrier`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -100,40 +94,38 @@ const UserProfileCard = () => {
 
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.msg || 'Error al obtener datos del usuario.');
+          throw new Error(error.msg || 'Error al obtener datos del carrier.');
         }
 
         const data = await response.json();
-        
         setUserData({
-            fullName: data.fullName || '',
-            companyName: data.companyName || '',
-            email: data.email || '',
-            phoneNumber: data.phoneNumber || '',
-            address: data.address || '',
-            city: data.city || '',
-            state: data.state || '',
-            zip: data.zip || '',
-            role: data.role || '',
-            
-            numberUsdot: data.numberUsdot || '',
-            trucks: data.trucks || '',
-            isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
-            isEnclose: typeof data.isEnclose === 'boolean' ? data.Enclose : false,
-            isBoth: typeof data.isBoth === 'boolean' ? data.isBoth : false,
-            typeOfTransport: data.typeOfTransport || ''
+          fullName: data.fullName || '',
+          companyName: data.companyName || '',
+          email: data.email || '',
+          phoneNumber: data.phoneNumber || '',
+          address: data.address || '',
+          city: data.city || '',
+          state: data.state || '',
+          zip: data.zip || '',
+          role: 'carrier', 
+          numberUsdot: data.numberUsdot || '',
+          trucks: data.trucks || '',
+          isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
+          isEnclose: typeof data.isEnclose === 'boolean' ? data.isEnclose : false,
+          isBoth: typeof data.isBoth === 'boolean' ? data.isBoth : false,
+          typeOfTransport: data.typeOfTransport || ''
         });
-        setInitialUserData(data); 
+        setInitialUserData(data);
       } catch (err) {
-        console.error('Error al obtener datos del usuario:', err.message);
-        showSnackbar(`Error al obtener datos del usuario: ${err.message}`, 'error');
+        console.error('Error al obtener datos del carrier:', err.message);
+        showSnackbar(`Error al obtener datos del carrier: ${err.message}`, 'error');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserData();
-  }, [userId, showSnackbar]); 
+    fetchCarrierData();
+  }, [userId, showSnackbar]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -146,94 +138,85 @@ const UserProfileCard = () => {
   const handleUpdateProfile = async () => {
     setLoading(true);
     const token = localStorage.getItem('access_token');
-    const Role = localStorage.getItem('role');
 
-    if (!token || !Role) {
-      console.error('No se encontró el token o el rol del usuario.');
+    if (!token) {
+      console.error('No se encontró el token del usuario.');
       showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
       setLoading(false);
       return;
     }
 
-    const endpoint = Role === 'broker' ? '/api/profile/broker' : '/api/profile/carrier';
-
-    
     const dataToSend = {
-        fullName: userData.fullName,
-        companyName: userData.companyName,
-        email: userData.email,
-        phoneNumber: userData.phoneNumber,
-        address: userData.address,
-        city: userData.city,
-        state: userData.state,
-        zip: userData.zip,
+      fullName: userData.fullName,
+      companyName: userData.companyName,
+      email: userData.email,
+      phoneNumber: userData.phoneNumber,
+      address: userData.address,
+      city: userData.city,
+      state: userData.state,
+      zip: userData.zip,
+      numberUsdot: userData.numberUsdot,
+      trucks: userData.trucks,
+      isOpen: userData.isOpen,
+      isEnclose: userData.isEnclose,
+      isBoth: userData.isBoth,
+      typeOfTransport: userData.typeOfTransport,
     };
 
-    
-    if (userRole === 'carrier') {
-        dataToSend.numberUsdot = userData.numberUsdot;
-        dataToSend.trucks = userData.trucks;
-        dataToSend.isOpen = userData.isOpen;
-        dataToSend.isBoth = userData.isBoth;
-        dataToSend.typeOfTransport = userData.typeOfTransport;
-    } 
-
     try {
-      const response = await fetch(`${backendUrl}/${endpoint}`, {
+      const response = await fetch(`${backendUrl}/api/profile/carrier`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(dataToSend) 
+        body: JSON.stringify(dataToSend)
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.msg || 'Error al actualizar el perfil.');
+        throw new Error(errorData.msg || 'Error al actualizar el perfil del carrier.');
       }
 
       const updatedData = await response.json();
       setUserData({
-            fullName: updatedData.fullName || '',
-            companyName: updatedData.companyName || '',
-            email: updatedData.email || '',
-            phoneNumber: updatedData.phoneNumber || '',
-            address: updatedData.address || '',
-            city: updatedData.city || '',
-            state: updatedData.state || '',
-            zip: updatedData.zip || '',
-            role: updatedData.role || '',
-            
-            numberUsdot: updatedData.numberUsdot || '',
-            trucks: updatedData.trucks || '',
-            isOpen: typeof updatedData.isOpen === 'boolean' ? updatedData.isOpen : false,
-            isEnclose: typeof updatedData.isEnclose === 'boolean' ? updatedData.isEnclose : false,
-            isBoth: typeof updatedData.isBoth === 'boolean' ? updatedData.isBoth : false,
-            typeOfTransport: updatedData.typeOfTransport || ''
+        fullName: updatedData.fullName || '',
+        companyName: updatedData.companyName || '',
+        email: updatedData.email || '',
+        phoneNumber: updatedData.phoneNumber || '',
+        address: updatedData.address || '',
+        city: updatedData.city || '',
+        state: updatedData.state || '',
+        zip: updatedData.zip || '',
+        role: 'carrier',
+        numberUsdot: updatedData.numberUsdot || '',
+        trucks: updatedData.trucks || '',
+        isOpen: typeof updatedData.isOpen === 'boolean' ? updatedData.isOpen : false,
+        isEnclose: typeof updatedData.isEnclose === 'boolean' ? updatedData.isEnclose : false,
+        isBoth: typeof updatedData.isBoth === 'boolean' ? updatedData.isBoth : false,
+        typeOfTransport: updatedData.typeOfTransport || ''
       });
-      setInitialUserData(updatedData); 
+      setInitialUserData(updatedData);
       setIsEditing(false);
-      showSnackbar('Perfil actualizado con éxito.', 'success');
+      showSnackbar('Perfil de carrier actualizado con éxito.', 'success');
     } catch (err) {
-      console.error('Error al actualizar el perfil:', err.message);
-      showSnackbar(`Error al actualizar el perfil: ${err.message}`, 'error');
+      console.error('Error al actualizar el perfil del carrier:', err.message);
+      showSnackbar(`Error al actualizar el perfil del carrier: ${err.message}`, 'error');
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancelEdit = () => {
-    setUserData(initialUserData); 
+    setUserData(initialUserData);
     setIsEditing(false);
   };
 
-  
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
         <CircularProgress />
-        <Typography variant="h6" sx={{ ml: 2 }}>Cargando perfil...</Typography>
+        <Typography variant="h6" sx={{ ml: 2 }}>Cargando perfil de carrier...</Typography>
       </Box>
     );
   }
@@ -257,11 +240,11 @@ const UserProfileCard = () => {
         <CardHeader
           title={
             <Typography variant="h5" sx={{ fontSize: '2rem', textAlign: 'left' }}>
-              Mi perfil ({userData.role.charAt(0).toUpperCase() + userData.role.slice(1)})
+              Mi perfil (Carrier)
             </Typography>
           }
-          action={ 
-            <Avatar sx={{fontSize: '2rem', bgcolor: blue[800] }}> 
+          action={
+            <Avatar sx={{ fontSize: '2rem', bgcolor: blue[800] }}>
               {userInitial}
             </Avatar>
           }
@@ -270,7 +253,7 @@ const UserProfileCard = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Full Name"
+                label="Nombre Completo"
                 variant="standard"
                 fullWidth
                 name="fullName"
@@ -281,7 +264,7 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Company Name"
+                label="Nombre de la Empresa"
                 variant="standard"
                 fullWidth
                 name="companyName"
@@ -292,7 +275,7 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="E-mail"
+                label="Correo Electrónico"
                 variant="standard"
                 fullWidth
                 name="email"
@@ -303,7 +286,7 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Phone Number"
+                label="Número de Teléfono"
                 variant="standard"
                 fullWidth
                 name="phoneNumber"
@@ -314,7 +297,7 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Address"
+                label="Dirección"
                 variant="standard"
                 fullWidth
                 name="address"
@@ -325,7 +308,7 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="City"
+                label="Ciudad"
                 variant="standard"
                 fullWidth
                 name="city"
@@ -336,7 +319,7 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="State"
+                label="Estado"
                 variant="standard"
                 fullWidth
                 name="state"
@@ -347,7 +330,7 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Zip"
+                label="Código Postal"
                 variant="standard"
                 fullWidth
                 name="zip"
@@ -358,95 +341,92 @@ const UserProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Role"
+                label="Rol"
                 variant="standard"
                 fullWidth
                 name="role"
-                value={userData.role.charAt(0).toUpperCase() + userData.role.slice(1)}
-                
+                value="Carrier"
+                disabled // El rol siempre está deshabilitado para visualización
               />
             </Grid>
 
             
-            {userData.role === 'carrier' && (
-              <>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    label="USDOT Number"
-                    variant="standard"
-                    fullWidth
-                    name="numberUsdot"
-                    value={userData.numberUsdot}
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Número USDOT"
+                variant="standard"
+                fullWidth
+                name="numberUsdot"
+                value={userData.numberUsdot}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Número de Camiones"
+                variant="standard"
+                fullWidth
+                name="trucks"
+                type="number"
+                value={userData.trucks}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Tipo de Transporte"
+                variant="standard"
+                fullWidth
+                name="typeOfTransport"
+                value={userData.typeOfTransport}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={userData.isOpen}
                     onChange={handleInputChange}
+                    name="isOpen"
+                    color="primary"
                     disabled={!isEditing}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    label="Number of Trucks"
-                    variant="standard"
-                    fullWidth
-                    name="trucks"
-                    type="number"
-                    value={userData.trucks}
+                }
+                label="Abierto a Nuevas Cargas"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={userData.isEnclose}
                     onChange={handleInputChange}
+                    name="isEnclose"
+                    color="primary"
                     disabled={!isEditing}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <TextField
-                    label="Type of Transport"
-                    variant="standard"
-                    fullWidth
-                    name="typeOfTransport"
-                    value={userData.typeOfTransport} //Esto no se edita 
+                }
+                label="Cerrado para Nuevas Cargas"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={userData.isBoth}
+                    onChange={handleInputChange}
+                    name="isBoth"
+                    color="primary"
+                    disabled={!isEditing}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={userData.isOpen}
-                        onChange={handleInputChange}
-                        name="isOpen"
-                        color="primary"
-                        disabled={!isEditing}
-                      />
-                    }
-                    label="Open for New Loads"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={userData.isOpen}
-                        onChange={handleInputChange}
-                        name="isEnclose"
-                        color="primary"
-                        disabled={!isEditing}
-                      />
-                    }
-                    label="Enclose for New Loads"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={userData.isBoth}
-                        onChange={handleInputChange}
-                        name="isBoth"
-                        color="primary"
-                        disabled={!isEditing}
-                      />
-                    }
-                    label="Handles both FTL/LTL"
-                  />
-                </Grid>
-              </>
-            )}
-
+                }
+                label="Maneja FTL/LTL"
+              />
+            </Grid>
           </Grid>
         </CardContent>
         <CardActions sx={{ justifyContent: 'flex-end', padding: 2 }}>
@@ -463,10 +443,10 @@ const UserProfileCard = () => {
           ) : (
             <>
               <Button size="small" onClick={handleUpdateProfile} variant="contained" color="primary" disabled={loading}>
-                {loading ? <CircularProgress size={24} /> : 'Save Changes'}
+                {loading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
               </Button>
               <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading}>
-                Cancel
+                Cancelar
               </Button>
             </>
           )}
@@ -482,4 +462,4 @@ const UserProfileCard = () => {
   );
 };
 
-export default UserProfileCard;
+export default CarrierProfileCard 

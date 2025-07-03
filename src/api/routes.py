@@ -293,11 +293,17 @@ def login():
 @api.route('/profile/broker', methods=['GET', 'PUT'])
 @jwt_required()
 def handle_broker_profile():
-    user_id = get_jwt_identity() 
+    jwt_data = get_jwt()
+    user_role = jwt_data.get("role")
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
+    
 
     if not user:
-        return jsonify({"msg": "Usuario no encontrado"}), 404
+        return jsonify({"msg": "User not found"}), 404
+    if user_role != "broker":
+            return jsonify({"msg": "You do not have permission to view this profile"}), 403
+
 
     
     if request.method == 'GET':
@@ -363,7 +369,7 @@ def handle_broker_profile():
     return jsonify({"msg": "Método no permitido"}), 405
 
 
-@api.route('profile/carrier', methods=['GET', 'PUT']) 
+@api.route('/profile/carrier', methods=['GET', 'PUT']) 
 @jwt_required()
 def handle_carrier_profile():
     user_id = get_jwt_identity() 
@@ -388,10 +394,6 @@ def handle_carrier_profile():
             "zip": user.zip,
             "role": user.role.value,
             "usdotNumber": user.usdot_number,
-            "number_of_trucks": user.number_of_trucks,
-            "isOpen": user.is_open,
-            "isEnclose": user.is_enclose,
-            "isBoth":user.is_both,
             "typeOfTransport": user.type_of_transport,
             'numberOfTrucks':user.number_of_trucks 
         }), 200
@@ -421,9 +423,6 @@ def handle_carrier_profile():
             if 'zip' in data: user.zip = data['zip']
             if 'usdotNumber' in data: user.usdot_number = data['usdotNumber']
             if 'trucks' in data: user.trucks = data['trucks']
-            if 'isOpen' in data: user.is_open = data['isOpen']
-            if 'isEnclose' in data: user.is_enclose = data['isEnclose']
-            if 'isBoth' in data: user.is_both = data['isBoth']
             if 'typeOfTransport' in data: user.type_of_transport = data['typeOfTransport']
             if 'numberOfTrucks' in data: user.number_of_trucks = data['numberOfTrucks']
 
@@ -442,9 +441,6 @@ def handle_carrier_profile():
                 "role": user.role.value,
                 "usdotNumber": user.usdot_number,
                 "trucks": user.trucks,
-                "isOpen": user.is_open,
-                "isEnclose": user.is_enclose,
-                "isBoth": user.is_both,
                 "typeOfTransport": user.type_of_transport,
                 "numberOfTrucks": user.number_of_trucks
             }), 200

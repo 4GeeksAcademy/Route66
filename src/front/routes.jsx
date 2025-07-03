@@ -12,7 +12,7 @@ import { Register } from "./pages/Register";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
 import PasswordReset from "./pages/PaswordReset";
-import ProfilesUser from "./pages/ProfilesUser";
+import UserProfilesApp from "./pages/UserProfilesApp";
 
 export const router = createBrowserRouter(
       createRoutesFromElements(
@@ -30,7 +30,7 @@ export const router = createBrowserRouter(
                   <Route path="/loadsboard" element={<LoadsBoard />} />
                   <Route path="/register/:role" element={<Register />} />
                   <Route path="/passwordReset" element={<PasswordReset />} />
-                  <Route path="/profile/:role/" element={<ProfilesUser />} />
+                  <Route path="/profile/:userId" element={<UserProfilesApp />} />
 
             </Route>
       )
