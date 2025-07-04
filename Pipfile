@@ -7,19 +7,19 @@ verify_ssl = true
 
 [packages]
 flask-sqlalchemy = "*"
+python-dotenv = "*"
 gunicorn = "*"
 cloudinary = "*"
 typing-extensions = "*"
 wtforms = "==3.1.2"
 sqlalchemy = "*"
 flask = "*"
-python-dotenv = "*"
 flask-migrate = "*"
-flask-jwt-extended = "*"
-python-dateutil = "*"
-flask-admin = "*"
-flask-cors = "*"
 flask-swagger = "*"
+python-dateutil = "*"
+flask-cors = "*"
+flask-jwt-extended = "*"
+flask-admin = "*"
 psycopg2-binary = "*"
 
 [requires]

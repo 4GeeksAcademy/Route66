@@ -144,11 +144,13 @@ class Load(db.Model):
             "delivery_location": self.delivery_location,
             "payment": self.payment,
             "days_to_deliver": self.days_to_deliver,
+            "status": self.status,
+            "carrier": self.accepted_carrier.serialize(detail_level="basic") if self.accepted_carrier else None
         }
 
         if detail_level == "full":
             data["load_requests"] = [
-                request.serialize(detail_level="basic") for request in self.load_requests
+                request.serialize(detail_level="full") for request in self.load_requests
             ]
 
         return data

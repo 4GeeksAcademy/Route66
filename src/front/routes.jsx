@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import PasswordReset from "./pages/PaswordReset";
 import UserProfilesApp from "./pages/UserProfilesApp";
 // import UserProfileViewer from "./pages/UserProfileViewer";
+import { BrokerLoadsBoard } from "./pages/BrokerLoadsBoard";
 
 export const router = createBrowserRouter(
       createRoutesFromElements(
@@ -34,6 +35,7 @@ export const router = createBrowserRouter(
                   <Route path="/profile/:role" element={<UserProfilesApp />} />
                   {/* <Route path="/profile/:userId" element={<U />} /> */}
 
+                  <Route path="/myloads" element={<BrokerLoadsBoard />} />
             </Route>
       )
 );
