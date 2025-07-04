@@ -13,7 +13,8 @@ export const Header = ({
     imgAlt = "Image",
     imgStyle = {},
     titleStyle = {},
-    containerStyle = {}
+    containerStyle = {},
+    onNewLoadCreated
 }) => {
 
     const location = useLocation();
@@ -36,7 +37,7 @@ export const Header = ({
                 Login
             </Button>
             <div className="dropdown">
-                <button className="btn btn-danger fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button className="btn btn-danger fw-bold dropdown-toggle boton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Started
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
@@ -114,7 +115,7 @@ export const Header = ({
 
                 {location.pathname === "/" ? <HomeButtons /> : location.pathname === "/login" ? <LoginButton /> : location.pathname === "/register/broker" || location.pathname === "/register/carrier" ? <RegisterButton /> : <SesionsButton />}
             </Box>
-            <CreateLoadModal open={isModalOpen} onClose={handleCloseModal}/>
+            <CreateLoadModal open={isModalOpen} onClose={handleCloseModal} onNewLoadCreated={onNewLoadCreated}/>
         </Box >
     );
 };

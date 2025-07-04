@@ -2,7 +2,7 @@ import React from "react";
 
 export const Footer = () => {
 	return (
-		<footer className="mt-auto text-white" style={{ backgroundColor: "#0f2e43" }}>
+		<footer className="mt-auto text-white" style={{ backgroundColor: "#0E397F" }}>
 			<div className="container py-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
 				<div className="text-center text-md-start">
 					<h5 className="fw-bold mb-2" style={{ color: "#ffffff" }}>Route66 Logistics</h5>
@@ -20,7 +20,7 @@ export const Footer = () => {
 				</div>
 			</div>
 
-			<div style={{ backgroundColor: "#540308" }} className="py-2 text-center">
+			<div style={{ backgroundColor: "#d32f2f" }} className="py-2 text-center">
 				<small>&copy; {new Date().getFullYear()} Route66. All rights reserved.</small>
 			</div>
 		</footer>

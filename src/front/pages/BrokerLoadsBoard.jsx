@@ -8,12 +8,13 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import CircularProgress from '@mui/material/CircularProgress';
 import { jwtDecode } from "jwt-decode";
+import { useOutletContext } from "react-router-dom";
 
 export const BrokerLoadsBoard = () => {
     const { store, dispatch } = useGlobalReducer();
     const navigate = useNavigate();
     // const { token } = store
-    const [loads, setLoads] = useState([]);
+    const { loads, setLoads } = useOutletContext();
     const [filteredLoads, setFilteredLoads] = useState([]);
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem("TOKEN");
@@ -40,6 +41,9 @@ export const BrokerLoadsBoard = () => {
         setFilteredLoads(filtered);
     }
 
+    useEffect(() => {
+        setFilteredLoads(loads);
+    }, [loads]);
 
     useEffect(() => {
 

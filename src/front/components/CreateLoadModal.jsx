@@ -1,7 +1,7 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
 import { LoadRegister } from "../pages/LoadRegister";
 
-export const CreateLoadModal = ({ open, onClose }) => {
+export const CreateLoadModal = ({ open, onClose, onNewLoadCreated }) => {
 
     return (
         <Modal open={open} onClose={onClose}>
@@ -18,8 +18,8 @@ export const CreateLoadModal = ({ open, onClose }) => {
                     Creating Load
                 </Typography>
 
-                <LoadRegister />
+                <LoadRegister onClose={onClose} onNewLoadCreated={onNewLoadCreated} />
             </Box>
         </Modal>
     );
-};git 
+};
