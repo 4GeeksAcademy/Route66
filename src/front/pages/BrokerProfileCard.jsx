@@ -40,7 +40,7 @@ const BrokerProfileCard = () => {
     city: '',
     state: '',
     zip: '',
-    role: 'broker', // Rol por defecto para este componente
+    role: 'broker',
   });
 
   const [initialUserData, setInitialUserData] = useState({});
@@ -69,7 +69,7 @@ const BrokerProfileCard = () => {
     const fetchBrokerData = async () => {
       setLoading(true);
       const token = localStorage.getItem('access_token');
-      // No es necesario verificar el rol desde localStorage aquí, ya que este componente es específicamente para brokers.
+
       // const role = 'broker'; 
 
       // if (!token) {
@@ -103,7 +103,7 @@ const BrokerProfileCard = () => {
           city: data.city || '',
           state: data.state || '',
           zip: data.zip || '',
-          role: 'broker', // Aseguramos que el rol sea broker
+          role: 'broker',
         });
         setInitialUserData(data);
       } catch (err) {
@@ -215,18 +215,73 @@ const BrokerProfileCard = () => {
         width: '90%',
         boxShadow: 3,
       }}>
+
         <CardHeader
+          sx={{
+            backgroundColor: '#002244',
+            color: 'white',
+            borderBottom: '2px solid white',
+            paddingBottom: 2,
+            marginBottom: 2,
+          }}
           title={
-            <Typography variant="h5" sx={{ fontSize: '2rem', textAlign: 'left' }}>
+            <Typography variant="h5" sx={{
+              fontSize: '2rem',
+              textAlign: 'left',
+              color: 'white',
+            }}>
               Mi perfil (Broker)
             </Typography>
           }
           action={
-            <Avatar sx={{ fontSize: '2rem', bgcolor: blue[800] }}>
-              {userInitial}
-            </Avatar>
+            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+              <Avatar
+                sx={{
+                  fontSize: '2rem',
+                  bgcolor: blue[800],
+                  width: 80,
+                  height: 80,
+                }}
+                src={userData.avatarUrl || undefined}
+              >
+                {!userData.avatarUrl && userInitial}
+              </Avatar>
+              {isEditing && (
+                <>
+                  <input
+                    accept="image/*"
+                    id="avatar-upload-button"
+                    type="file"
+                    style={{ display: 'none' }}
+                    onChange={handleAvatarUpload}
+                    ref={fileInputRef}
+                  />
+                  <label htmlFor="avatar-upload-button">
+                    <IconButton
+                      color="inherit" // Cambiado a 'inherit' para que el icono tome el color blanco del CardHeader
+                      aria-label="upload picture"
+                      component="span"
+                      sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                        backgroundColor: 'rgba(255,255,255,0.8)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,1)',
+                        },
+                        color: blue[800],
+                      }}
+                      disabled={uploadingAvatar}
+                    >
+                      {uploadingAvatar ? <CircularProgress size={24} sx={{ color: blue[800] }} /> : <PhotoCamera />}
+                    </IconButton>
+                  </label>
+                </>
+              )}
+            </Box>
           }
         />
+
         <CardContent>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
@@ -324,7 +379,7 @@ const BrokerProfileCard = () => {
                 fullWidth
                 name="role"
                 value="Broker"
-                disabled 
+                disabled
               />
             </Grid>
           </Grid>
@@ -342,10 +397,10 @@ const BrokerProfileCard = () => {
             </Button>
           ) : (
             <>
-              <Button size="small" onClick={handleUpdateProfile} variant="contained" color="primary" disabled={loading}>
+              <Button size="small" onClick={handleUpdateProfile} variant="contained" color="primary" disabled={loading || uploadingAvatar}>
                 {loading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
               </Button>
-              <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading}>
+              <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading || uploadingAvatar}>
                 Cancelar
               </Button>
             </>
@@ -362,4 +417,4 @@ const BrokerProfileCard = () => {
   );
 };
 
-export default BrokerProfileCard 
+export default BrokerProfileCard;

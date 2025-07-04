@@ -485,10 +485,8 @@ def handle_carrier_profile():
 
 
 @api.route('/profile/<int:user_id>', methods=['GET'])
-@jwt_required()
+# @jwt_required()
 def get_user_profile_by_id(user_id):
-    # No necesitamos el user_id del token JWT aquí, solo necesitamos que el token sea válido.
-    # El user_id que nos importa es el que viene en la URL.
 
     user = db.session.get(User, user_id)
 
@@ -508,7 +506,6 @@ def get_user_profile_by_id(user_id):
         "role": user.role.value
     }
 
-    # Añadir campos específicos de carrier si el usuario cuyo perfil se está viendo es un carrier
     if user.role == Roles.carrier:
         profile_data.update({
             "usdotNumber": user.usdot_number,

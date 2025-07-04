@@ -222,7 +222,7 @@ const CarrierProfileCard = () => {
   }
 
   return (
-    <Box sx={{
+     <Box sx={{
       padding: 4,
       backgroundColor: '#f5f5f5',
       minHeight: '100vh',
@@ -237,18 +237,74 @@ const CarrierProfileCard = () => {
         width: '90%',
         boxShadow: 3,
       }}>
+        
         <CardHeader
+          sx={{
+            backgroundColor: '#002244',
+            color: 'white', 
+            borderBottom: '2px solid white', 
+            paddingBottom: 2,
+            marginBottom: 2, 
+          }}
           title={
-            <Typography variant="h5" sx={{ fontSize: '2rem', textAlign: 'left' }}>
+            <Typography variant="h5" sx={{
+              fontSize: '2rem',
+              textAlign: 'left',
+              color: 'white',
+            }}>
               Mi perfil (Carrier)
             </Typography>
           }
           action={
-            <Avatar sx={{ fontSize: '2rem', bgcolor: blue[800] }}>
-              {userInitial}
-            </Avatar>
+            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+              <Avatar
+                sx={{
+                  fontSize: '2rem',
+                  bgcolor: blue[800], 
+                  width: 80,
+                  height: 80,
+                }}
+                src={userData.avatarUrl || undefined} 
+              >
+                {!userData.avatarUrl && userInitial}
+              </Avatar>
+              {isEditing && (
+                <>
+                  <input
+                    accept="image/*"
+                    id="avatar-upload-button"
+                    type="file"
+                    style={{ display: 'none' }}
+                    onChange={handleAvatarUpload}
+                    ref={fileInputRef}
+                  />
+                  <label htmlFor="avatar-upload-button">
+                    <IconButton
+                      color="inherit"
+                      aria-label="upload picture"
+                      component="span"
+                      sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                        backgroundColor: 'rgba(255,255,255,0.8)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,1)', 
+                        },
+                        color: '#002244', 
+                      }}
+                      disabled={uploadingAvatar}
+                    >
+                      {uploadingAvatar ? <CircularProgress size={24} sx={{ color: '#002244' }} /> : <PhotoCamera />}
+                    </IconButton>
+                  </label>
+                </>
+              )}
+            </Box>
           }
         />
+
+
         <CardContent>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
@@ -346,11 +402,10 @@ const CarrierProfileCard = () => {
                 fullWidth
                 name="role"
                 value="Carrier"
-                disabled // El rol siempre está deshabilitado para visualización
+                disabled
               />
             </Grid>
 
-            
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Número USDOT"
@@ -396,7 +451,7 @@ const CarrierProfileCard = () => {
                     disabled={!isEditing}
                   />
                 }
-                label="Abierto a Nuevas Cargas"
+                label="Open"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -410,7 +465,7 @@ const CarrierProfileCard = () => {
                     disabled={!isEditing}
                   />
                 }
-                label="Cerrado para Nuevas Cargas"
+                label="Enclose"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -424,7 +479,7 @@ const CarrierProfileCard = () => {
                     disabled={!isEditing}
                   />
                 }
-                label="Maneja FTL/LTL"
+                label="Both"
               />
             </Grid>
           </Grid>
@@ -442,10 +497,16 @@ const CarrierProfileCard = () => {
             </Button>
           ) : (
             <>
-              <Button size="small" onClick={handleUpdateProfile} variant="contained" color="primary" disabled={loading}>
+              <Button
+                size="small"
+                onClick={handleUpdateProfile}
+                variant="contained"
+                color="primary"
+                disabled={loading || uploadingAvatar} // Deshabilita el botón mientras se sube el avatar
+              >
                 {loading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
               </Button>
-              <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading}>
+              <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading || uploadingAvatar}>
                 Cancelar
               </Button>
             </>
@@ -462,4 +523,4 @@ const CarrierProfileCard = () => {
   );
 };
 
-export default CarrierProfileCard 
+export default CarrierProfileCard;

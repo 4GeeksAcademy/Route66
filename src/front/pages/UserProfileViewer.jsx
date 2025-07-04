@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom'; // Para obtener el ID del usuario de la URL
-// Eliminamos Snackbar y MuiAlert ya que no hay funcionalidad de edición/mensajes
-// import Snackbar from '@mui/material/Snackbar';
-// import MuiAlert from '@mui/material/Alert';
-// Eliminamos EditIcon y Button de CardActions ya que no hay edición
-// import EditIcon from '@mui/icons-material/Edit';
+import { useParams } from 'react-router-dom';
+
 import {
     Box,
     Card,
@@ -17,32 +13,16 @@ import {
     FormControlLabel,
     Checkbox,
     CircularProgress,
-    // Eliminamos Button y CardActions si no se usan para otros propósitos
-    // Button,
-    // CardActions
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
 
-// El componente Alert ya no es necesario si eliminamos Snackbar
-// const Alert = React.forwardRef(function Alert(props, ref) {
-//     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-// });
+// @param { string }
+// @param { number }
+// @returns { Promise < object >}
 
-/**
- * Realiza una solicitud GET para obtener el perfil de un usuario específico por su ID.
- * Este fetch coincide con el endpoint Flask: GET /profile/<user_id>
- *
- * @param {string} jwtToken El token JWT del usuario autenticado que realiza la solicitud.
- * @param {number} userIdToConsult El ID del usuario cuyo perfil se desea obtener.
- * @returns {Promise<object>} Una promesa que resuelve con los datos del perfil del usuario si la solicitud es exitosa,
- * o rechaza con un objeto de error si hay un problema.
- */
 async function fetchUserProfileById(jwtToken, userIdToConsult) {
-    // IMPORTANTE: Ajusta esta URL base para que coincida con la dirección de tu backend Flask.
-    // En un entorno de desarrollo local, podría ser "http://localhost:5000".
-    // En Codespaces, podría ser la URL pública del puerto de tu backend (ej. "https://your-codespace-name-5000.app.github.dev").
-    // Se recomienda usar una variable de entorno para esto.
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"; 
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL
 
     const url = `${backendUrl}/profile/${userIdToConsult}`;
 
@@ -70,40 +50,29 @@ async function fetchUserProfileById(jwtToken, userIdToConsult) {
     }
 }
 
-// -----------------------------------------------------------------------------
-// COMPONENTE REACT: UserProfileViewer (Solo Lectura)
-// -----------------------------------------------------------------------------
 
 function UserProfileViewer() {
-    // Obtener el ID del usuario de los parámetros de la URL (ej. /profile/123)
-    const { userId } = useParams(); 
-    const userIdToConsult = parseInt(userId, 10); // Convertir a número entero
 
-    // Estados para la gestión de datos, carga y errores
+    const { userId } = useParams();
+    const userIdToConsult = parseInt(userId, 10);
+
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    // Eliminamos el estado isEditing ya que el perfil será solo lectura
-    // const [isEditing, setIsEditing] = useState(false); 
-    // Eliminamos los estados de Snackbar ya que no hay mensajes de edición
-    // const [snackbarOpen, setSnackbarOpen] = useState(false);
-    // const [snackbarMessage, setSnackbarMessage] = useState('');
-    // const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    
 
-    // Función para obtener el token JWT (simulación, en una app real vendría de un un contexto/localStorage)
-    const getJwtToken = useCallback(() => {
-        // En una aplicación real, esto se obtendría de forma segura, por ejemplo:
-        // return localStorage.getItem('jwt_token');
-        // Para pruebas, puedes usar un token de ejemplo:
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3ODkwNTYwNywianRpIjoiZmVkMjA2OWEtYTEwNS00Mzk5LThjMjItOTYwZGM2NjgwMjEwIiwibmJmIjoxNjc4OTA1NjA3LCJzdWIiOjEsInR5cGUiOiJhY2Nlc3MiLCJleHAiOjE2Nzg5MDY1MDcsInJvbGUiOiJicm9rZXIifQ.ejmK9bL6-bB8-F6_2h-1q5Y-Y5j-7J5-7J5-7J5-7J5-7J5"; // REEMPLAZA CON UN TOKEN REAL Y SEGURO
-    }, []);
+    
+    // const getJwtToken = useCallback(() => {
+        
+    //     return localStorage.getItem('jwt_token');
+    // }, []);
 
-    // Efecto para cargar los datos del perfil cuando el componente se monta o el userId cambia
+    
     useEffect(() => {
         const loadUserProfile = async () => {
             setLoading(true);
             setError(null);
-            setUserData(null); // Limpiar datos anteriores
+            setUserData(null); 
 
             const jwtToken = getJwtToken();
 
@@ -130,19 +99,11 @@ function UserProfileViewer() {
         };
 
         loadUserProfile();
-    }, [userIdToConsult, getJwtToken]); // Dependencias: userIdToConsult y getJwtToken
+    }, [userIdToConsult, getJwtToken]);
 
-    // Derivar la inicial del nombre para el Avatar
+    
     const userInitial = userData?.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
 
-    // Eliminamos handleInputChange y otros manejadores de edición
-    // const handleInputChange = (event) => { /* ... */ };
-    // const handleUpdateProfile = () => { /* ... */ };
-    // const handleCancelEdit = () => { /* ... */ };
-    // const handleEditClick = () => { /* ... */ };
-    // const handleCloseSnackbar = (event, reason) => { /* ... */ };
-
-    // Renderizado condicional basado en el estado de carga y error
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -206,7 +167,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="fullName"
                                 value={userData.fullName || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }} 
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -216,7 +177,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="companyName"
                                 value={userData.companyName || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }} 
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -226,7 +187,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="email"
                                 value={userData.email || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }} 
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -236,7 +197,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="phoneNumber"
                                 value={userData.phoneNumber || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }} 
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -246,7 +207,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="address"
                                 value={userData.address || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }} 
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -256,7 +217,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="city"
                                 value={userData.city || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -266,7 +227,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="state"
                                 value={userData.state || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -276,7 +237,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="zip"
                                 value={userData.zip || ''}
-                                InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                InputProps={{ readOnly: true }} 
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -286,11 +247,11 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="role"
                                 value={userData.role.charAt(0).toUpperCase() + userData.role.slice(1)}
-                                InputProps={{ readOnly: true }} // El rol no debería ser editable
+                                InputProps={{ readOnly: true }} 
                             />
                         </Grid>
 
-                        {/* Campos específicos para Carriers */}
+                        
                         {userData.role === 'carrier' && (
                             <>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -300,7 +261,7 @@ function UserProfileViewer() {
                                         fullWidth
                                         name="usdotNumber"
                                         value={userData.usdotNumber || ''}
-                                        InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                        InputProps={{ readOnly: true }} 
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -311,7 +272,7 @@ function UserProfileViewer() {
                                         name="numberOfTrucks"
                                         type="number"
                                         value={userData.numberOfTrucks || ''}
-                                        InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                        InputProps={{ readOnly: true }} 
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -321,7 +282,7 @@ function UserProfileViewer() {
                                         fullWidth
                                         name="typeOfTransport"
                                         value={userData.typeOfTransport || ''}
-                                        InputProps={{ readOnly: true }} // Siempre de solo lectura
+                                        InputProps={{ readOnly: true }} 
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -331,10 +292,10 @@ function UserProfileViewer() {
                                                 checked={userData.isOpen || false}
                                                 name="isOpen"
                                                 color="primary"
-                                                disabled={true} // Siempre deshabilitado
+                                                disabled={true} 
                                             />
                                         }
-                                        label="Open for New Loads"
+                                        label="Open"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -344,10 +305,10 @@ function UserProfileViewer() {
                                                 checked={userData.isEnclose || false}
                                                 name="isEnclose"
                                                 color="primary"
-                                                disabled={true} // Siempre deshabilitado
+                                                disabled={true}
                                             />
                                         }
-                                        label="Enclose for New Loads"
+                                        label="Enclose"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -357,27 +318,19 @@ function UserProfileViewer() {
                                                 checked={userData.isBoth || false}
                                                 name="isBoth"
                                                 color="primary"
-                                                disabled={true} // Siempre deshabilitado
+                                                disabled={true} 
                                             />
                                         }
-                                        label="Handles both FTL/LTL"
+                                        label="Both"
                                     />
                                 </Grid>
                             </>
                         )}
                     </Grid>
                 </CardContent>
-                {/* Eliminamos CardActions ya que no hay botones de edición */}
-                {/* <CardActions sx={{ justifyContent: 'flex-end', padding: 2 }}>
-                    </CardActions> */}
+
             </Card>
 
-            {/* Eliminamos Snackbar ya que no hay mensajes de alerta relacionados con la edición */}
-            {/* <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar> */}
         </Box>
     );
 }
