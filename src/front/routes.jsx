@@ -13,7 +13,7 @@ import Principal from "./pages/Principal";
 import Login from "./pages/Login";
 import PasswordReset from "./pages/PaswordReset";
 import UserProfilesApp from "./pages/UserProfilesApp";
-import UserProfileViewer from "./pages/UserProfileViewer";
+// import UserProfileViewer from "./pages/UserProfileViewer";
 
 export const router = createBrowserRouter(
       createRoutesFromElements(
@@ -32,7 +32,7 @@ export const router = createBrowserRouter(
                   <Route path="/register/:role" element={<Register />} />
                   <Route path="/passwordReset" element={<PasswordReset />} />
                   <Route path="/profile/:role" element={<UserProfilesApp />} />
-                  <Route path="/profile/:userId" element={<U />} />
+                  {/* <Route path="/profile/:userId" element={<U />} /> */}
 
             </Route>
       )
