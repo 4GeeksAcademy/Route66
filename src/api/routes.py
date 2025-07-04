@@ -453,3 +453,36 @@ def handle_carrier_profile():
     return jsonify({"msg": "Método no permitido"}), 405
 
    
+@app.route('/profile/<int:user_id>', methods=['GET'])
+@jwt_required()
+def get_user_profile_by_id(user_id):
+    # No necesitamos el user_id del token JWT aquí, solo necesitamos que el token sea válido.
+    # El user_id que nos importa es el que viene en la URL.
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    profile_data = {
+        "id": user.id,
+        "fullName": user.full_name,
+        "companyName": user.company_name,
+        "email": user.email,
+        "phoneNumber": user.phone_number,
+        "address": user.address,
+        "city": user.city,
+        "state": user.state,
+        "zip": user.zip,
+        "role": user.role.value
+    }
+    
+    # Añadir campos específicos de carrier si el usuario cuyo perfil se está viendo es un carrier
+    if user.role == Roles.carrier:
+        profile_data.update({
+            "usdotNumber": user.usdot_number,
+            "typeOfTransport": user.type_of_transport,
+            "numberOfTrucks": user.number_of_trucks
+        })
+    
+    return jsonify(profile_data), 200
