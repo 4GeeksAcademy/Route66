@@ -26,7 +26,6 @@ app.config['JWT_SECRET_KEY'] = 'una_clave_super_segura'
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
 jwt = JWTManager(app)
 
-
 app.url_map.strict_slashes = False
 
 # database condiguration

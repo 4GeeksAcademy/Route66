@@ -12,6 +12,7 @@ import { Register } from "./pages/Register";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
 import PasswordReset from "./pages/PaswordReset";
+import FormPasswordReset from "./pages/FormPasswordReset";
 
 export const router = createBrowserRouter(
       createRoutesFromElements(
@@ -29,6 +30,7 @@ export const router = createBrowserRouter(
                   <Route path="/loadsboard" element={<LoadsBoard />} />
                   <Route path="/register/:role" element={<Register />} />
                   <Route path="/passwordReset" element={<PasswordReset />} />
+                  <Route path="/formPasswordReset/:userId/:emailEncrypt" element={<FormPasswordReset />} />
             </Route>
       )
 );
