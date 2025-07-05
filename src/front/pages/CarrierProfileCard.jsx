@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import IconButton from '@mui/material/IconButton';
 import {
   Box,
   Card,
@@ -20,16 +22,12 @@ import {
   CircularProgress
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
-
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
 const CarrierProfileCard = () => {
   const { userId } = useParams();
-
   const [userData, setUserData] = useState({
     fullName: '',
     companyName: '',
@@ -39,50 +37,51 @@ const CarrierProfileCard = () => {
     city: '',
     state: '',
     zip: '',
-    role: 'carrier', 
+    role: 'carrier',
     numberUsdot: '',
     trucks: '',
     isOpen: false,
     isEnclose: false,
     isBoth: false,
-    typeOfTransport: ''
+    typeOfTransport: '',
+    avatarUrl: ''
   });
-
   const [initialUserData, setInitialUserData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [loading, setLoading] = useState(true);
-
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = React.useRef(null);
   const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
-
   const showSnackbar = useCallback((message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   }, []);
-
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
     setSnackbarOpen(false);
   };
-
+  const handleAvatarUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    // Aquí podrías implementar la lógica de subida de imagen si la tienes
+    showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
+  };
   useEffect(() => {
     const fetchCarrierData = async () => {
       setLoading(true);
-      const token = localStorage.getItem('access_token');
-      
-
+      const token = localStorage.getItem('TOKEN');
       if (!token) {
         console.error('No se encontró el token en localStorage.');
         showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
         setLoading(false);
         return;
       }
-
       try {
         const response = await fetch(`${backendUrl}/api/profile/carrier`, {
           method: 'GET',
@@ -91,12 +90,10 @@ const CarrierProfileCard = () => {
             'Content-Type': 'application/json'
           }
         });
-
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.msg || 'Error al obtener datos del carrier.');
         }
-
         const data = await response.json();
         setUserData({
           fullName: data.fullName || '',
@@ -107,7 +104,7 @@ const CarrierProfileCard = () => {
           city: data.city || '',
           state: data.state || '',
           zip: data.zip || '',
-          role: 'carrier', 
+          role: 'carrier',
           numberUsdot: data.numberUsdot || '',
           trucks: data.trucks || '',
           isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
@@ -123,10 +120,8 @@ const CarrierProfileCard = () => {
         setLoading(false);
       }
     };
-
     fetchCarrierData();
   }, [userId, showSnackbar]);
-
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setUserData(prevData => ({
@@ -134,18 +129,15 @@ const CarrierProfileCard = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
   };
-
   const handleUpdateProfile = async () => {
     setLoading(true);
-    const token = localStorage.getItem('access_token');
-
+    const token = localStorage.getItem('TOKEN');
     if (!token) {
       console.error('No se encontró el token del usuario.');
       showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
       setLoading(false);
       return;
     }
-
     const dataToSend = {
       fullName: userData.fullName,
       companyName: userData.companyName,
@@ -162,7 +154,6 @@ const CarrierProfileCard = () => {
       isBoth: userData.isBoth,
       typeOfTransport: userData.typeOfTransport,
     };
-
     try {
       const response = await fetch(`${backendUrl}/api/profile/carrier`, {
         method: 'PUT',
@@ -172,12 +163,10 @@ const CarrierProfileCard = () => {
         },
         body: JSON.stringify(dataToSend)
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.msg || 'Error al actualizar el perfil del carrier.');
       }
-
       const updatedData = await response.json();
       setUserData({
         fullName: updatedData.fullName || '',
@@ -206,23 +195,22 @@ const CarrierProfileCard = () => {
       setLoading(false);
     }
   };
-
   const handleCancelEdit = () => {
     setUserData(initialUserData);
     setIsEditing(false);
   };
-
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
         <CircularProgress />
         <Typography variant="h6" sx={{ ml: 2 }}>Cargando perfil de carrier...</Typography>
       </Box>
     );
   }
 
+
   return (
-     <Box sx={{
+    <Box sx={{
       padding: 4,
       backgroundColor: '#f5f5f5',
       minHeight: '100vh',
@@ -237,14 +225,14 @@ const CarrierProfileCard = () => {
         width: '90%',
         boxShadow: 3,
       }}>
-        
+
         <CardHeader
           sx={{
             backgroundColor: '#002244',
-            color: 'white', 
-            borderBottom: '2px solid white', 
+            color: 'white',
+            borderBottom: '2px solid white',
             paddingBottom: 2,
-            marginBottom: 2, 
+            marginBottom: 2,
           }}
           title={
             <Typography variant="h5" sx={{
@@ -260,11 +248,11 @@ const CarrierProfileCard = () => {
               <Avatar
                 sx={{
                   fontSize: '2rem',
-                  bgcolor: blue[800], 
+                  bgcolor: blue[800],
                   width: 80,
                   height: 80,
                 }}
-                src={userData.avatarUrl || undefined} 
+                src={userData.avatarUrl || undefined}
               >
                 {!userData.avatarUrl && userInitial}
               </Avatar>
@@ -289,9 +277,9 @@ const CarrierProfileCard = () => {
                         right: 0,
                         backgroundColor: 'rgba(255,255,255,0.8)',
                         '&:hover': {
-                          backgroundColor: 'rgba(255,255,255,1)', 
+                          backgroundColor: 'rgba(255,255,255,1)',
                         },
-                        color: '#002244', 
+                        color: '#002244',
                       }}
                       disabled={uploadingAvatar}
                     >

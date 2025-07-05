@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import IconButton from '@mui/material/IconButton';
 import {
   Box,
   Card,
@@ -20,17 +22,12 @@ import {
   CircularProgress
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
-
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
-
 const BrokerProfileCard = () => {
   const { userId } = useParams();
-
   const [userData, setUserData] = useState({
     fullName: '',
     companyName: '',
@@ -41,44 +38,45 @@ const BrokerProfileCard = () => {
     state: '',
     zip: '',
     role: 'broker',
+    avatarUrl: '',
   });
-
   const [initialUserData, setInitialUserData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [loading, setLoading] = useState(true);
-
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = React.useRef(null);
   const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
-
   const showSnackbar = useCallback((message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   }, []);
-
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
     setSnackbarOpen(false);
   };
-
+  const handleAvatarUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    // Aquí podrías implementar la lógica de subida de imagen si la tienes
+    showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
+  };
   useEffect(() => {
     const fetchBrokerData = async () => {
       setLoading(true);
-      const token = localStorage.getItem('access_token');
-
+      const token = localStorage.getItem('TOKEN');
       const role = 'broker';
-
       if (!token) {
         console.error('No se encontró el token en localStorage.');
         showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
         setLoading(false);
         return;
       }
-
       try {
         const response = await fetch(`${backendUrl}/api/profile/broker`, {
           method: 'GET',
@@ -87,12 +85,10 @@ const BrokerProfileCard = () => {
             'Content-Type': 'application/json'
           }
         });
-
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.msg || 'Error al obtener datos del broker.');
         }
-
         const data = await response.json();
         setUserData({
           fullName: data.fullName || '',
@@ -113,10 +109,8 @@ const BrokerProfileCard = () => {
         setLoading(false);
       }
     };
-
     fetchBrokerData();
   }, [userId, showSnackbar]);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData(prevData => ({
@@ -124,18 +118,15 @@ const BrokerProfileCard = () => {
       [name]: value
     }));
   };
-
   const handleUpdateProfile = async () => {
     setLoading(true);
-    const token = localStorage.getItem('access_token');
-
+    const token = localStorage.getItem('TOKEN');
     if (!token) {
       console.error('No se encontró el token del usuario.');
       showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
       setLoading(false);
       return;
     }
-
     const dataToSend = {
       fullName: userData.fullName,
       companyName: userData.companyName,
@@ -146,7 +137,6 @@ const BrokerProfileCard = () => {
       state: userData.state,
       zip: userData.zip,
     };
-
     try {
       const response = await fetch(`${backendUrl}/api/profile/broker`, {
         method: 'PUT',
@@ -156,12 +146,10 @@ const BrokerProfileCard = () => {
         },
         body: JSON.stringify(dataToSend)
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.msg || 'Error al actualizar el perfil del broker.');
       }
-
       const updatedData = await response.json();
       setUserData({
         fullName: updatedData.fullName || '',
@@ -184,15 +172,13 @@ const BrokerProfileCard = () => {
       setLoading(false);
     }
   };
-
   const handleCancelEdit = () => {
     setUserData(initialUserData);
     setIsEditing(false);
   };
-
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
         <CircularProgress />
         <Typography variant="h6" sx={{ ml: 2 }}>Cargando perfil de broker...</Typography>
       </Box>
@@ -215,7 +201,6 @@ const BrokerProfileCard = () => {
         width: '90%',
         boxShadow: 3,
       }}>
-
         <CardHeader
           sx={{
             backgroundColor: '#002244',
@@ -242,7 +227,7 @@ const BrokerProfileCard = () => {
                   width: 80,
                   height: 80,
                 }}
-                src={userData.avatarUrl || undefined}
+                src={userData.avatarUrl || undefined} // Usa avatarUrl del estado
               >
                 {!userData.avatarUrl && userInitial}
               </Avatar>
