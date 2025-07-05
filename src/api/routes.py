@@ -318,7 +318,7 @@ def login():
 
 
 @api.route('/profile/broker', methods=['GET', 'PUT'])
-# @jwt_required()
+@jwt_required()
 def handle_broker_profile():
     jwt_data = get_jwt()
     user_role = jwt_data.get("role")
@@ -393,7 +393,7 @@ def handle_broker_profile():
 
 
 @api.route('/profile/carrier', methods=['GET', 'PUT'])
-# @jwt_required()
+@jwt_required()
 def handle_carrier_profile():
     user_id = get_jwt_identity()
     user = db.session.get(User, user_id)
@@ -485,7 +485,7 @@ def handle_carrier_profile():
 
 
 @api.route('/profile/<int:user_id>', methods=['GET'])
-# @jwt_required()
+@jwt_required()
 def get_user_profile_by_id(user_id):
 
     user = db.session.get(User, user_id)

@@ -70,14 +70,14 @@ const BrokerProfileCard = () => {
       setLoading(true);
       const token = localStorage.getItem('access_token');
 
-      // const role = 'broker'; 
+      const role = 'broker';
 
-      // if (!token) {
-      //   console.error('No se encontró el token en localStorage.');
-      //   showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
-      //   setLoading(false);
-      //   return;
-      // }
+      if (!token) {
+        console.error('No se encontró el token en localStorage.');
+        showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
+        setLoading(false);
+        return;
+      }
 
       try {
         const response = await fetch(`${backendUrl}/api/profile/broker`, {
@@ -129,12 +129,12 @@ const BrokerProfileCard = () => {
     setLoading(true);
     const token = localStorage.getItem('access_token');
 
-    // if (!token) {
-    //   console.error('No se encontró el token del usuario.');
-    //   showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
-    //   setLoading(false);
-    //   return;
-    // }
+    if (!token) {
+      console.error('No se encontró el token del usuario.');
+      showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
+      setLoading(false);
+      return;
+    }
 
     const dataToSend = {
       fullName: userData.fullName,

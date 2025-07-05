@@ -59,20 +59,20 @@ function UserProfileViewer() {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
 
-    
-    // const getJwtToken = useCallback(() => {
-        
-    //     return localStorage.getItem('jwt_token');
-    // }, []);
 
-    
+
+    const getJwtToken = useCallback(() => {
+
+        return localStorage.getItem('jwt_token');
+    }, []);
+
+
     useEffect(() => {
         const loadUserProfile = async () => {
             setLoading(true);
             setError(null);
-            setUserData(null); 
+            setUserData(null);
 
             const jwtToken = getJwtToken();
 
@@ -101,7 +101,7 @@ function UserProfileViewer() {
         loadUserProfile();
     }, [userIdToConsult, getJwtToken]);
 
-    
+
     const userInitial = userData?.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
 
     if (loading) {
@@ -144,7 +144,7 @@ function UserProfileViewer() {
                 maxWidth: 800,
                 width: '90%',
                 boxShadow: 3,
-                borderRadius: '12px' // Añadir bordes redondeados
+                borderRadius: '12px'
             }}>
                 <CardHeader
                     title={
@@ -167,7 +167,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="fullName"
                                 value={userData.fullName || ''}
-                                InputProps={{ readOnly: true }} 
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -177,7 +177,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="companyName"
                                 value={userData.companyName || ''}
-                                InputProps={{ readOnly: true }} 
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -187,7 +187,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="email"
                                 value={userData.email || ''}
-                                InputProps={{ readOnly: true }} 
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -197,7 +197,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="phoneNumber"
                                 value={userData.phoneNumber || ''}
-                                InputProps={{ readOnly: true }} 
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -207,7 +207,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="address"
                                 value={userData.address || ''}
-                                InputProps={{ readOnly: true }} 
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -237,7 +237,7 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="zip"
                                 value={userData.zip || ''}
-                                InputProps={{ readOnly: true }} 
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
@@ -247,11 +247,11 @@ function UserProfileViewer() {
                                 fullWidth
                                 name="role"
                                 value={userData.role.charAt(0).toUpperCase() + userData.role.slice(1)}
-                                InputProps={{ readOnly: true }} 
+                                InputProps={{ readOnly: true }}
                             />
                         </Grid>
 
-                        
+
                         {userData.role === 'carrier' && (
                             <>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -261,7 +261,7 @@ function UserProfileViewer() {
                                         fullWidth
                                         name="usdotNumber"
                                         value={userData.usdotNumber || ''}
-                                        InputProps={{ readOnly: true }} 
+                                        InputProps={{ readOnly: true }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -272,7 +272,7 @@ function UserProfileViewer() {
                                         name="numberOfTrucks"
                                         type="number"
                                         value={userData.numberOfTrucks || ''}
-                                        InputProps={{ readOnly: true }} 
+                                        InputProps={{ readOnly: true }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -282,7 +282,7 @@ function UserProfileViewer() {
                                         fullWidth
                                         name="typeOfTransport"
                                         value={userData.typeOfTransport || ''}
-                                        InputProps={{ readOnly: true }} 
+                                        InputProps={{ readOnly: true }}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
@@ -292,7 +292,7 @@ function UserProfileViewer() {
                                                 checked={userData.isOpen || false}
                                                 name="isOpen"
                                                 color="primary"
-                                                disabled={true} 
+                                                disabled={true}
                                             />
                                         }
                                         label="Open"
@@ -318,7 +318,7 @@ function UserProfileViewer() {
                                                 checked={userData.isBoth || false}
                                                 name="isBoth"
                                                 color="primary"
-                                                disabled={true} 
+                                                disabled={true}
                                             />
                                         }
                                         label="Both"
