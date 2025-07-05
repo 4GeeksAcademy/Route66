@@ -60,16 +60,20 @@ const BrokerProfileCard = () => {
     }
     setSnackbarOpen(false);
   };
+
   const handleAvatarUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
     // Aquí podrías implementar la lógica de subida de imagen si la tienes
     showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
   };
+
   useEffect(() => {
     const fetchBrokerData = async () => {
       setLoading(true);
       const token = localStorage.getItem('TOKEN');
+
       const role = 'broker';
       if (!token) {
         console.error('No se encontró el token en localStorage.');
@@ -121,6 +125,7 @@ const BrokerProfileCard = () => {
   const handleUpdateProfile = async () => {
     setLoading(true);
     const token = localStorage.getItem('TOKEN');
+
     if (!token) {
       console.error('No se encontró el token del usuario.');
       showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
@@ -189,7 +194,7 @@ const BrokerProfileCard = () => {
     <Box sx={{
       padding: 4,
       backgroundColor: '#f5f5f5',
-      minHeight: '100vh',
+      minHeight: '79.2vh',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',

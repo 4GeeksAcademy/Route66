@@ -66,16 +66,20 @@ const CarrierProfileCard = () => {
     }
     setSnackbarOpen(false);
   };
+
   const handleAvatarUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
     // Aquí podrías implementar la lógica de subida de imagen si la tienes
     showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
   };
+
   useEffect(() => {
     const fetchCarrierData = async () => {
       setLoading(true);
       const token = localStorage.getItem('TOKEN');
+
       if (!token) {
         console.error('No se encontró el token en localStorage.');
         showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
@@ -132,6 +136,7 @@ const CarrierProfileCard = () => {
   const handleUpdateProfile = async () => {
     setLoading(true);
     const token = localStorage.getItem('TOKEN');
+
     if (!token) {
       console.error('No se encontró el token del usuario.');
       showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
@@ -213,7 +218,7 @@ const CarrierProfileCard = () => {
     <Box sx={{
       padding: 4,
       backgroundColor: '#f5f5f5',
-      minHeight: '100vh',
+      minHeight: '79.2vh',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',

@@ -63,11 +63,11 @@ def loads_register():
             days_to_deliver=int(data['days_to_deliver']),
             status="Pending"
         )
-
         db.session.add(new_load)
         db.session.commit()
 
-        return jsonify({"msg": "Carga registrada exitosamente."}), 201
+        return jsonify({"msg": "Upload successfully registered.",
+                        "new_load": new_load.serialize()}), 201
 
     except Exception as e:
         db.session.rollback()

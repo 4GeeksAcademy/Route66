@@ -13,7 +13,7 @@ const Principal = () => {
                 </div>
 
                 <div className="dropdown">
-                    <button className="btn btn-danger btn-lg fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button className="btn btn-danger btn-lg fw-bold dropdown-toggle boton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Get Started
                     </button>
                     <ul className="dropdown-menu dropdown-menu-center">
