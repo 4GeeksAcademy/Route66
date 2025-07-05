@@ -168,7 +168,8 @@ export const Register = () => {
               {alerta.mensaje}
             </div>
           )}
-          <div className="border border-2 rounded-4 p-4" style={{ background: '#0F2E43' }}>
+
+          <div className="border border-2 rounded-4 p-4" style={{ background: '#0E397F' }}>
             <div className="mb-2 fw-bold text-light border-bottom border-danger border-3 fs-4">Register</div>
             <form className="row g-3 mb-3">
               <div className="col-md-6">

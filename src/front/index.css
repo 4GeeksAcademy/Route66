@@ -1,7 +1,6 @@
-.boton{
-    background-color: rgba(7, 7, 182, 0.952);
-    border-color: rgb(14, 14, 199);
-    color: white 
+.boton {
+  background-color: #d32f2f !important;
+  color: white;
 }
 
 .boton:hover {
@@ -10,18 +9,17 @@
   color: white;
 }
 
-#titulo{
-    color: white;
-    font-size: 30px;
-  }
+#titulo {
+  color: white;
+  font-size: 30px;
+}
 
-#formulario{
-  background-color:#09437ee7;
+#formulario {
+  background-color: #09437ee7;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-body{
-
+body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #ffffff;
@@ -90,6 +88,10 @@ h1 {
 }
 
 .MuiDataGrid-columnHeader {
-  background-color: #0e397e !important;
+  background-color: #0E397F !important;
   color: white;
+}
+
+.swal2-container {
+  z-index: 1400 !important;
 }
