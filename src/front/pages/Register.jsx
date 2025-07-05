@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import rutaCamiones from '../assets/img/camiones.jpg';
+import { State, City }  from 'country-state-city';
+
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -12,8 +14,8 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
         type="text"
         className="form-control shadow-sm"
         id="inputUsdot"
-        name="numberUsdot"
-        value={formulario.numberUsdot}
+        name="usdotNumber"
+        value={formulario.usdotNumber}
         onChange={handleChange}
       />
     </div>
@@ -29,7 +31,7 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
       />
     </div>
     <div className="text-start" style={{ width: "50%" }}>
-      <div className="fs-5 text-light border-bottom border-danger border-3 ">Type of transport?</div>
+      <div className="fs-5 text-light border-bottom border-danger border-3 ">TYPE OF TRANSPORT</div>
       <div className="col-2 d-flex inline-block" style={{ width: "150px" }}>
         {['Open', 'Enclose', 'Both'].map(type => (
           <div className="form-check ms-3 mt-3" key={type}>
@@ -51,10 +53,11 @@ const InputsSoloParaCarriers = ({ formulario, handleChange }) => (
   </>
 );
 
+
 export const Register = () => {
+
   const { role } = useParams();
   const navigate = useNavigate();
-
   const initialFormState = {
     fullName: "",
     companyName: "",
@@ -76,6 +79,23 @@ export const Register = () => {
   const [formulario, setFormulario] = useState(initialFormState);
   const [alerta, setAlerta] = useState({ mensaje: "", tipo: "" });
   const [loading, setLoading] = useState(false);
+  const [states, setStates] = useState([]); //A partir de aquí lo coloqué para manejar los estados y ciudades
+  const [cities, setCities] = useState([]);
+  const US_COUNTRY_CODE = 'US';
+
+   useEffect(() => {
+    setStates(State.getStatesOfCountry(US_COUNTRY_CODE));
+  }, []);
+
+   useEffect(() => {
+    if (formulario.state) {
+      setCities(City.getCitiesOfState(US_COUNTRY_CODE, formulario.state));
+      setFormulario(prevForm => ({ ...prevForm, city: '' })); 
+    } else {
+      setCities([]);
+    }
+  }, [formulario.state]); 
+
 
   function handleChange(e) {
     const { name, type, value, checked } = e.target;
@@ -85,7 +105,7 @@ export const Register = () => {
 
   async function handleRegister() {
     setLoading(true);
-    const transportType = formulario.isBoth ? "both" : formulario.isOpen ? "open" : formulario.isEnclose ? "enclose" : null;
+    const typeOfTransport = formulario.isBoth ? "both" : formulario.isOpen ? "open" : formulario.isEnclose ? "enclose" : null;
     const userData = {
       email: formulario.email,
       password: formulario.password,
@@ -100,17 +120,16 @@ export const Register = () => {
       role: role
     };
     if (role === "carrier") {
-      userData.usdot_number = formulario.numberUsdot;
-      userData.type_of_transport = transportType;
+      userData.usdot_number = formulario.usdotNumber;
+      userData.type_of_transport = typeOfTransport ;
+      userData.trucks = formulario.trucks;
     }
-
     try {
       const res = await fetch(`${backendUrl}/api/signup/${role}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
       });
-
       let result;
       try {
         result = await res.json();
@@ -131,6 +150,7 @@ export const Register = () => {
     }
   }
 
+  
   return (
     <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ minHeight: '79.2vh' }}>
       <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '1200px', width: '100%' }}>
@@ -142,7 +162,6 @@ export const Register = () => {
             style={{ height: '100%', objectFit: 'fill' }}
           />
         </div>
-
         <div className="col-md-6 p-4 bg-light text-white">
           {alerta.mensaje && (
             <div className={`alert alert-${alerta.tipo} fw-bold`} role="alert">
@@ -181,26 +200,38 @@ export const Register = () => {
                 <label htmlFor="inputAddress" className="form-label text-light">Address</label>
                 <input type="text" className="form-control shadow-sm" id="inputAddress" name="address" value={formulario.address} onChange={handleChange} />
               </div>
-              <div className="col-md-6">
-                <label htmlFor="inputCity" className="form-label text-light">City</label>
-                <input type="text" className="form-control shadow-sm" id="inputCity" name="city" value={formulario.city} onChange={handleChange} />
-              </div>
+
+               
               <div className="col-md-6">
                 <label htmlFor="inputState" className="form-label text-light">State</label>
                 <select id="inputState" className="form-control shadow-sm" name="state" value={formulario.state} onChange={handleChange}>
-                  <option>Choose</option>
-                  {["Alabama", "Arizona", "Arkansas", "California", "Colorado", "Delaware", "Florida", "Georgia", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Maine", "Maryland", "Michigan", "Nevada", "New Jersey", "New Mexico", "New York", "Ohio", "Oklahoma", "Pennsilvanya", "South Carolina", "Tennessee", "Texas", "Utah", "Virginia", "Washington"].map(state => (
-                    <option key={state}>{state}</option>
+                  <option value="">Select State</option>
+                  {states.map((state) => (
+                    <option key={state.isoCode} value={state.isoCode}>
+                      {state.name}
+                    </option>
                   ))}
                 </select>
               </div>
+
+              
+              <div className="col-md-6">
+                <label htmlFor="inputCity" className="form-label text-light">City</label>
+                <select id="inputCity" className="form-control shadow-sm" name="city" value={formulario.city} onChange={handleChange} disabled={!formulario.state}>
+                  <option value="">Select City</option>
+                  {cities.map((city) => (
+                    <option key={city.name} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            
               <div className="col-md-6">
                 <label htmlFor="inputZip" className="form-label text-light">Zip</label>
                 <input type="text" className="form-control shadow-sm" id="inputZip" name="zip" value={formulario.zip} onChange={handleChange} />
               </div>
-
               {role === "carrier" && <InputsSoloParaCarriers formulario={formulario} handleChange={handleChange} />}
-
               <div className="col-12 text-center mt-3">
                 <button
                   type="button"
