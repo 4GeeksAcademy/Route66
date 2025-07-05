@@ -6,6 +6,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import CreateIcon from '@mui/icons-material/Create';
 import { CreateLoadModal } from "./CreateLoadModal.jsx"
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const Header = ({
     title = "Title",
@@ -16,7 +17,7 @@ export const Header = ({
     containerStyle = {},
     onNewLoadCreated
 }) => {
-
+    const token = localStorage.getItem("TOKEN");
     const location = useLocation();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,6 +28,11 @@ export const Header = ({
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+    
+    let decodedToken
+    if (token) {
+        decodedToken = jwtDecode(token);
+    }
 
 
     const HomeButtons = () => (
@@ -90,7 +96,7 @@ export const Header = ({
                 Create load
             </Button>)}
             <Button variant="contained" endIcon={<AccountBoxIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
-                navigate("/profile/:role");
+                navigate(`/profile/${decodedToken?.role}`);
             }}>
                 Profile
             </Button>
@@ -115,7 +121,7 @@ export const Header = ({
 
                 {location.pathname === "/" ? <HomeButtons /> : location.pathname === "/login" ? <LoginButton /> : location.pathname === "/register/broker" || location.pathname === "/register/carrier" ? <RegisterButton /> : <SesionsButton />}
             </Box>
-            <CreateLoadModal open={isModalOpen} onClose={handleCloseModal} onNewLoadCreated={onNewLoadCreated}/>
+            <CreateLoadModal open={isModalOpen} onClose={handleCloseModal} onNewLoadCreated={onNewLoadCreated} />
         </Box >
     );
 };

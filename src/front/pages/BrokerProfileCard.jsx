@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import IconButton from '@mui/material/IconButton';
 import {
   Box,
   Card,
@@ -41,6 +43,7 @@ const BrokerProfileCard = () => {
     state: '',
     zip: '',
     role: 'broker',
+    avatarUrl: '',
   });
 
   const [initialUserData, setInitialUserData] = useState({});
@@ -49,6 +52,8 @@ const BrokerProfileCard = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [loading, setLoading] = useState(true);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
 
@@ -65,10 +70,18 @@ const BrokerProfileCard = () => {
     setSnackbarOpen(false);
   };
 
+  const handleAvatarUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Aquí podrías implementar la lógica de subida de imagen si la tienes
+    showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
+  };
+
   useEffect(() => {
     const fetchBrokerData = async () => {
       setLoading(true);
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem('TOKEN');
 
       const role = 'broker';
 
@@ -127,7 +140,7 @@ const BrokerProfileCard = () => {
 
   const handleUpdateProfile = async () => {
     setLoading(true);
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('TOKEN');
 
     if (!token) {
       console.error('No se encontró el token del usuario.');
@@ -192,7 +205,7 @@ const BrokerProfileCard = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
         <CircularProgress />
         <Typography variant="h6" sx={{ ml: 2 }}>Cargando perfil de broker...</Typography>
       </Box>
@@ -203,7 +216,7 @@ const BrokerProfileCard = () => {
     <Box sx={{
       padding: 4,
       backgroundColor: '#f5f5f5',
-      minHeight: '100vh',
+      minHeight: '79.2vh',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
