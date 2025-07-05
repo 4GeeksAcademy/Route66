@@ -12,6 +12,8 @@ import { Register } from "./pages/Register";
 import Principal from "./pages/Principal";
 import Login from "./pages/Login";
 import PasswordReset from "./pages/PaswordReset";
+import UserProfilesApp from "./pages/UserProfilesApp";
+// import UserProfileViewer from "./pages/UserProfileViewer";
 import { BrokerLoadsBoard } from "./pages/BrokerLoadsBoard";
 
 export const router = createBrowserRouter(
@@ -30,6 +32,9 @@ export const router = createBrowserRouter(
                   <Route path="/loadsboard" element={<LoadsBoard />} />
                   <Route path="/register/:role" element={<Register />} />
                   <Route path="/passwordReset" element={<PasswordReset />} />
+                  <Route path="/profile/:role" element={<UserProfilesApp />} />
+                  {/* <Route path="/profile/:userId" element={<U />} /> */}
+
                   <Route path="/myloads" element={<BrokerLoadsBoard />} />
             </Route>
       )

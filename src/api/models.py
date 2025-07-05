@@ -47,6 +47,7 @@ class User(db.Model):
         Boolean(), nullable=False, default=True)
     rating: Mapped[float] = mapped_column(nullable=False, default=5.0)
     password_hash: Mapped[str] = mapped_column(String(300), nullable=False)
+    
 
     broker_loads: Mapped[list["Load"]] = relationship(
         back_populates="broker",
