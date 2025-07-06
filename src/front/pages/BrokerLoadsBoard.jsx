@@ -31,8 +31,53 @@ export const BrokerLoadsBoard = () => {
         setSelectedLoad(null);
     };
 
-    const handelDeleteLoad = (load) => {
+    const handleDeleteLoad = async (load) => {
 
+        if (!token) {
+            Swal.fire({
+                title: '¡No autorizado!',
+                text: 'Sign in to continue',
+                icon: 'warning',
+                confirmButtonText: 'Accept'
+            });
+            return;
+        }
+
+        try {
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
+            const response = await fetch(`${backendUrl}/api/deleteload/${load.id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+
+            const data = await response.json();
+            console.log(data);
+            
+            if (!response.ok) {
+                throw new Error(data.msg || 'Error deleting load');
+            }
+
+            setFilteredLoads((prev) => prev.filter((load) => load.id !== data.load.id))
+
+            Swal.fire({
+                title: '¡Successful!',
+                text: data.msg,
+                icon: 'success',
+                confirmButtonText: 'Accept'
+            });
+
+        } catch (error) {
+            console.error("Error loading loads", error);
+            Swal.fire({
+                title: '¡ERROR!',
+                text: 'Error deleting load',
+                icon: 'error',
+                confirmButtonText: 'Accept'
+            });
+        }
     }
 
 
@@ -58,7 +103,7 @@ export const BrokerLoadsBoard = () => {
                     title: '¡Unauthorized!',
                     text: 'You are not authorized to be on this page, you will be redirected to Login',
                     icon: 'warning',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 });
                 navigate("/login");
                 return;
@@ -72,7 +117,7 @@ export const BrokerLoadsBoard = () => {
                     title: '¡Error!',
                     text: 'authentication error',
                     icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 });
                 localStorage.removeItem("TOKEN");
                 navigate("/login");
@@ -84,7 +129,7 @@ export const BrokerLoadsBoard = () => {
                     title: 'Access Denied',
                     text: 'Only carriers can access the Loads Board.',
                     icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 });
                 localStorage.removeItem("TOKEN");
                 navigate("/login");
@@ -105,13 +150,7 @@ export const BrokerLoadsBoard = () => {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    Swal.fire({
-                        title: '¡Error!',
-                        text: data.msg || 'Error loading loads',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    return;
+                    throw new Error(data.msg || 'Error loading loads');
                 }
 
                 if (!data.results || !Array.isArray(data.results)) {
@@ -139,7 +178,7 @@ export const BrokerLoadsBoard = () => {
                     title: '¡ERROR!',
                     text: 'Error loading loads',
                     icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 });
             }
         }
@@ -165,7 +204,7 @@ export const BrokerLoadsBoard = () => {
                     <Button
                         variant="contained"
                         color="error"
-                        onClick={() => console.log(params.row)}
+                        onClick={() => handleDeleteLoad(params.row)}
                     >
                         Delete Load
                     </Button>
