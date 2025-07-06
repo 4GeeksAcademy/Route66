@@ -31,6 +31,10 @@ export const BrokerLoadsBoard = () => {
         setSelectedLoad(null);
     };
 
+    const handelDeleteLoad = (load) => {
+
+    }
+
 
     const handleFilterChange = ({ pickup, delivery }) => {
         const filtered = loads.filter((load) => {
@@ -155,15 +159,24 @@ export const BrokerLoadsBoard = () => {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 170,
+            width: 340,
             renderCell: (params) =>
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleOpenModal(params.row)}
-                >
-                    See Requests
-                </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-around', alignContent: 'center' }}>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => console.log(params.row)}
+                    >
+                        Delete Load
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleOpenModal(params.row)}
+                    >
+                        See Requests
+                    </Button>
+                </Box>
         }
     ];
 
