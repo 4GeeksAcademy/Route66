@@ -47,7 +47,6 @@ class User(db.Model):
         Boolean(), nullable=False, default=True)
     rating: Mapped[float] = mapped_column(nullable=False, default=5.0)
     password_hash: Mapped[str] = mapped_column(String(300), nullable=False)
-    
 
     broker_loads: Mapped[list["Load"]] = relationship(
         back_populates="broker",
@@ -102,7 +101,7 @@ class User(db.Model):
                 "rating": self.rating,
                 "broker_loads": [load.serialize() for load in self.broker_loads],
                 "requests_accepted": [load.serialize() for load in self.requests_accepted],
-                "load_requests_sent": [load.serialize() for load in self.load_requests_sent],
+                "load_requests_sent": [req.serialize() for req in self.load_requests_sent],
                 "subscription": self.subscription.serialize() if self.subscription else None,
             }
 
@@ -131,8 +130,8 @@ class Load(db.Model):
         foreign_keys=[carrier_id]
     )
 
-    load_requests: Mapped[list["LoadRequest"]
-                          ] = relationship(back_populates="load")
+    load_requests: Mapped[list["LoadRequest"]] = relationship(
+        back_populates="load", cascade="all, delete-orphan")
 
     def serialize(self, detail_level="full"):
         data = {
