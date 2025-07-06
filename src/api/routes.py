@@ -200,7 +200,8 @@ def delete_load(load_id):
         db.session.delete(load)
         db.session.commit()
 
-        return jsonify({"msg": "Load successfully deleted."}), 200
+        return jsonify({"msg": "Load successfully deleted.",
+                        "load": load.serialize(detail_level="medium")}), 200
 
     except Exception as e:
         return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
