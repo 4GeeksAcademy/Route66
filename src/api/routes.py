@@ -10,11 +10,32 @@ from flask_jwt_extended import create_access_token
 from api.models import db, User, Load, LoadRequest, Roles
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from werkzeug.security import check_password_hash
+import cloudinary
+import cloudinary.uploader
+import os
 
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+
+cloudinary.config(
+        cloud_name=os.environ.get("CLOUDINATY_CLOUD_NAME"),
+        api_key=os.environ.get("CLOUDINATY_API_KEY"),
+        api_secret=os.environ.get("CLOUDINATY_API_SECRET"),
+        )
+
+@api.route('/upload', methods=['POST'])
+def update_image():
+    file=request.files["image"]
+    if not file: 
+        return jsonify({"error": "the file is required"}), 400
+    result=cloudinary.uploader.upload(file)
+
+    if "secure_url" not in result:
+        return jsonify({"error": "the image can not be uploader"}), 400
+    
+    return jsonify({"secure_url": result["secure_url"]}), 200
 
 
 @api.route('/hello', methods=['POST', 'GET'])

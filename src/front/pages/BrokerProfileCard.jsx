@@ -49,6 +49,7 @@ const BrokerProfileCard = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = React.useRef(null);
   const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
+
   const showSnackbar = useCallback((message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
@@ -62,11 +63,61 @@ const BrokerProfileCard = () => {
   };
 
   const handleAvatarUpload = async (event) => {
+
     const file = event.target.files[0];
     if (!file) return;
 
-    // Aquí podrías implementar la lógica de subida de imagen si la tienes
-    showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
+    setUploadingAvatar(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+
+      const uploadResponse = await fetch(`${backendUrl}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        const error = await uploadResponse.json();
+        throw new Error(error.error || 'Error uploading image to your server.');
+      }
+
+      const uploadData = await uploadResponse.json();
+      const newAvatarUrl = uploadData.secure_url;
+
+
+      const token = localStorage.getItem('TOKEN');
+      if (!token) {
+        showSnackbar('You are not authenticated. Please log in', 'error');
+        setUploadingAvatar(false);
+        return;
+      }
+
+      const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/broker`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ avatarUrl: newAvatarUrl })
+      });
+
+      if (!backendUpdateResponse.ok) {
+        const errorData = await backendUpdateResponse.json();
+        throw new Error(errorData.msg || 'Failed to update brokers profile avatar.');
+      }
+
+      setUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
+      setInitialUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
+      showSnackbar('Avatar updated successfully.', 'success');
+
+    } catch (err) {
+      console.error('Error uploading or updating avatar:', err.message);
+      showSnackbar(`Error uploading or updating avatar: ${err.message}`, 'error');
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   useEffect(() => {
@@ -104,6 +155,7 @@ const BrokerProfileCard = () => {
           state: data.state || '',
           zip: data.zip || '',
           role: 'broker',
+          avatarUrl: data.avatarUrl || '',
         });
         setInitialUserData(data);
       } catch (err) {
@@ -115,6 +167,7 @@ const BrokerProfileCard = () => {
     };
     fetchBrokerData();
   }, [userId, showSnackbar]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData(prevData => ({
@@ -127,7 +180,7 @@ const BrokerProfileCard = () => {
     const token = localStorage.getItem('TOKEN');
 
     if (!token) {
-      console.error('No se encontró el token del usuario.');
+      console.error('User token not found.');
       showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
       setLoading(false);
       return;
@@ -166,6 +219,7 @@ const BrokerProfileCard = () => {
         state: updatedData.state || '',
         zip: updatedData.zip || '',
         role: 'broker',
+        avatarUrl: updatedData.avatarUrl || '',
       });
       setInitialUserData(updatedData);
       setIsEditing(false);
@@ -177,10 +231,12 @@ const BrokerProfileCard = () => {
       setLoading(false);
     }
   };
+
   const handleCancelEdit = () => {
     setUserData(initialUserData);
     setIsEditing(false);
   };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
@@ -248,7 +304,7 @@ const BrokerProfileCard = () => {
                   />
                   <label htmlFor="avatar-upload-button">
                     <IconButton
-                      color="inherit" // Cambiado a 'inherit' para que el icono tome el color blanco del CardHeader
+                      color="inherit"
                       aria-label="upload picture"
                       component="span"
                       sx={{
@@ -261,7 +317,7 @@ const BrokerProfileCard = () => {
                         },
                         color: blue[800],
                       }}
-                      disabled={uploadingAvatar}
+                      disabled={uploadingAvatar} // Deshabilita el botón durante la carga
                     >
                       {uploadingAvatar ? <CircularProgress size={24} sx={{ color: blue[800] }} /> : <PhotoCamera />}
                     </IconButton>

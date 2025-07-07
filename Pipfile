@@ -9,7 +9,6 @@ verify_ssl = true
 flask-sqlalchemy = "*"
 python-dotenv = "*"
 gunicorn = "*"
-cloudinary = "*"
 typing-extensions = "*"
 wtforms = "==3.1.2"
 sqlalchemy = "*"
@@ -21,6 +20,7 @@ flask-cors = "*"
 flask-jwt-extended = "*"
 flask-admin = "*"
 psycopg2-binary = "*"
+cloudinary = "*"
 
 [requires]
 python_version = "3.13"
