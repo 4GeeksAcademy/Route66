@@ -24,7 +24,7 @@ async function fetchUserProfileById(jwtToken, userIdToConsult) {
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL
 
-    const url = `${backendUrl}/profile/${userIdToConsult}`;
+    const url = `${backendUrl}/users/${userIdToConsult}`;
 
     try {
         const response = await fetch(url, {
@@ -75,6 +75,7 @@ function UserProfileViewer() {
             setUserData(null);
 
             const jwtToken = getJwtToken();
+            console.log("JWT Token desde localStorage:", TOKEN);
 
             if (!jwtToken) {
                 setError("No se encontró el token JWT. Por favor, inicie sesión.");

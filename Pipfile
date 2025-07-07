@@ -16,11 +16,11 @@ flask = "*"
 flask-migrate = "*"
 flask-swagger = "*"
 python-dateutil = "*"
-flask-cors = "*"
 flask-jwt-extended = "*"
 flask-admin = "*"
 psycopg2-binary = "*"
 cloudinary = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.13"

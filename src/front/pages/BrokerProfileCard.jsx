@@ -22,10 +22,13 @@ import {
   CircularProgress
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
 const BrokerProfileCard = () => {
   const { userId } = useParams();
   const [userData, setUserData] = useState({
@@ -55,6 +58,8 @@ const BrokerProfileCard = () => {
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   }, []);
+
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -85,6 +90,8 @@ const BrokerProfileCard = () => {
 
       const uploadData = await uploadResponse.json();
       const newAvatarUrl = uploadData.secure_url;
+      console.log(uploadData);
+      
 
 
       const token = localStorage.getItem('TOKEN');
@@ -288,7 +295,7 @@ const BrokerProfileCard = () => {
                   width: 80,
                   height: 80,
                 }}
-                src={userData.avatarUrl || undefined} // Usa avatarUrl del estado
+                src={userData.avatarUrl || undefined} 
               >
                 {!userData.avatarUrl && userInitial}
               </Avatar>
@@ -317,7 +324,7 @@ const BrokerProfileCard = () => {
                         },
                         color: blue[800],
                       }}
-                      disabled={uploadingAvatar} // Deshabilita el botón durante la carga
+                      disabled={uploadingAvatar} 
                     >
                       {uploadingAvatar ? <CircularProgress size={24} sx={{ color: blue[800] }} /> : <PhotoCamera />}
                     </IconButton>

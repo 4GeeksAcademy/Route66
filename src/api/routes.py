@@ -20,21 +20,22 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 cloudinary.config(
-        cloud_name=os.environ.get("CLOUDINATY_CLOUD_NAME"),
-        api_key=os.environ.get("CLOUDINATY_API_KEY"),
-        api_secret=os.environ.get("CLOUDINATY_API_SECRET"),
-        )
+    cloud_name=os.environ.get("CLOUDINATY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINATY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINATY_API_SECRET"),
+)
+
 
 @api.route('/upload', methods=['POST'])
 def update_image():
-    file=request.files["image"]
-    if not file: 
+    file = request.files.get("image")
+    if not file:
         return jsonify({"error": "the file is required"}), 400
-    result=cloudinary.uploader.upload(file)
+    result = cloudinary.uploader.upload(file)
 
     if "secure_url" not in result:
         return jsonify({"error": "the image can not be uploader"}), 400
-    
+
     return jsonify({"secure_url": result["secure_url"]}), 200
 
 
@@ -505,7 +506,7 @@ def handle_carrier_profile():
     return jsonify({"msg": "Método no permitido"}), 405
 
 
-@api.route('/profile/<int:user_id>', methods=['GET'])
+@api.route('/users/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_user_profile_by_id(user_id):
 
@@ -531,7 +532,10 @@ def get_user_profile_by_id(user_id):
         profile_data.update({
             "usdotNumber": user.usdot_number,
             "typeOfTransport": user.type_of_transport,
-            "numberOfTrucks": user.number_of_trucks
+            "numberOfTrucks": user.number_of_trucks,
+            "isOpen": user.is_open,
+            "isEnclose": user.is_enclose,
+            "isBoth": user.is_both
         })
 
     return jsonify(profile_data), 200
