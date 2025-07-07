@@ -511,6 +511,7 @@ def handle_carrier_profile():
 def get_user_profile_by_id(user_id):
 
     user = db.session.get(User, user_id)
+    print(user)
 
     if not user:
         return jsonify({"msg": "User not found"}), 404
@@ -533,9 +534,6 @@ def get_user_profile_by_id(user_id):
             "usdotNumber": user.usdot_number,
             "typeOfTransport": user.type_of_transport,
             "numberOfTrucks": user.number_of_trucks,
-            "isOpen": user.is_open,
-            "isEnclose": user.is_enclose,
-            "isBoth": user.is_both
         })
 
     return jsonify(profile_data), 200
