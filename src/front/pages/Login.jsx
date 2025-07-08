@@ -26,14 +26,14 @@ const Login = () => {
                     title: '¡Welcome!',
                     text: data.mensaje,
                     icon: 'success',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
             } else {
                 Swal.fire({
                     title: 'Error',
                     text: data.mensaje,
                     icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 });
             }
         } catch (error) {

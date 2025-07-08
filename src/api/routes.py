@@ -182,6 +182,37 @@ def create_load_request():
         return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
 
 
+@api.route('/deleteload/<int:load_id>', methods=['DELETE'])
+@jwt_required()
+def delete_load(load_id):
+    try:
+        jwt_data = get_jwt()
+        broker_id = int(get_jwt_identity())
+        user_role = jwt_data.get("role")
+
+        if user_role != "broker":
+            return jsonify({"msg": "You do not have permission to delete this load."}), 403
+
+        # Buscar la carga que pertenezca a este broker
+        load = db.session.execute(
+            select(Load).where(
+                and_(Load.id == load_id, Load.broker_id == broker_id)
+            )
+        ).scalar_one_or_none()
+
+        if not load:
+            return jsonify({"msg": "Load not found or does not belong to this broker."}), 404
+
+        db.session.delete(load)
+        db.session.commit()
+
+        return jsonify({"msg": "Load successfully deleted.",
+                        "load": load.serialize(detail_level="medium")}), 200
+
+    except Exception as e:
+        return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
+
+
 @api.route('/signup/carrier', methods=['POST'])
 def register_carrier():
     data = request.get_json()

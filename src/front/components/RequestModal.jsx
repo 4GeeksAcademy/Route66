@@ -9,8 +9,9 @@ export const RequestModal = ({ open, onClose, load }) => {
     const handleSubmit = async () => {
         const requestData = {
             load_id: load.id,
-            price_offer: offer.trim() !== "" ? offer : load.payment
+            price_offer: offer.trim() !== "" ? offer : parseInt(load.payment.slice(1))
         }
+
         try {
             const backendUrl = import.meta.env.VITE_BACKEND_URL;
             const response = await fetch(`${backendUrl}/api/requestload`, {
