@@ -167,7 +167,7 @@ export const LoadsBoard = () => {
                         color="error"
                         onClick={() => handleOpenModal(params.row)}
                     >
-                        See Requests
+                        Send Requests
                     </Button>
                 </Box>
 

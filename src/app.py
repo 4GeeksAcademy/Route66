@@ -16,6 +16,7 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 
 # from models import Person
@@ -24,6 +25,7 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 
 app.config['JWT_SECRET_KEY'] = 'una_clave_super_segura'
 app.config['JWT_TOKEN_LOCATION'] = ['headers']

@@ -22,12 +22,8 @@ flask-admin = "*"
 psycopg2 = "*"
 flask-mail = "*"
 dotenv = "*"
-<<<<<<< HEAD
-
-=======
 cloudinary = "*"
 flask-cors = "*"
->>>>>>> d2441decd1847e29dc314b35a8b4007126e3dbc8
 
 [requires]
 python_version = "3.13"
