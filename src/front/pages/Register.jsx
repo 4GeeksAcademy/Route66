@@ -134,17 +134,17 @@ export const Register = () => {
       try {
         result = await res.json();
       } catch {
-        result = { msg: "Error inesperado del servidor" };
+        result = { msg: "Unexpected server error" };
       }
       if (res.ok) {
-        setAlerta({ mensaje: `Registro de ${role} exitoso`, tipo: "success" });
+        setAlerta({ mensaje: `${role} registration successful`, tipo: "success" });
         setFormulario(initialFormState);
         setTimeout(() => navigate("/login"), 1500);
       } else {
-        setAlerta({ mensaje: `Error al registrar: ${result.msg}`, tipo: "danger" });
+        setAlerta({ mensaje: `Error registering: ${result.msg}`, tipo: "danger" });
       }
     } catch (err) {
-      setAlerta({ mensaje: "Error de red o servidor. Inténtalo más tarde.", tipo: "danger" });
+      setAlerta({ mensaje: "Network or server error. Please try again later.", tipo: "danger" });
     } finally {
       setLoading(false);
     }
