@@ -7,6 +7,7 @@ import CreateIcon from '@mui/icons-material/Create';
 import { CreateLoadModal } from "./CreateLoadModal.jsx"
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import GridViewIcon from '@mui/icons-material/GridView';
 
 export const Header = ({
     title = "Title",
@@ -113,11 +114,18 @@ export const Header = ({
             }}>
                 Create load
             </Button>)}
-            <Button variant="contained" endIcon={<AccountBoxIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+
+            {(location.pathname === "/profile/carrier" || location.pathname === "/profile/broker")? (<Button variant="contained" endIcon={<GridViewIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+                navigate(location.pathname === "/profile/carrier" ? "/loadsboard" : "/myloads");
+            }}>
+                Loads
+            </Button>) : <Button variant="contained" endIcon={<AccountBoxIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
                 navigate(`/profile/${decodedToken?.role}`);
             }}>
                 Profile
-            </Button>
+            </Button>}
+
+
             <Button variant="contained" endIcon={<LogoutIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
                 localStorage.removeItem("TOKEN")
                 localStorage.removeItem("User")
