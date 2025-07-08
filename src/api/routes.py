@@ -508,7 +508,7 @@ def handle_broker_profile():
         data = request.get_json()
 
         if not data:
-            return jsonify({"msg": "No se recibieron datos para actualizar"}), 400
+            return jsonify({"msg": "No data received to update"}), 400
 
         try:
             if 'fullName' in data:
@@ -517,7 +517,7 @@ def handle_broker_profile():
                 user.company_name = data['companyName']
             if 'email' in data:
                 if '@' not in data['email'] or '.' not in data['email']:
-                    return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
+                    return jsonify({"msg": "Invalid email format"}), 400
                 user.email = data['email']
             if 'phoneNumber' in data:
                 user.phone_number = data['phoneNumber']
@@ -535,7 +535,7 @@ def handle_broker_profile():
             db.session.commit()
 
             return jsonify({
-                "msg": "Perfil actualizado con éxito",
+                "msg": "Profile updated successfully",
                 "fullName": user.full_name,
                 "companyName": user.company_name,
                 "email": user.email,
@@ -550,10 +550,10 @@ def handle_broker_profile():
 
         except Exception as e:
             db.session.rollback()
-            print(f"Error al actualizar el perfil del usuario: {e}")
-            return jsonify({"msg": "Error interno del servidor al actualizar el perfil"}), 500
+            print(f"Error updating user profile: {e}")
+            return jsonify({"msg": "Internal server error while updating profile"}), 500
 
-    return jsonify({"msg": "Método no permitido"}), 405
+    return jsonify({"msg": "Disallowed method"}), 405
 
 
 @api.route('/profile/carrier', methods=['GET', 'PUT'])
@@ -563,7 +563,7 @@ def handle_carrier_profile():
     user = db.session.get(User, user_id)
 
     if not user:
-        return jsonify({"msg": "Usuario no encontrado"}), 404
+        return jsonify({"msg": "User not found"}), 404
 
     if user.role != Roles.carrier:
         return jsonify({"msg": "You do not have permission to access this carrier profile"}), 403
@@ -623,7 +623,7 @@ def handle_carrier_profile():
             db.session.commit()
 
             return jsonify({
-                "msg": "Perfil de Carrier actualizado con éxito",
+                "msg": "Carrier profile successfully updated",
                 "fullName": user.full_name,
                 "companyName": user.company_name,
                 "email": user.email,

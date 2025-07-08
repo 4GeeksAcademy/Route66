@@ -401,7 +401,7 @@ const CarrierProfileCard = () => {
 
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Number USDOT"
+                label="USDOT Number"
                 variant="standard"
                 fullWidth
                 name="numberUsdot"
