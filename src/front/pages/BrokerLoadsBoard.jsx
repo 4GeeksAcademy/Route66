@@ -55,12 +55,13 @@ export const BrokerLoadsBoard = () => {
 
             const data = await response.json();
             console.log(data);
-            
+
             if (!response.ok) {
                 throw new Error(data.msg || 'Error deleting load');
             }
 
-            setFilteredLoads((prev) => prev.filter((load) => load.id !== data.load.id))
+            setFilteredLoads(filteredLoads.filter((load) => load.id !== data.load.id))
+            setLoads(loads.filter((load) => load.id !== data.load.id))
 
             Swal.fire({
                 title: '¡Successful!',

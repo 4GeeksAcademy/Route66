@@ -55,7 +55,6 @@ export const LoadRegister = ({ onClose, onNewLoadCreated }) => {
 					confirmButtonText: 'Great',
 				});
 				setForm(initialForm);
-				setForm(initialForm);
 				
 				onNewLoadCreated(result.new_load);
 				onClose();
