@@ -95,16 +95,9 @@ export const LoadsBoard = () => {
                 });
 
                 const data = await response.json();
-                console.log(data)
 
                 if (!response.ok) {
-                    Swal.fire({
-                        title: '¡Error!',
-                        text: data.msg || 'Error loading loads',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    return;
+                    throw new Error(data.msg || 'Error loading loads');
                 }
 
                 if (!data.results || !Array.isArray(data.results)) {
@@ -167,7 +160,7 @@ export const LoadsBoard = () => {
                         color="error"
                         onClick={() => handleOpenModal(params.row)}
                     >
-                        See Requests
+                        Send Requests
                     </Button>
                 </Box>
 
@@ -181,15 +174,18 @@ export const LoadsBoard = () => {
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
                     <CircularProgress />
                 </Box>
+            ) : filteredLoads.length === 0 ? (
+                <Box sx={{ textAlign: 'center', mt: 5 }}>
+                    <Typography variant="h6" color="text.secondary">
+                        There are no uploads posted yet.
+                    </Typography>
+                </Box>
             ) : (
                 <Box sx={{ margin: 'auto', display: 'inline-block' }}>
                     <DataGrid
                         rows={filteredLoads}
                         columns={columns}
-                        sx={{
-                            bgcolor: 'white',
-                            borderRadius: 2,
-                        }}
+                        sx={{ bgcolor: 'white', borderRadius: 2 }}
                     />
                 </Box>
             )}

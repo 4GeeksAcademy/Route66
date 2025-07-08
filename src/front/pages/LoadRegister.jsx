@@ -55,7 +55,6 @@ export const LoadRegister = ({ onClose, onNewLoadCreated }) => {
 					confirmButtonText: 'Great',
 				});
 				setForm(initialForm);
-				setForm(initialForm);
 				
 				onNewLoadCreated(result.new_load);
 				onClose();
@@ -73,7 +72,7 @@ export const LoadRegister = ({ onClose, onNewLoadCreated }) => {
 			console.error('Network/server error:', error);
 			Swal.fire({
 				title: 'ERROR!',
-				text: 'Server connection failed.',
+				text: result.msg || 'Server connection failed.',
 				icon: 'error',
 				confirmButtonText: 'Ok',
 			});

@@ -61,13 +61,13 @@ def loads_register():
     user_role = jwt_data.get("role")
 
     if user_role != "broker":
-        return jsonify({"msg": "No tienes permiso para registrar cargas"}), 403
+        return jsonify({"msg": "You do not have permission to register loads"}), 403
 
     user_id = int(get_jwt_identity())
 
     data = request.get_json()
     if not data:
-        return jsonify({"msg": "No se recibieron datos necesarios"}), 400
+        return jsonify({"msg": "No necessary data was received"}), 400
 
     required_fields = [
         "vehicle_year", "vehicle_make", "vehicle_model",
@@ -76,7 +76,7 @@ def loads_register():
     ]
 
     if not all(field in data for field in required_fields):
-        return jsonify({"msg": "Faltan datos obligatorios"}), 400
+        return jsonify({"msg": "Mandatory data is missing"}), 400
 
     try:
         new_load = Load(
@@ -99,7 +99,7 @@ def loads_register():
     except Exception as e:
         db.session.rollback()
         return jsonify({
-            "msg": "Error al registrar la carga",
+            "msg": "Error registering the load",
             "error": str(e)
         }), 500
 
@@ -116,7 +116,7 @@ def get_loads():
 
         loads_query = db.session.execute(select(Load)).scalars().all()
         if not loads_query:
-            return jsonify({"msg": "No registered loads found"}), 404
+            return jsonify({"results": []}), 200
 
         loads = [load.serialize() for load in loads_query]
 
@@ -143,7 +143,7 @@ def get_my_loads():
         loads_query = db.session.execute(select(Load).where(
             Load.broker_id == user_id)).scalars().all()
         if not loads_query:
-            return jsonify({"msg": "No loads found"}), 404
+            return jsonify({"results": []}), 200
 
         loads = [load.serialize(detail_level="full") for load in loads_query]
 
@@ -214,7 +214,6 @@ def delete_load(load_id):
         if user_role != "broker":
             return jsonify({"msg": "You do not have permission to delete this load."}), 403
 
-        # Buscar la carga que pertenezca a este broker
         load = db.session.execute(
             select(Load).where(
                 and_(Load.id == load_id, Load.broker_id == broker_id)
@@ -224,11 +223,13 @@ def delete_load(load_id):
         if not load:
             return jsonify({"msg": "Load not found or does not belong to this broker."}), 404
 
+        serialized_load = load.serialize(detail_level="medium")
+
         db.session.delete(load)
         db.session.commit()
 
         return jsonify({"msg": "Load successfully deleted.",
-                        "load": load.serialize(detail_level="medium")}), 200
+                        "load": serialized_load}), 200
 
     except Exception as e:
         return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
@@ -353,7 +354,7 @@ def login():
     if not data or not data.get("email") or not data.get("password"):
         return jsonify({
             "exitoso": False,
-            "mensaje": "Email y contraseña son requeridos."
+            "mensaje": "Email and password are required."
         }), 400
 
     user = User.query.filter_by(email=data["email"]).first()
@@ -361,7 +362,7 @@ def login():
     if not user or not check_password_hash(user.password_hash, data["password"]):
         return jsonify({
             "exitoso": False,
-            "mensaje": "Credenciales inválidas. Por favor, verifica tu email y contraseña."
+            "mensaje": "Invalid credentials. Please verify your email and password."
         }), 401
 
     access_token = create_access_token(
@@ -507,7 +508,7 @@ def handle_broker_profile():
         data = request.get_json()
 
         if not data:
-            return jsonify({"msg": "No se recibieron datos para actualizar"}), 400
+            return jsonify({"msg": "No data received to update"}), 400
 
         try:
             if 'fullName' in data:
@@ -516,7 +517,7 @@ def handle_broker_profile():
                 user.company_name = data['companyName']
             if 'email' in data:
                 if '@' not in data['email'] or '.' not in data['email']:
-                    return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
+                    return jsonify({"msg": "Invalid email format"}), 400
                 user.email = data['email']
             if 'phoneNumber' in data:
                 user.phone_number = data['phoneNumber']
@@ -534,7 +535,7 @@ def handle_broker_profile():
             db.session.commit()
 
             return jsonify({
-                "msg": "Perfil actualizado con éxito",
+                "msg": "Profile updated successfully",
                 "fullName": user.full_name,
                 "companyName": user.company_name,
                 "email": user.email,
@@ -549,10 +550,10 @@ def handle_broker_profile():
 
         except Exception as e:
             db.session.rollback()
-            print(f"Error al actualizar el perfil del usuario: {e}")
-            return jsonify({"msg": "Error interno del servidor al actualizar el perfil"}), 500
+            print(f"Error updating user profile: {e}")
+            return jsonify({"msg": "Internal server error while updating profile"}), 500
 
-    return jsonify({"msg": "Método no permitido"}), 405
+    return jsonify({"msg": "Disallowed method"}), 405
 
 
 @api.route('/profile/carrier', methods=['GET', 'PUT'])
@@ -562,10 +563,10 @@ def handle_carrier_profile():
     user = db.session.get(User, user_id)
 
     if not user:
-        return jsonify({"msg": "Usuario no encontrado"}), 404
+        return jsonify({"msg": "User not found"}), 404
 
     if user.role != Roles.carrier:
-        return jsonify({"msg": "No tienes permiso para acceder a este perfil de carrier"}), 403
+        return jsonify({"msg": "You do not have permission to access this carrier profile"}), 403
 
     if request.method == 'GET':
         return jsonify({
@@ -586,7 +587,7 @@ def handle_carrier_profile():
     elif request.method == 'PUT':
         data = request.get_json()
         if not data:
-            return jsonify({"msg": "No se recibieron datos para actualizar"}), 400
+            return jsonify({"msg": "No data received to update"}), 400
 
         try:
 
@@ -599,7 +600,7 @@ def handle_carrier_profile():
                 if not ("@" in data['email'] and "." in data['email']):
                     return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
                 if User.query.filter(and_(User.email == data['email'], User.id != user.id)).first():
-                    return jsonify({"msg": "Este correo electrónico ya está registrado por otro usuario"}), 409
+                    return jsonify({"msg": "This email address is already registered by another user"}), 409
                 user.email = data['email']
 
             if 'phoneNumber' in data:
@@ -622,7 +623,7 @@ def handle_carrier_profile():
             db.session.commit()
 
             return jsonify({
-                "msg": "Perfil de Carrier actualizado con éxito",
+                "msg": "Carrier profile successfully updated",
                 "fullName": user.full_name,
                 "companyName": user.company_name,
                 "email": user.email,
@@ -639,12 +640,12 @@ def handle_carrier_profile():
 
         except Exception as e:
             db.session.rollback()
-            print(f"Error al actualizar el perfil del carrier: {e}")
+            print(f"Error updating carrier profile: {e}")
             import traceback
             print(traceback.format_exc())
-            return jsonify({"msg": "Error interno del servidor al actualizar el perfil de carrier"}), 500
+            return jsonify({"msg": "Internal server error while updating carrier profile"}), 500
 
-    return jsonify({"msg": "Método no permitido"}), 405
+    return jsonify({"msg": "Disallowed method"}), 405
 
 
 @api.route('/users/<int:user_id>', methods=['GET'])

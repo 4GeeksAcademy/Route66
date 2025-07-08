@@ -135,8 +135,8 @@ const BrokerProfileCard = () => {
 
       const role = 'broker';
       if (!token) {
-        console.error('No se encontró el token en localStorage.');
-        showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
+        console.error('Token not found in localStorage.');
+        showSnackbar('You are not authenticated. Please log in.', 'error');
         setLoading(false);
         return;
       }
@@ -150,7 +150,7 @@ const BrokerProfileCard = () => {
         });
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.msg || 'Error al obtener datos del broker.');
+          throw new Error(error.msg || 'Error getting data from broker.');
         }
         const data = await response.json();
         setUserData({
@@ -167,8 +167,8 @@ const BrokerProfileCard = () => {
         });
         setInitialUserData(data);
       } catch (err) {
-        console.error('Error al obtener datos del broker:', err.message);
-        showSnackbar(`Error al obtener datos del broker: ${err.message}`, 'error');
+        console.error('Error getting data from broker:', err.message);
+        showSnackbar(`Error getting data from broker: ${err.message}`, 'error');
       } finally {
         setLoading(false);
       }
@@ -189,12 +189,10 @@ const BrokerProfileCard = () => {
 
     if (!token) {
       console.error('User token not found.');
-      showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
+      showSnackbar('The authentication token was not found. Please log in again.', 'error');
       setLoading(false);
       return;
     }
-    console.log(userData);
-    console.log(userData.avatarUrl);
 
 
     const dataToSend = {
@@ -219,7 +217,7 @@ const BrokerProfileCard = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.msg || 'Error al actualizar el perfil del broker.');
+        throw new Error(errorData.msg || 'Error updating broker profile.');
       }
       const updatedData = await response.json();
       setUserData({
@@ -236,10 +234,10 @@ const BrokerProfileCard = () => {
       });
       setInitialUserData(updatedData);
       setIsEditing(false);
-      showSnackbar('Perfil de broker actualizado con éxito.', 'success');
+      showSnackbar('Broker profile successfully updated.', 'success');
     } catch (err) {
-      console.error('Error al actualizar el perfil del broker:', err.message);
-      showSnackbar(`Error al actualizar el perfil del broker: ${err.message}`, 'error');
+      console.error('Error updating broker profile:', err.message);
+      showSnackbar(`Error updating broker profile: ${err.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -254,7 +252,7 @@ const BrokerProfileCard = () => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
         <CircularProgress />
-        <Typography variant="h6" sx={{ ml: 2 }}>Cargando perfil de broker...</Typography>
+        <Typography variant="h6" sx={{ ml: 2 }}>Loading broker profile...</Typography>
       </Box>
     );
   }
@@ -289,7 +287,7 @@ const BrokerProfileCard = () => {
               textAlign: 'left',
               color: 'white',
             }}>
-              Mi perfil (Broker)
+              My profile (Broker)
             </Typography>
           }
           action={
@@ -345,7 +343,7 @@ const BrokerProfileCard = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Nombre Completo"
+                label="Full Name"
                 variant="standard"
                 fullWidth
                 name="fullName"
@@ -356,7 +354,7 @@ const BrokerProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Nombre de la Empresa"
+                label="Company Name"
                 variant="standard"
                 fullWidth
                 name="companyName"
@@ -367,7 +365,7 @@ const BrokerProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Correo Electrónico"
+                label="Email"
                 variant="standard"
                 fullWidth
                 name="email"
@@ -378,7 +376,7 @@ const BrokerProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Número de Teléfono"
+                label="Phone number"
                 variant="standard"
                 fullWidth
                 name="phoneNumber"
@@ -389,7 +387,7 @@ const BrokerProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Dirección"
+                label="Address"
                 variant="standard"
                 fullWidth
                 name="address"
@@ -400,7 +398,7 @@ const BrokerProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Ciudad"
+                label="City"
                 variant="standard"
                 fullWidth
                 name="city"
@@ -411,7 +409,7 @@ const BrokerProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Estado"
+                label="State"
                 variant="standard"
                 fullWidth
                 name="state"
@@ -422,7 +420,7 @@ const BrokerProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Código Postal"
+                label="Zip code"
                 variant="standard"
                 fullWidth
                 name="zip"
@@ -452,7 +450,7 @@ const BrokerProfileCard = () => {
               onClick={() => setIsEditing(true)}
               startIcon={<EditIcon />}
             >
-              Editar información
+              Edit information
             </Button>
           ) : (
             <>
@@ -460,7 +458,7 @@ const BrokerProfileCard = () => {
                 {loading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
               </Button>
               <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading || uploadingAvatar}>
-                Cancelar
+                Cancel
               </Button>
             </>
           )}

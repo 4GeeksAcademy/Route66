@@ -12,19 +12,24 @@ const Principal = () => {
                     <img src={rutaCamiones} alt="Camiones de transporte" className="img-fluid rounded shadow imgCamionesPrincipal" style={{ width: '35%' }} />
                 </div>
 
-                <div className="dropdown">
-                    <button className="btn btn-danger btn-lg fw-bold dropdown-toggle boton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div className="dropdown-center">
+                    <button
+                        className="btn boton btn-danger fw-bold dropdown-toggle shadow"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
                         Get Started
                     </button>
-                    <ul className="dropdown-menu dropdown-menu-center">
+                    <ul className="dropdown-menu shadow-sm">
                         <li>
-                            <Link to="/register?role=broker" className="dropdown-item text-danger fw-bold">
-                                I'm a Broker
+                            <Link className="dropdown-item py-2" to="/register/broker">
+                                🚚 I'm a Broker
                             </Link>
                         </li>
                         <li>
-                            <Link to="/register?role=carrier" className="dropdown-item text-danger fw-bold">
-                                I'm a Carrier
+                            <Link className="dropdown-item py-2" to="/register/carrier">
+                                🛻 I'm a Carrier
                             </Link>
                         </li>
                     </ul>

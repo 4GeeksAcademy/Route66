@@ -7,6 +7,8 @@ import CreateIcon from '@mui/icons-material/Create';
 import { CreateLoadModal } from "./CreateLoadModal.jsx"
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import GridViewIcon from '@mui/icons-material/GridView';
+import { useMatch } from 'react-router-dom';
 
 export const Header = ({
     title = "Title",
@@ -21,6 +23,7 @@ export const Header = ({
     const location = useLocation();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const match = useMatch('/users/:userId');
     const handleOpenModal = () => {
         setIsModalOpen(true);
     };
@@ -28,7 +31,7 @@ export const Header = ({
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-    
+
     let decodedToken
     if (token) {
         decodedToken = jwtDecode(token);
@@ -43,15 +46,24 @@ export const Header = ({
                 Login
             </Button>
             <div className="dropdown">
-                <button className="btn btn-danger fw-bold dropdown-toggle boton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Started
+                <button
+                    className="btn boton btn-danger fw-bold dropdown-toggle shadow"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    Get Started
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end">
+                <ul className="dropdown-menu dropdown-menu-end shadow-sm">
                     <li>
-                        <Link to="/register/broker">I'm a Broker</Link>
+                        <Link className="dropdown-item py-2" to="/register/broker">
+                            🚚 I'm a Broker
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/register/carrier">I'm a Carrier</Link>
+                        <Link className="dropdown-item py-2" to="/register/carrier">
+                            🛻 I'm a Carrier
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -62,20 +74,29 @@ export const Header = ({
     const LoginButton = () => (
         <nav className="d-flex align-items-center gap-3">
             <div className="dropdown">
-                <button className="btn btn-danger fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Started
+                <button
+                    className="btn boton btn-danger fw-bold dropdown-toggle shadow"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    Get Started
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end">
+                <ul className="dropdown-menu dropdown-menu-end shadow-sm">
                     <li>
-                        <Link to="/register/broker">I'm a Broker</Link>
+                        <Link className="dropdown-item py-2" to="/register/broker">
+                            🚚 I'm a Broker
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/register/carrier">I'm a Carrier</Link>
+                        <Link className="dropdown-item py-2" to="/register/carrier">
+                            🛻 I'm a Carrier
+                        </Link>
                     </li>
                 </ul>
             </div>
         </nav>
-    )
+    );
 
 
     const RegisterButton = () => (
@@ -95,11 +116,22 @@ export const Header = ({
             }}>
                 Create load
             </Button>)}
-            <Button variant="contained" endIcon={<AccountBoxIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+
+            {(location.pathname === "/profile/carrier" || location.pathname === "/profile/broker") ? (<Button variant="contained" endIcon={<GridViewIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+                navigate(location.pathname === "/profile/carrier" ? "/loadsboard" : "/myloads");
+            }}>
+                Loads
+            </Button>) : match ? (<Button variant="contained" endIcon={<GridViewIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+                navigate(-1);
+            }}>
+                Loads
+            </Button>) : <Button variant="contained" endIcon={<AccountBoxIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
                 navigate(`/profile/${decodedToken?.role}`);
             }}>
                 Profile
-            </Button>
+            </Button>}
+
+
             <Button variant="contained" endIcon={<LogoutIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
                 localStorage.removeItem("TOKEN")
                 localStorage.removeItem("User")
@@ -114,8 +146,8 @@ export const Header = ({
     return (
         <Box sx={containerStyle}>
             <Box component="img" src={imgUrl} alt={imgAlt} sx={imgStyle} onClick={() => navigate("/")} />
-            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h1" sx={titleStyle} onClick={() => navigate("/")}>
+            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }} className="justify-content-end justify-content-md-between">
+                <Typography variant="h1" sx={titleStyle} className="d-none d-md-flex" onClick={() => navigate("/")}>
                     {title}
                 </Typography>
 

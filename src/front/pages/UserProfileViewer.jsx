@@ -64,14 +64,14 @@ function UserProfileViewer() {
             console.log(data)
 
             if (response.ok) {
-                console.log(`Perfil del usuario ${userIdToConsult} obtenido con éxito:`, data);
+                console.log(`User profile ${userIdToConsult} successfully obtained:`, data);
                 return data;
             } else {
-                console.error(`Error al obtener el perfil del usuario ${userIdToConsult}:`, data.msg || "Error desconocido");
-                throw new Error(data.msg || "Error al obtener el perfil.");
+                console.error(`Error getting the profile for user ${userIdToConsult}:`, data.msg || "Unknown error");
+                throw new Error(data.msg || "Error getting profile.");
             }
         } catch (error) {
-            console.error("Error de red o en la solicitud fetch:", error);
+            console.error("Network or fetch request error:", error);
             throw error;
         }
     }
@@ -91,7 +91,7 @@ function UserProfileViewer() {
 
 
             if (isNaN(userIdToConsult)) {
-                setError("ID de usuario inválido en la URL.");
+                setError("Invalid user ID in URL.");
                 setLoading(false);
                 return;
             }
@@ -100,7 +100,7 @@ function UserProfileViewer() {
                 const profile = await fetchUserProfileById(jwtToken, userIdToConsult);
                 setUserData(profile);
             } catch (err) {
-                setError(err.message || "Error al cargar el perfil.");
+                setError(err.message || "Error loading profile.");
             } finally {
                 setLoading(false);
             }
@@ -114,16 +114,16 @@ function UserProfileViewer() {
 
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
                 <CircularProgress />
-                <Typography sx={{ ml: 2 }}>Cargando perfil...</Typography>
+                <Typography sx={{ ml: 2 }}>Loading profile...</Typography>
             </Box>
         );
     }
 
     if (error) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
                 <Typography color="error">Error: {error}</Typography>
             </Box>
         );
@@ -131,226 +131,226 @@ function UserProfileViewer() {
 
     if (!userData) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-                <Typography>No se encontró el perfil del usuario.</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
+                <Typography>User profile not found.</Typography>
             </Box>
         );
     }
 
-  return (
-    <Box sx={{
-        padding: 4,
-        backgroundColor: '#f5f5f5',
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column'
-    }}>
-        <Card sx={{
-            minWidth: 275,
-            maxWidth: 800,
-            width: '90%',
-            boxShadow: 3,
-            borderRadius: '12px'
+    return (
+        <Box sx={{
+            padding: 4,
+            backgroundColor: '#f5f5f5',
+            minHeight: '79.2vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column'
         }}>
-            <CardHeader
-                sx={{
-                    backgroundColor: '#002244',
-                    color: 'white', 
-                    paddingBottom: 2,
-                    marginBottom: 2,
-                }}
-                title={
-                    <Typography variant="h5" sx={{
-                        fontSize: '2rem',
-                        textAlign: 'left',
-                        color: 'white', 
-                    }}>
-                        Perfil de {userData.fullName} ({userData.role.charAt(0).toUpperCase() + userData.role.slice(1)})
-                    </Typography>
-                }
-                action={
-                    <Avatar sx={{ fontSize: '2rem', bgcolor: blue[800] }}>
-                        {userInitial}
-                    </Avatar>
-                }
-            />
-            <CardContent>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="Full Name"
-                            variant="standard"
-                            fullWidth
-                            name="fullName"
-                            value={userData.fullName || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="Company Name"
-                            variant="standard"
-                            fullWidth
-                            name="companyName"
-                            value={userData.companyName || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="E-mail"
-                            variant="standard"
-                            fullWidth
-                            name="email"
-                            value={userData.email || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="Phone Number"
-                            variant="standard"
-                            fullWidth
-                            name="phoneNumber"
-                            value={userData.phoneNumber || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="Address"
-                            variant="standard"
-                            fullWidth
-                            name="address"
-                            value={userData.address || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="City"
-                            variant="standard"
-                            fullWidth
-                            name="city"
-                            value={userData.city || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="State"
-                            variant="standard"
-                            fullWidth
-                            name="state"
-                            value={userData.state || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="Zip"
-                            variant="standard"
-                            fullWidth
-                            name="zip"
-                            value={userData.zip || ''}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField
-                            label="Role"
-                            variant="standard"
-                            fullWidth
-                            name="role"
-                            value={userData.role.charAt(0).toUpperCase() + userData.role.slice(1)}
-                            InputProps={{ readOnly: true }}
-                        />
-                    </Grid>
+            <Card sx={{
+                minWidth: 275,
+                maxWidth: 800,
+                width: '90%',
+                boxShadow: 3,
+                borderRadius: '12px'
+            }}>
+                <CardHeader
+                    sx={{
+                        backgroundColor: '#002244',
+                        color: 'white',
+                        paddingBottom: 2,
+                        marginBottom: 2,
+                    }}
+                    title={
+                        <Typography variant="h5" sx={{
+                            fontSize: '2rem',
+                            textAlign: 'left',
+                            color: 'white',
+                        }}>
+                            Profile of {userData.fullName} ({userData.role.charAt(0).toUpperCase() + userData.role.slice(1)})
+                        </Typography>
+                    }
+                    action={
+                        <Avatar sx={{ fontSize: '2rem', bgcolor: blue[800] }}>
+                            {userInitial}
+                        </Avatar>
+                    }
+                />
+                <CardContent>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Full Name"
+                                variant="standard"
+                                fullWidth
+                                name="fullName"
+                                value={userData.fullName || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Company Name"
+                                variant="standard"
+                                fullWidth
+                                name="companyName"
+                                value={userData.companyName || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="E-mail"
+                                variant="standard"
+                                fullWidth
+                                name="email"
+                                value={userData.email || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Phone Number"
+                                variant="standard"
+                                fullWidth
+                                name="phoneNumber"
+                                value={userData.phoneNumber || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Address"
+                                variant="standard"
+                                fullWidth
+                                name="address"
+                                value={userData.address || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="City"
+                                variant="standard"
+                                fullWidth
+                                name="city"
+                                value={userData.city || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="State"
+                                variant="standard"
+                                fullWidth
+                                name="state"
+                                value={userData.state || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Zip code"
+                                variant="standard"
+                                fullWidth
+                                name="zip"
+                                value={userData.zip || ''}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Role"
+                                variant="standard"
+                                fullWidth
+                                name="role"
+                                value={userData.role.charAt(0).toUpperCase() + userData.role.slice(1)}
+                                InputProps={{ readOnly: true }}
+                            />
+                        </Grid>
 
 
-                    {userData.role === 'carrier' && (
-                        <>
-                            <Grid item xs={12} sm={6} md={4}>
-                                <TextField
-                                    label="USDOT Number"
-                                    variant="standard"
-                                    fullWidth
-                                    name="usdotNumber"
-                                    value={userData.usdotNumber || ''}
-                                    InputProps={{ readOnly: true }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
-                                <TextField
-                                    label="Number of Trucks"
-                                    variant="standard"
-                                    fullWidth
-                                    name="numberOfTrucks"
-                                    type="number"
-                                    value={userData.numberOfTrucks || ''}
-                                    InputProps={{ readOnly: true }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
-                                <TextField
-                                    label="Type of Transport"
-                                    variant="standard"
-                                    fullWidth
-                                    name="typeOfTransport"
-                                    value={userData.typeOfTransport || ''}
-                                    InputProps={{ readOnly: true }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={userData.isOpen || false}
-                                            name="isOpen"
-                                            color="primary"
-                                            disabled={true}
-                                        />
-                                    }
-                                    label="Open"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={userData.isEnclose || false}
-                                            name="isEnclose"
-                                            color="primary"
-                                            disabled={true}
-                                        />
-                                    }
-                                    label="Enclose"
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={userData.isBoth || false}
-                                            name="isBoth"
-                                            color="primary"
-                                            disabled={true}
-                                        />
-                                    }
-                                    label="Both"
-                                />
-                            </Grid>
-                        </>
-                    )}
-                </Grid>
-            </CardContent>
+                        {userData.role === 'carrier' && (
+                            <>
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <TextField
+                                        label="USDOT Number"
+                                        variant="standard"
+                                        fullWidth
+                                        name="usdotNumber"
+                                        value={userData.usdotNumber || ''}
+                                        InputProps={{ readOnly: true }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <TextField
+                                        label="Number of Trucks"
+                                        variant="standard"
+                                        fullWidth
+                                        name="numberOfTrucks"
+                                        type="number"
+                                        value={userData.numberOfTrucks || ''}
+                                        InputProps={{ readOnly: true }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <TextField
+                                        label="Type of Transport"
+                                        variant="standard"
+                                        fullWidth
+                                        name="typeOfTransport"
+                                        value={userData.typeOfTransport || ''}
+                                        InputProps={{ readOnly: true }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={userData.isOpen || false}
+                                                name="isOpen"
+                                                color="primary"
+                                                disabled={true}
+                                            />
+                                        }
+                                        label="Open"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={userData.isEnclose || false}
+                                                name="isEnclose"
+                                                color="primary"
+                                                disabled={true}
+                                            />
+                                        }
+                                        label="Enclose"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={userData.isBoth || false}
+                                                name="isBoth"
+                                                color="primary"
+                                                disabled={true}
+                                            />
+                                        }
+                                        label="Both"
+                                    />
+                                </Grid>
+                            </>
+                        )}
+                    </Grid>
+                </CardContent>
 
-        </Card>
+            </Card>
 
-    </Box>
-);
+        </Box>
+    );
 };
 
 export default UserProfileViewer;

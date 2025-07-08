@@ -72,7 +72,7 @@ const CarrierProfileCard = () => {
     if (!file) return;
 
     // Aquí podrías implementar la lógica de subida de imagen si la tienes
-    showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
+    showSnackbar('Image upload functionality not yet implemented', 'info');
   };
 
   useEffect(() => {
@@ -81,8 +81,8 @@ const CarrierProfileCard = () => {
       const token = localStorage.getItem('TOKEN');
 
       if (!token) {
-        console.error('No se encontró el token en localStorage.');
-        showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
+        console.error('Token not found in localStorage.');
+        showSnackbar('You are not authenticated. Please log in.', 'error');
         setLoading(false);
         return;
       }
@@ -96,7 +96,7 @@ const CarrierProfileCard = () => {
         });
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.msg || 'Error al obtener datos del carrier.');
+          throw new Error(error.msg || 'Error getting carrier data.');
         }
         const data = await response.json();
         setUserData({
@@ -118,8 +118,8 @@ const CarrierProfileCard = () => {
         });
         setInitialUserData(data);
       } catch (err) {
-        console.error('Error al obtener datos del carrier:', err.message);
-        showSnackbar(`Error al obtener datos del carrier: ${err.message}`, 'error');
+        console.error('Error getting carrier data:', err.message);
+        showSnackbar(`Error getting carrier data: ${err.message}`, 'error');
       } finally {
         setLoading(false);
       }
@@ -138,8 +138,8 @@ const CarrierProfileCard = () => {
     const token = localStorage.getItem('TOKEN');
 
     if (!token) {
-      console.error('No se encontró el token del usuario.');
-      showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
+      console.error('User token not found.');
+      showSnackbar('Authentication token not found. Please log in again.', 'error');
       setLoading(false);
       return;
     }
@@ -170,7 +170,7 @@ const CarrierProfileCard = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.msg || 'Error al actualizar el perfil del carrier.');
+        throw new Error(errorData.msg || 'Error updating carrier profile.');
       }
       const updatedData = await response.json();
       setUserData({
@@ -192,10 +192,10 @@ const CarrierProfileCard = () => {
       });
       setInitialUserData(updatedData);
       setIsEditing(false);
-      showSnackbar('Perfil de carrier actualizado con éxito.', 'success');
+      showSnackbar('Carrier profile successfully updated.', 'success');
     } catch (err) {
-      console.error('Error al actualizar el perfil del carrier:', err.message);
-      showSnackbar(`Error al actualizar el perfil del carrier: ${err.message}`, 'error');
+      console.error('Error updating carrier profile:', err.message);
+      showSnackbar(`Error updating carrier profile: ${err.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -208,7 +208,7 @@ const CarrierProfileCard = () => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
         <CircularProgress />
-        <Typography variant="h6" sx={{ ml: 2 }}>Cargando perfil de carrier...</Typography>
+        <Typography variant="h6" sx={{ ml: 2 }}>Loading carrier profile...</Typography>
       </Box>
     );
   }
@@ -245,7 +245,7 @@ const CarrierProfileCard = () => {
               textAlign: 'left',
               color: 'white',
             }}>
-              Mi perfil (Carrier)
+              My profile (Carrier)
             </Typography>
           }
           action={
@@ -302,7 +302,7 @@ const CarrierProfileCard = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Nombre Completo"
+                label="Full Name"
                 variant="standard"
                 fullWidth
                 name="fullName"
@@ -313,7 +313,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Nombre de la Empresa"
+                label="Company Name"
                 variant="standard"
                 fullWidth
                 name="companyName"
@@ -324,7 +324,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Correo Electrónico"
+                label="Email"
                 variant="standard"
                 fullWidth
                 name="email"
@@ -335,7 +335,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Número de Teléfono"
+                label="Phone number"
                 variant="standard"
                 fullWidth
                 name="phoneNumber"
@@ -346,7 +346,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Dirección"
+                label="Address"
                 variant="standard"
                 fullWidth
                 name="address"
@@ -357,7 +357,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Ciudad"
+                label="City"
                 variant="standard"
                 fullWidth
                 name="city"
@@ -368,7 +368,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Estado"
+                label="State"
                 variant="standard"
                 fullWidth
                 name="state"
@@ -379,7 +379,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Código Postal"
+                label="Zip code"
                 variant="standard"
                 fullWidth
                 name="zip"
@@ -401,7 +401,7 @@ const CarrierProfileCard = () => {
 
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Número USDOT"
+                label="USDOT Number"
                 variant="standard"
                 fullWidth
                 name="numberUsdot"
@@ -412,7 +412,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Número de Camiones"
+                label="Number of Trucks"
                 variant="standard"
                 fullWidth
                 name="trucks"
@@ -424,7 +424,7 @@ const CarrierProfileCard = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
-                label="Tipo de Transporte"
+                label="Type of Transport"
                 variant="standard"
                 fullWidth
                 name="typeOfTransport"
@@ -500,7 +500,7 @@ const CarrierProfileCard = () => {
                 {loading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
               </Button>
               <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading || uploadingAvatar}>
-                Cancelar
+                Cancel
               </Button>
             </>
           )}
