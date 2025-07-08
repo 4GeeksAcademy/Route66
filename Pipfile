@@ -7,6 +7,7 @@ verify_ssl = true
 
 [packages]
 flask-sqlalchemy = "*"
+psycopg2-binary = "*"
 python-dotenv = "*"
 gunicorn = "*"
 cloudinary = "*"
@@ -20,6 +21,12 @@ python-dateutil = "*"
 flask-cors = "*"
 flask-jwt-extended = "*"
 flask-admin = "*"
+psycopg2 = "*"
+flask-mail = "*"
+dotenv = "*"
+flask = "*"
+flask-migrate = "*"
+flask-swagger = "*"
 psycopg2-binary = "*"
 
 [requires]
