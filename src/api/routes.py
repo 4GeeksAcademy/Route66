@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import json
 from flask import Flask, request, jsonify, url_for, Blueprint
 from sqlalchemy import Null, null, select, and_
 from api.DTOs.LoginDto import LoginDto
@@ -306,6 +307,33 @@ def checkPasswordResetEmail():
         "full_name": user.full_name,
         "email": user.email,
     }), 200
+
+
+@api.route('/savePasswordReset', methods=['POST'])
+def savePasswordReset():
+    data = request.get_json()
+    if not data or not data.get("email") or not data.get("newPassword"):
+        return jsonify({"msg": "Email y contraseña son datos requeridos", "success": False}), 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+
+    if user == None:
+        return jsonify({"msg": "Email no existe", "success": False}), 400
+
+    user.set_password(data.get("newPassword"))
+    db.session.add(user)
+
+    try:
+        db.session.commit()
+        return jsonify({
+            "success": True,
+            "msg": "Password restablecido"
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        import traceback
+        print(traceback.format_exc())
+        return jsonify({"msg": "Error al restablecer contraseña.", "error": str(e), "success": False}), 500
 
 
 @api.route('/passwordResetEmail', methods=['POST'])

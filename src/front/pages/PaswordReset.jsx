@@ -65,7 +65,7 @@ const PasswordReset = () => {
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Reset</button>
                 </form>
-                <Link to={'/principal'}>
+                <Link to={'/login'}>
                     ← Back to Home
                 </Link>
             </div>

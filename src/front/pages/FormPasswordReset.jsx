@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const FormPasswordReset = () => {
 
@@ -12,12 +13,62 @@ const FormPasswordReset = () => {
 
 
 
-    const envioReset = (event) => {
+    const envioReset = async (event) => {
         event.preventDefault();
 
-        console.log(email);
+        if (password != confirmPassword) {
+            Swal.fire({
+                title: 'Error',
+                text: "Las dos contraseñas deben ser iguales",
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
 
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined");
 
+        try {
+            const response = await fetch(`${backendUrl}/api/savePasswordReset`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "email": email, "newPassword": password })
+            });
+
+            const data = await response.json();
+            if (data.success != undefined) {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Correcto!',
+                        text: 'Su contraseña ha sido modificada',
+                        icon: 'success',
+                        confirmButtonText: 'Accept'
+                    })
+
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.msg,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: data.msg,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+
+            console.log(data)
+        } catch (error) {
+            console.error("Error al enviar datos:", error);
+            Swal.fire("Oops!", "Error en el servidor", "error");
+        }
     };
 
 
@@ -93,7 +144,7 @@ const FormPasswordReset = () => {
                 }
 
 
-                <Link to={'/principal'}>
+                <Link to={'/login'}>
                     ← Back to Home
                 </Link>
             </div>
