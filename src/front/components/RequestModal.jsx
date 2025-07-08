@@ -31,6 +31,7 @@ export const RequestModal = ({ open, onClose, load }) => {
                     icon: 'success',
                     confirmButtonText: 'Great'
                 });
+                setOffer("")
                 onClose();
             } else {
                 Swal.fire({
