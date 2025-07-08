@@ -29,10 +29,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-
 const BrokerProfileCard = () => {
   const { userId } = useParams();
-
   const [userData, setUserData] = useState({
     fullName: '',
     companyName: '',
@@ -43,9 +41,8 @@ const BrokerProfileCard = () => {
     state: '',
     zip: '',
     role: 'broker',
-    avatarUrl: '',
+    avatar_url: '',
   });
-
   const [initialUserData, setInitialUserData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -54,7 +51,6 @@ const BrokerProfileCard = () => {
   const [loading, setLoading] = useState(true);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = React.useRef(null);
-
   const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
 
   const showSnackbar = useCallback((message, severity) => {
@@ -62,6 +58,7 @@ const BrokerProfileCard = () => {
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   }, []);
+
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
@@ -71,11 +68,64 @@ const BrokerProfileCard = () => {
   };
 
   const handleAvatarUpload = async (event) => {
+
     const file = event.target.files[0];
     if (!file) return;
 
-    // Aquí podrías implementar la lógica de subida de imagen si la tienes
-    showSnackbar('Funcionalidad de subida de imagen aún no implementada', 'info');
+    setUploadingAvatar(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+
+      const uploadResponse = await fetch(`${backendUrl}/api/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        const error = await uploadResponse.json();
+        throw new Error(error.error || 'Error uploading image to your server.');
+      }
+
+      const uploadData = await uploadResponse.json();
+      const newAvatarUrl = uploadData.secure_url;
+      console.log(uploadData);
+      setUserData({...userData, avatar_url: newAvatarUrl})
+
+
+
+      const token = localStorage.getItem('TOKEN');
+      if (!token) {
+        showSnackbar('You are not authenticated. Please log in', 'error');
+        setUploadingAvatar(false);
+        return;
+      }
+
+      const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/broker`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ avatarUrl: newAvatarUrl })
+      });
+
+      if (!backendUpdateResponse.ok) {
+        const errorData = await backendUpdateResponse.json();
+        throw new Error(errorData.msg || 'Failed to update brokers profile avatar.');
+      }
+
+      setUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
+      setInitialUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
+      showSnackbar('Avatar updated successfully.', 'success');
+
+    } catch (err) {
+      console.error('Error uploading or updating avatar:', err.message);
+      showSnackbar(`Error uploading or updating avatar: ${err.message}`, 'error');
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   useEffect(() => {
@@ -84,14 +134,12 @@ const BrokerProfileCard = () => {
       const token = localStorage.getItem('TOKEN');
 
       const role = 'broker';
-
       if (!token) {
         console.error('No se encontró el token en localStorage.');
         showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
         setLoading(false);
         return;
       }
-
       try {
         const response = await fetch(`${backendUrl}/api/profile/broker`, {
           method: 'GET',
@@ -100,12 +148,10 @@ const BrokerProfileCard = () => {
             'Content-Type': 'application/json'
           }
         });
-
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.msg || 'Error al obtener datos del broker.');
         }
-
         const data = await response.json();
         setUserData({
           fullName: data.fullName || '',
@@ -117,6 +163,7 @@ const BrokerProfileCard = () => {
           state: data.state || '',
           zip: data.zip || '',
           role: 'broker',
+          avatar_url: data.avatar_url || '',
         });
         setInitialUserData(data);
       } catch (err) {
@@ -126,7 +173,6 @@ const BrokerProfileCard = () => {
         setLoading(false);
       }
     };
-
     fetchBrokerData();
   }, [userId, showSnackbar]);
 
@@ -137,17 +183,19 @@ const BrokerProfileCard = () => {
       [name]: value
     }));
   };
-
   const handleUpdateProfile = async () => {
     setLoading(true);
     const token = localStorage.getItem('TOKEN');
 
     if (!token) {
-      console.error('No se encontró el token del usuario.');
+      console.error('User token not found.');
       showSnackbar('No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.', 'error');
       setLoading(false);
       return;
     }
+    console.log(userData);
+    console.log(userData.avatarUrl);
+
 
     const dataToSend = {
       fullName: userData.fullName,
@@ -159,7 +207,7 @@ const BrokerProfileCard = () => {
       state: userData.state,
       zip: userData.zip,
     };
-
+    console.log(dataToSend)
     try {
       const response = await fetch(`${backendUrl}/api/profile/broker`, {
         method: 'PUT',
@@ -169,12 +217,10 @@ const BrokerProfileCard = () => {
         },
         body: JSON.stringify(dataToSend)
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.msg || 'Error al actualizar el perfil del broker.');
       }
-
       const updatedData = await response.json();
       setUserData({
         fullName: updatedData.fullName || '',
@@ -186,6 +232,7 @@ const BrokerProfileCard = () => {
         state: updatedData.state || '',
         zip: updatedData.zip || '',
         role: 'broker',
+        avatar_url: updatedData.avatar_url || '',
       });
       setInitialUserData(updatedData);
       setIsEditing(false);
@@ -228,7 +275,6 @@ const BrokerProfileCard = () => {
         width: '90%',
         boxShadow: 3,
       }}>
-
         <CardHeader
           sx={{
             backgroundColor: '#002244',
@@ -255,9 +301,9 @@ const BrokerProfileCard = () => {
                   width: 80,
                   height: 80,
                 }}
-                src={userData.avatarUrl || undefined}
+                src={userData.avatar_url || undefined}
               >
-                {!userData.avatarUrl && userInitial}
+                {!userData.avatar_url && userInitial}
               </Avatar>
               {isEditing && (
                 <>
@@ -271,7 +317,7 @@ const BrokerProfileCard = () => {
                   />
                   <label htmlFor="avatar-upload-button">
                     <IconButton
-                      color="inherit" // Cambiado a 'inherit' para que el icono tome el color blanco del CardHeader
+                      color="inherit"
                       aria-label="upload picture"
                       component="span"
                       sx={{

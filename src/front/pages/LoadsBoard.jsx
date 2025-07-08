@@ -95,6 +95,7 @@ export const LoadsBoard = () => {
                 });
 
                 const data = await response.json();
+                console.log(data)
 
                 if (!response.ok) {
                     Swal.fire({
@@ -118,7 +119,8 @@ export const LoadsBoard = () => {
                     vehicleModel: load.vehicle_model,
                     pickup: load.pickup_location,
                     delivery: load.delivery_location,
-                    payment: `$${load.payment}`
+                    payment: `$${load.payment}`,
+                    brokerId: load.broker.id
                 }))
 
                 setLoads(transformedRows);
@@ -150,15 +152,25 @@ export const LoadsBoard = () => {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 170,
+            width: 340,
             renderCell: (params) =>
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleOpenModal(params.row)}
-                >
-                    Request
-                </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-around', alignContent: 'center' }}>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => navigate(`/users/${params.row.brokerId}`)}
+                    >
+                        See profile
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleOpenModal(params.row)}
+                    >
+                        See Requests
+                    </Button>
+                </Box>
+
         }
     ];
 

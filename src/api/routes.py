@@ -11,16 +11,37 @@ from flask_cors import CORS
 from flask_jwt_extended import create_access_token
 from api.models import db, User, Load, LoadRequest, Roles
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+import cloudinary
+import cloudinary.uploader
+import os
 from werkzeug.security import check_password_hash, generate_password_hash
 import smtplib
 from email.message import EmailMessage
-import os
 from dotenv import load_dotenv
 
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINATY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINATY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINATY_API_SECRET"),
+)
+
+
+@api.route('/upload', methods=['POST'])
+def update_image():
+    file = request.files.get("image")
+    if not file:
+        return jsonify({"error": "the file is required"}), 400
+    result = cloudinary.uploader.upload(file)
+
+    if "secure_url" not in result:
+        return jsonify({"error": "the image can not be uploader"}), 400
+
+    return jsonify({"secure_url": result["secure_url"]}), 200
 
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -354,6 +375,7 @@ def login():
         "access_token": access_token,
     }), 200
 
+
 @api.route('/checkPasswordResetEmail', methods=['POST'])
 def checkPasswordResetEmail():
     data = request.get_json()
@@ -453,7 +475,8 @@ def send_email(subject, body_html, to_email):
     except Exception as e:
         print("Error enviando email:", str(e))
         return False
-      
+
+
 @api.route('/profile/broker', methods=['GET', 'PUT'])
 @jwt_required()
 def handle_broker_profile():
@@ -477,7 +500,8 @@ def handle_broker_profile():
             "city": user.city,
             "state": user.state,
             "zip": user.zip,
-            "role": user.role.value
+            "role": user.role.value,
+            "avatar_url": user.avatar_url
         }), 200
 
     elif request.method == 'PUT':
@@ -505,6 +529,8 @@ def handle_broker_profile():
                 user.state = data['state']
             if 'zip' in data:
                 user.zip = data['zip']
+            if 'avatarUrl' in data:
+                user.avatar_url = data['avatarUrl']
 
             db.session.commit()
 
@@ -518,7 +544,8 @@ def handle_broker_profile():
                 "city": user.city,
                 "state": user.state,
                 "zip": user.zip,
-                "role": user.role.value
+                "role": user.role.value,
+                "avatar_url": user.avatar_url
             }), 200
 
         except Exception as e:
@@ -621,11 +648,12 @@ def handle_carrier_profile():
     return jsonify({"msg": "Método no permitido"}), 405
 
 
-@api.route('/profile/<int:user_id>', methods=['GET'])
+@api.route('/users/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_user_profile_by_id(user_id):
 
     user = db.session.get(User, user_id)
+    print(user)
 
     if not user:
         return jsonify({"msg": "User not found"}), 404
@@ -647,7 +675,7 @@ def get_user_profile_by_id(user_id):
         profile_data.update({
             "usdotNumber": user.usdot_number,
             "typeOfTransport": user.type_of_transport,
-            "numberOfTrucks": user.number_of_trucks
+            "numberOfTrucks": user.number_of_trucks,
         })
 
     return jsonify(profile_data), 200

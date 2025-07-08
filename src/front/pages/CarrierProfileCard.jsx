@@ -22,16 +22,12 @@ import {
   CircularProgress
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
-
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
 const CarrierProfileCard = () => {
   const { userId } = useParams();
-
   const [userData, setUserData] = useState({
     fullName: '',
     companyName: '',
@@ -50,7 +46,6 @@ const CarrierProfileCard = () => {
     typeOfTransport: '',
     avatarUrl: ''
   });
-
   const [initialUserData, setInitialUserData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -59,15 +54,12 @@ const CarrierProfileCard = () => {
   const [loading, setLoading] = useState(true);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = React.useRef(null);
-
   const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
-
   const showSnackbar = useCallback((message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   }, []);
-
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -88,14 +80,12 @@ const CarrierProfileCard = () => {
       setLoading(true);
       const token = localStorage.getItem('TOKEN');
 
-
       if (!token) {
         console.error('No se encontró el token en localStorage.');
         showSnackbar('No estás autenticado. Por favor, inicia sesión.', 'error');
         setLoading(false);
         return;
       }
-
       try {
         const response = await fetch(`${backendUrl}/api/profile/carrier`, {
           method: 'GET',
@@ -104,12 +94,10 @@ const CarrierProfileCard = () => {
             'Content-Type': 'application/json'
           }
         });
-
         if (!response.ok) {
           const error = await response.json();
           throw new Error(error.msg || 'Error al obtener datos del carrier.');
         }
-
         const data = await response.json();
         setUserData({
           fullName: data.fullName || '',
@@ -136,10 +124,8 @@ const CarrierProfileCard = () => {
         setLoading(false);
       }
     };
-
     fetchCarrierData();
   }, [userId, showSnackbar]);
-
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setUserData(prevData => ({
@@ -147,7 +133,6 @@ const CarrierProfileCard = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
   };
-
   const handleUpdateProfile = async () => {
     setLoading(true);
     const token = localStorage.getItem('TOKEN');
@@ -158,7 +143,6 @@ const CarrierProfileCard = () => {
       setLoading(false);
       return;
     }
-
     const dataToSend = {
       fullName: userData.fullName,
       companyName: userData.companyName,
@@ -175,7 +159,6 @@ const CarrierProfileCard = () => {
       isBoth: userData.isBoth,
       typeOfTransport: userData.typeOfTransport,
     };
-
     try {
       const response = await fetch(`${backendUrl}/api/profile/carrier`, {
         method: 'PUT',
@@ -185,12 +168,10 @@ const CarrierProfileCard = () => {
         },
         body: JSON.stringify(dataToSend)
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.msg || 'Error al actualizar el perfil del carrier.');
       }
-
       const updatedData = await response.json();
       setUserData({
         fullName: updatedData.fullName || '',
@@ -219,12 +200,10 @@ const CarrierProfileCard = () => {
       setLoading(false);
     }
   };
-
   const handleCancelEdit = () => {
     setUserData(initialUserData);
     setIsEditing(false);
   };
-
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
@@ -233,6 +212,7 @@ const CarrierProfileCard = () => {
       </Box>
     );
   }
+
 
   return (
     <Box sx={{
