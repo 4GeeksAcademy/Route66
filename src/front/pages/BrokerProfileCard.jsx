@@ -41,7 +41,7 @@ const BrokerProfileCard = () => {
     state: '',
     zip: '',
     role: 'broker',
-    avatarUrl: '',
+    avatar_url: '',
   });
   const [initialUserData, setInitialUserData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
@@ -91,6 +91,7 @@ const BrokerProfileCard = () => {
       const uploadData = await uploadResponse.json();
       const newAvatarUrl = uploadData.secure_url;
       console.log(uploadData);
+      setUserData({...userData, avatar_url: newAvatarUrl})
 
 
 
@@ -162,7 +163,7 @@ const BrokerProfileCard = () => {
           state: data.state || '',
           zip: data.zip || '',
           role: 'broker',
-          avatarUrl: data.avatarUrl || '',
+          avatar_url: data.avatar_url || '',
         });
         setInitialUserData(data);
       } catch (err) {
@@ -192,6 +193,10 @@ const BrokerProfileCard = () => {
       setLoading(false);
       return;
     }
+    console.log(userData);
+    console.log(userData.avatarUrl);
+
+
     const dataToSend = {
       fullName: userData.fullName,
       companyName: userData.companyName,
@@ -202,6 +207,7 @@ const BrokerProfileCard = () => {
       state: userData.state,
       zip: userData.zip,
     };
+    console.log(dataToSend)
     try {
       const response = await fetch(`${backendUrl}/api/profile/broker`, {
         method: 'PUT',
@@ -226,7 +232,7 @@ const BrokerProfileCard = () => {
         state: updatedData.state || '',
         zip: updatedData.zip || '',
         role: 'broker',
-        avatarUrl: updatedData.avatarUrl || '',
+        avatar_url: updatedData.avatar_url || '',
       });
       setInitialUserData(updatedData);
       setIsEditing(false);
@@ -295,9 +301,9 @@ const BrokerProfileCard = () => {
                   width: 80,
                   height: 80,
                 }}
-                src={userData.avatarUrl || undefined}
+                src={userData.avatar_url || undefined}
               >
-                {!userData.avatarUrl && userInitial}
+                {!userData.avatar_url && userInitial}
               </Avatar>
               {isEditing && (
                 <>

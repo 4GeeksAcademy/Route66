@@ -374,6 +374,7 @@ def login():
         "access_token": access_token,
     }), 200
 
+
 @api.route('/checkPasswordResetEmail', methods=['POST'])
 def checkPasswordResetEmail():
     data = request.get_json()
@@ -473,7 +474,8 @@ def send_email(subject, body_html, to_email):
     except Exception as e:
         print("Error enviando email:", str(e))
         return False
-      
+
+
 @api.route('/profile/broker', methods=['GET', 'PUT'])
 @jwt_required()
 def handle_broker_profile():
@@ -497,7 +499,8 @@ def handle_broker_profile():
             "city": user.city,
             "state": user.state,
             "zip": user.zip,
-            "role": user.role.value
+            "role": user.role.value,
+            "avatar_url": user.avatar_url
         }), 200
 
     elif request.method == 'PUT':
@@ -525,6 +528,8 @@ def handle_broker_profile():
                 user.state = data['state']
             if 'zip' in data:
                 user.zip = data['zip']
+            if 'avatarUrl' in data:
+                user.avatar_url = data['avatarUrl']
 
             db.session.commit()
 
@@ -538,7 +543,8 @@ def handle_broker_profile():
                 "city": user.city,
                 "state": user.state,
                 "zip": user.zip,
-                "role": user.role.value
+                "role": user.role.value,
+                "avatar_url": user.avatar_url
             }), 200
 
         except Exception as e:
