@@ -8,6 +8,7 @@ import { CreateLoadModal } from "./CreateLoadModal.jsx"
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import GridViewIcon from '@mui/icons-material/GridView';
+import { useMatch } from 'react-router-dom';
 
 export const Header = ({
     title = "Title",
@@ -22,6 +23,7 @@ export const Header = ({
     const location = useLocation();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const match = useMatch('/users/:userId');
     const handleOpenModal = () => {
         setIsModalOpen(true);
     };
@@ -115,8 +117,12 @@ export const Header = ({
                 Create load
             </Button>)}
 
-            {(location.pathname === "/profile/carrier" || location.pathname === "/profile/broker")? (<Button variant="contained" endIcon={<GridViewIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+            {(location.pathname === "/profile/carrier" || location.pathname === "/profile/broker") ? (<Button variant="contained" endIcon={<GridViewIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
                 navigate(location.pathname === "/profile/carrier" ? "/loadsboard" : "/myloads");
+            }}>
+                Loads
+            </Button>) : match ? (<Button variant="contained" endIcon={<GridViewIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
+                navigate(-1);
             }}>
                 Loads
             </Button>) : <Button variant="contained" endIcon={<AccountBoxIcon />} color="error" sx={{ height: 'fit-content' }} onClick={() => {
