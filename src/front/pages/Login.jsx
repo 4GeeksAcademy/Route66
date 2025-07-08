@@ -38,7 +38,7 @@ const Login = () => {
             }
         } catch (error) {
             console.error("Error al enviar datos:", error);
-            Swal.fire("Oops!", "Error en el servidor", "error");
+            Swal.fire("Oops!", "Server error", error);
         }
     };
     return (
@@ -83,7 +83,7 @@ const Login = () => {
                         <Link to="/" className="text-decoration-none text-muted">
                             ← Back to Home
                         </Link>
-                        <Link to="/passwordReset" className="text-decoration-none text-muted">
+                        <Link to="/passwordReset" className="text-decoration-none text-muted" onClick={(e) => e.preventDefault()}>
                             Forgot Password?
                         </Link>
                     </div>

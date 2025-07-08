@@ -222,7 +222,7 @@ def delete_load(load_id):
 
         if not load:
             return jsonify({"msg": "Load not found or does not belong to this broker."}), 404
-        
+
         serialized_load = load.serialize(detail_level="medium")
 
         db.session.delete(load)
@@ -354,7 +354,7 @@ def login():
     if not data or not data.get("email") or not data.get("password"):
         return jsonify({
             "exitoso": False,
-            "mensaje": "Email y contraseña son requeridos."
+            "mensaje": "Email and password are required."
         }), 400
 
     user = User.query.filter_by(email=data["email"]).first()
@@ -362,7 +362,7 @@ def login():
     if not user or not check_password_hash(user.password_hash, data["password"]):
         return jsonify({
             "exitoso": False,
-            "mensaje": "Credenciales inválidas. Por favor, verifica tu email y contraseña."
+            "mensaje": "Invalid credentials. Please verify your email and password."
         }), 401
 
     access_token = create_access_token(
