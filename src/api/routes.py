@@ -61,13 +61,13 @@ def loads_register():
     user_role = jwt_data.get("role")
 
     if user_role != "broker":
-        return jsonify({"msg": "No tienes permiso para registrar cargas"}), 403
+        return jsonify({"msg": "You do not have permission to register loads"}), 403
 
     user_id = int(get_jwt_identity())
 
     data = request.get_json()
     if not data:
-        return jsonify({"msg": "No se recibieron datos necesarios"}), 400
+        return jsonify({"msg": "No necessary data was received"}), 400
 
     required_fields = [
         "vehicle_year", "vehicle_make", "vehicle_model",
@@ -76,7 +76,7 @@ def loads_register():
     ]
 
     if not all(field in data for field in required_fields):
-        return jsonify({"msg": "Faltan datos obligatorios"}), 400
+        return jsonify({"msg": "Mandatory data is missing"}), 400
 
     try:
         new_load = Load(
@@ -99,7 +99,7 @@ def loads_register():
     except Exception as e:
         db.session.rollback()
         return jsonify({
-            "msg": "Error al registrar la carga",
+            "msg": "Error registering the load",
             "error": str(e)
         }), 500
 

@@ -72,7 +72,7 @@ export const LoadRegister = ({ onClose, onNewLoadCreated }) => {
 			console.error('Network/server error:', error);
 			Swal.fire({
 				title: 'ERROR!',
-				text: 'Server connection failed.',
+				text: result.msg || 'Server connection failed.',
 				icon: 'error',
 				confirmButtonText: 'Ok',
 			});
