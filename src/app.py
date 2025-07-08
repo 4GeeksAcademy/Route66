@@ -1,19 +1,22 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+from flask_jwt_extended import JWTManager
+from api.commands import setup_commands
+from api.admin import setup_admin
+from api.routes import api
+from api.models import db, User
+from api.utils import APIException, generate_sitemap
+from api.DTOs.LoginDto import LoginDto
+from flask_swagger import swagger
 import email
 import os
 import traceback
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
-from flask_swagger import swagger
-from api.DTOs.LoginDto import LoginDto
-from api.utils import APIException, generate_sitemap
-from api.models import db, User
-from api.routes import api
-from api.admin import setup_admin
-from api.commands import setup_commands
-from flask_jwt_extended import JWTManager
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
 
 # from models import Person
 
