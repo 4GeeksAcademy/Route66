@@ -28,7 +28,7 @@ export const Header = ({
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-    
+
     let decodedToken
     if (token) {
         decodedToken = jwtDecode(token);
@@ -43,15 +43,24 @@ export const Header = ({
                 Login
             </Button>
             <div className="dropdown">
-                <button className="btn btn-danger fw-bold dropdown-toggle boton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Started
+                <button
+                    className="btn boton btn-danger fw-bold dropdown-toggle shadow"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    Get Started
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end">
+                <ul className="dropdown-menu dropdown-menu-end shadow-sm">
                     <li>
-                        <Link to="/register/broker">I'm a Broker</Link>
+                        <Link className="dropdown-item py-2" to="/register/broker">
+                            🚚 I'm a Broker
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/register/carrier">I'm a Carrier</Link>
+                        <Link className="dropdown-item py-2" to="/register/carrier">
+                            🛻 I'm a Carrier
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -62,20 +71,29 @@ export const Header = ({
     const LoginButton = () => (
         <nav className="d-flex align-items-center gap-3">
             <div className="dropdown">
-                <button className="btn btn-danger fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Started
+                <button
+                    className="btn boton btn-danger fw-bold dropdown-toggle shadow"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    Get Started
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end">
+                <ul className="dropdown-menu dropdown-menu-end shadow-sm">
                     <li>
-                        <Link to="/register/broker">I'm a Broker</Link>
+                        <Link className="dropdown-item py-2" to="/register/broker">
+                            🚚 I'm a Broker
+                        </Link>
                     </li>
                     <li>
-                        <Link to="/register/carrier">I'm a Carrier</Link>
+                        <Link className="dropdown-item py-2" to="/register/carrier">
+                            🛻 I'm a Carrier
+                        </Link>
                     </li>
                 </ul>
             </div>
         </nav>
-    )
+    );
 
 
     const RegisterButton = () => (
@@ -114,8 +132,8 @@ export const Header = ({
     return (
         <Box sx={containerStyle}>
             <Box component="img" src={imgUrl} alt={imgAlt} sx={imgStyle} onClick={() => navigate("/")} />
-            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h1" sx={titleStyle} onClick={() => navigate("/")}>
+            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }} className="justify-content-end justify-content-md-between">
+                <Typography variant="h1" sx={titleStyle} className="d-none d-md-flex" onClick={() => navigate("/")}>
                     {title}
                 </Typography>
 
