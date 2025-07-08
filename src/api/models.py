@@ -144,7 +144,8 @@ class Load(db.Model):
             "payment": self.payment,
             "days_to_deliver": self.days_to_deliver,
             "status": self.status,
-            "carrier": self.accepted_carrier.serialize(detail_level="basic") if self.accepted_carrier else None
+            "carrier": self.accepted_carrier.serialize(detail_level="medium") if self.accepted_carrier else None,
+            "broker": self.broker.serialize(detail_level="medium") if self.broker else None
         }
 
         if detail_level == "full":
