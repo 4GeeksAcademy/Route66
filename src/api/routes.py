@@ -566,7 +566,7 @@ def handle_carrier_profile():
         return jsonify({"msg": "Usuario no encontrado"}), 404
 
     if user.role != Roles.carrier:
-        return jsonify({"msg": "No tienes permiso para acceder a este perfil de carrier"}), 403
+        return jsonify({"msg": "You do not have permission to access this carrier profile"}), 403
 
     if request.method == 'GET':
         return jsonify({
@@ -587,7 +587,7 @@ def handle_carrier_profile():
     elif request.method == 'PUT':
         data = request.get_json()
         if not data:
-            return jsonify({"msg": "No se recibieron datos para actualizar"}), 400
+            return jsonify({"msg": "No data received to update"}), 400
 
         try:
 
@@ -600,7 +600,7 @@ def handle_carrier_profile():
                 if not ("@" in data['email'] and "." in data['email']):
                     return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
                 if User.query.filter(and_(User.email == data['email'], User.id != user.id)).first():
-                    return jsonify({"msg": "Este correo electrónico ya está registrado por otro usuario"}), 409
+                    return jsonify({"msg": "This email address is already registered by another user"}), 409
                 user.email = data['email']
 
             if 'phoneNumber' in data:
@@ -640,12 +640,12 @@ def handle_carrier_profile():
 
         except Exception as e:
             db.session.rollback()
-            print(f"Error al actualizar el perfil del carrier: {e}")
+            print(f"Error updating carrier profile: {e}")
             import traceback
             print(traceback.format_exc())
-            return jsonify({"msg": "Error interno del servidor al actualizar el perfil de carrier"}), 500
+            return jsonify({"msg": "Internal server error while updating carrier profile"}), 500
 
-    return jsonify({"msg": "Método no permitido"}), 405
+    return jsonify({"msg": "Disallowed method"}), 405
 
 
 @api.route('/users/<int:user_id>', methods=['GET'])
