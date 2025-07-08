@@ -24,10 +24,7 @@ flask-admin = "*"
 psycopg2 = "*"
 flask-mail = "*"
 dotenv = "*"
-flask = "*"
-flask-migrate = "*"
-flask-swagger = "*"
-psycopg2-binary = "*"
+
 
 [requires]
 python_version = "3.13"

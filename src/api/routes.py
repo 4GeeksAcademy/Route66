@@ -193,7 +193,6 @@ def delete_load(load_id):
         if user_role != "broker":
             return jsonify({"msg": "You do not have permission to delete this load."}), 403
 
-        # Buscar la carga que pertenezca a este broker
         load = db.session.execute(
             select(Load).where(
                 and_(Load.id == load_id, Load.broker_id == broker_id)
@@ -202,12 +201,14 @@ def delete_load(load_id):
 
         if not load:
             return jsonify({"msg": "Load not found or does not belong to this broker."}), 404
+        
+        serialized_load = load.serialize(detail_level="medium")
 
         db.session.delete(load)
         db.session.commit()
 
         return jsonify({"msg": "Load successfully deleted.",
-                        "load": load.serialize(detail_level="medium")}), 200
+                        "load": serialized_load}), 200
 
     except Exception as e:
         return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
