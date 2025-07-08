@@ -78,7 +78,7 @@ const BrokerProfileCard = () => {
 
     try {
 
-      const uploadResponse = await fetch(`${backendUrl}/upload`, {
+      const uploadResponse = await fetch(`${backendUrl}/api/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -91,7 +91,7 @@ const BrokerProfileCard = () => {
       const uploadData = await uploadResponse.json();
       const newAvatarUrl = uploadData.secure_url;
       console.log(uploadData);
-      
+
 
 
       const token = localStorage.getItem('TOKEN');
@@ -295,7 +295,7 @@ const BrokerProfileCard = () => {
                   width: 80,
                   height: 80,
                 }}
-                src={userData.avatarUrl || undefined} 
+                src={userData.avatarUrl || undefined}
               >
                 {!userData.avatarUrl && userInitial}
               </Avatar>
@@ -324,7 +324,7 @@ const BrokerProfileCard = () => {
                         },
                         color: blue[800],
                       }}
-                      disabled={uploadingAvatar} 
+                      disabled={uploadingAvatar}
                     >
                       {uploadingAvatar ? <CircularProgress size={24} sx={{ color: blue[800] }} /> : <PhotoCamera />}
                     </IconButton>
