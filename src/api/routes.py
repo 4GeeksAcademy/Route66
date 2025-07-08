@@ -1,6 +1,8 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+
+import json
 from math import log
 from flask import Flask, request, jsonify, url_for, Blueprint
 from sqlalchemy import select, and_
@@ -9,10 +11,13 @@ from flask_cors import CORS
 from flask_jwt_extended import create_access_token
 from api.models import db, User, Load, LoadRequest, Roles
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
-from werkzeug.security import check_password_hash
 import cloudinary
 import cloudinary.uploader
 import os
+from werkzeug.security import check_password_hash, generate_password_hash
+import smtplib
+from email.message import EmailMessage
+from dotenv import load_dotenv
 
 api = Blueprint('api', __name__)
 
@@ -198,6 +203,37 @@ def create_load_request():
         return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
 
 
+@api.route('/deleteload/<int:load_id>', methods=['DELETE'])
+@jwt_required()
+def delete_load(load_id):
+    try:
+        jwt_data = get_jwt()
+        broker_id = int(get_jwt_identity())
+        user_role = jwt_data.get("role")
+
+        if user_role != "broker":
+            return jsonify({"msg": "You do not have permission to delete this load."}), 403
+
+        # Buscar la carga que pertenezca a este broker
+        load = db.session.execute(
+            select(Load).where(
+                and_(Load.id == load_id, Load.broker_id == broker_id)
+            )
+        ).scalar_one_or_none()
+
+        if not load:
+            return jsonify({"msg": "Load not found or does not belong to this broker."}), 404
+
+        db.session.delete(load)
+        db.session.commit()
+
+        return jsonify({"msg": "Load successfully deleted.",
+                        "load": load.serialize(detail_level="medium")}), 200
+
+    except Exception as e:
+        return jsonify({"msg": "Internal Server Error", "error": str(e)}), 500
+
+
 @api.route('/signup/carrier', methods=['POST'])
 def register_carrier():
     data = request.get_json()
@@ -338,7 +374,106 @@ def login():
         "access_token": access_token,
     }), 200
 
+@api.route('/checkPasswordResetEmail', methods=['POST'])
+def checkPasswordResetEmail():
+    data = request.get_json()
+    if not data or not data.get("userId") or not data.get("emailEncrypt"):
+        return jsonify({"msg": "Email y el encrypt es requerido"}), 400
 
+    user = User.query.filter_by(id=data["userId"]).first()
+
+    if not user or not check_password_hash(data.get("emailEncrypt"), user.email):
+        return jsonify({"msg": "Datos no validos"}), 401
+
+    return jsonify({
+        "msg": "Exito",
+        "full_name": user.full_name,
+        "email": user.email,
+    }), 200
+
+
+@api.route('/savePasswordReset', methods=['POST'])
+def savePasswordReset():
+    data = request.get_json()
+    if not data or not data.get("email") or not data.get("newPassword"):
+        return jsonify({"msg": "Email y contraseña son datos requeridos", "success": False}), 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+
+    if user == None:
+        return jsonify({"msg": "Email no existe", "success": False}), 400
+
+    user.set_password(data.get("newPassword"))
+    db.session.add(user)
+
+    try:
+        db.session.commit()
+        return jsonify({
+            "success": True,
+            "msg": "Password restablecido"
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        import traceback
+        print(traceback.format_exc())
+        return jsonify({"msg": "Error al restablecer contraseña.", "error": str(e), "success": False}), 500
+
+
+@api.route('/passwordResetEmail', methods=['POST'])
+def passwordResetEmail():
+    data = request.get_json()
+    if not data or not data.get("email"):
+        return jsonify({"msg": "Email es requerido"}), 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+
+    if user == None:
+        return jsonify({"msg": "Email no existe"}), 400
+
+    emailEncrypt = generate_password_hash(data["email"])
+    load_dotenv()
+    front_url = os.getenv("VITE_FRONT_URL")
+
+    print(front_url)
+
+    body = 'Para reinciar tu contraseña presiona click en este enlace <a href="' + \
+        front_url + 'Formpasswordreset/' + str(user.id) + '/' + \
+        emailEncrypt + '">Restablecer contraseña</a>'
+
+    send_email('Route66 - Password Reset', body, data["email"])
+
+    return jsonify({
+        "msg": "Exito",
+        "encrypt": emailEncrypt
+    }), 200
+
+
+def send_email(subject, body_html, to_email):
+    try:
+        smtp_server = 'smtp.gmail.com'
+        smtp_port = 587
+        from_email = 'gsimsa2016@gmail.com'
+        password = 'goxedesltdxforts'  # Debe ser una contraseña de aplicación válida
+
+        msg = EmailMessage()
+        msg['Subject'] = subject
+        msg['From'] = from_email
+        msg['To'] = to_email
+
+        # Cuerpo del mensaje como HTML (y texto plano opcional)
+        # texto plano
+        msg.set_content("Este correo requiere un cliente que soporte HTML.")
+        msg.add_alternative(body_html, subtype='html')  # versión HTML
+
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(from_email, password)
+            server.send_message(msg)
+            return True
+    except Exception as e:
+        print("Error enviando email:", str(e))
+        return False
+      
 @api.route('/profile/broker', methods=['GET', 'PUT'])
 @jwt_required()
 def handle_broker_profile():

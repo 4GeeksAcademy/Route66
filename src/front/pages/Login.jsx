@@ -23,17 +23,17 @@ const Login = () => {
                 localStorage.setItem("User", JSON.stringify(data));
                 localStorage.setItem("TOKEN", data.access_token);
                 Swal.fire({
-                    title: '¡Bienvenido!',
+                    title: '¡Welcome!',
                     text: data.mensaje,
                     icon: 'success',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
             } else {
                 Swal.fire({
                     title: 'Error',
                     text: data.mensaje,
                     icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Accept'
                 });
             }
         } catch (error) {
