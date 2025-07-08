@@ -227,15 +227,18 @@ export const BrokerLoadsBoard = () => {
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
                     <CircularProgress />
                 </Box>
+            ) : filteredLoads.length === 0 ? (
+                <Box sx={{ textAlign: 'center', mt: 5 }}>
+                    <Typography variant="h6" color="text.secondary">
+                        There are no uploads posted yet.
+                    </Typography>
+                </Box>
             ) : (
                 <Box sx={{ margin: 'auto', display: 'inline-block' }}>
                     <DataGrid
                         rows={filteredLoads}
                         columns={columns}
-                        sx={{
-                            bgcolor: 'white',
-                            borderRadius: 2,
-                        }}
+                        sx={{ bgcolor: 'white', borderRadius: 2 }}
                     />
                 </Box>
             )}

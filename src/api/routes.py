@@ -116,7 +116,7 @@ def get_loads():
 
         loads_query = db.session.execute(select(Load)).scalars().all()
         if not loads_query:
-            return jsonify({"msg": "No registered loads found"}), 404
+            return jsonify({"results": []}), 200
 
         loads = [load.serialize() for load in loads_query]
 
@@ -143,7 +143,7 @@ def get_my_loads():
         loads_query = db.session.execute(select(Load).where(
             Load.broker_id == user_id)).scalars().all()
         if not loads_query:
-            return jsonify({"msg": "No loads found"}), 404
+            return jsonify({"results": []}), 200
 
         loads = [load.serialize(detail_level="full") for load in loads_query]
 
