@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 
+from ast import Try
 import json
 from math import log
 from flask import Flask, request, jsonify, url_for, Blueprint
@@ -18,6 +19,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import smtplib
 from email.message import EmailMessage
 from dotenv import load_dotenv
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+
 
 api = Blueprint('api', __name__)
 
@@ -374,6 +378,33 @@ def login():
         "user": user.serialize(),
         "access_token": access_token,
     }), 200
+
+
+@api.route('/social-login/google', methods=['POST'])
+def google_login():
+    data = request.get_json()
+    token = data.get('token')
+
+    try:
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request())
+        email = idinfo['email']
+        name = idinfo.get('name')
+        user = db.session.execute(select(User).where(
+            User.email == email)).scalar_one_or_none()
+        if not user:
+            user = User(full_name=name, email=email)
+            db.session.add(user)
+            db.session.commit()
+        access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={"role": user.role.value}
+        )
+        return jsonify({
+            "user": user.serialize(),
+            "access_token": access_token,
+        }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 @api.route('/checkPasswordResetEmail', methods=['POST'])
