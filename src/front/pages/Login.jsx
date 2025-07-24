@@ -21,7 +21,7 @@ const Login = () => {
             });
             const data = await response.json();
             if (data.exitoso) {
-                localStorage.setItem("User", JSON.stringify(data));
+                localStorage.setItem("User", JSON.stringify(data.user));
                 localStorage.setItem("TOKEN", data.access_token);
                 Swal.fire({
                     title: '¡Welcome!',
@@ -84,15 +84,24 @@ const Login = () => {
                             <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
                                 <GoogleLogin
                                     onSuccess={async (credentialResponse) => {
+                                        const backendUrl = import.meta.env.VITE_BACKEND_URL;
                                         const token = credentialResponse.credential;
-                                        console.log(token);
-                                        const response = await fetch(`${VITE_BACKEND_URL}/api/social-login/google`, {
+                                        const response = await fetch(`${backendUrl}/api/social-login/google`, {
                                             method: "POST",
                                             headers: { "Content-Type": "application/json" },
                                             body: JSON.stringify({ token })
                                         });
+
                                         const data = await response.json();
-                                        localStorage.setItem("jwt", data.jwt);
+                                        localStorage.setItem("User", JSON.stringify(data.user));
+                                        localStorage.setItem("TOKEN", data.access_token);
+                                        Swal.fire({
+                                            title: '¡Welcome!',
+                                            text: data.mensaje,
+                                            icon: 'success',
+                                            confirmButtonText: 'Accept'
+                                        }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
+
                                     }}
                                     onError={() => {
                                         console.log("Login Failed");
