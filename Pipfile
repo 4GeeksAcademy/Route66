@@ -24,6 +24,7 @@ flask-mail = "*"
 dotenv = "*"
 cloudinary = "*"
 flask-cors = "*"
+google-auth = "*"
 
 [requires]
 python_version = "3.13"
