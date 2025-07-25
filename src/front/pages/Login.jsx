@@ -91,13 +91,22 @@ const Login = () => {
                                             headers: { "Content-Type": "application/json" },
                                             body: JSON.stringify({ token })
                                         });
-
                                         const data = await response.json();
+                                        console.log(response.status);
+                                        if (response.status === 201) {
+                                            localStorage.setItem("User", JSON.stringify(data.user));
+                                            Swal.fire({
+                                                title: '¡Welcome!',
+                                                text: data.msg,
+                                                icon: 'success',
+                                                confirmButtonText: 'Accept'
+                                            }).then(() => navigate("/myprofile"));
+                                        }
                                         localStorage.setItem("User", JSON.stringify(data.user));
                                         localStorage.setItem("TOKEN", data.access_token);
                                         Swal.fire({
                                             title: '¡Welcome!',
-                                            text: data.mensaje,
+                                            text: data.msg,
                                             icon: 'success',
                                             confirmButtonText: 'Accept'
                                         }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
