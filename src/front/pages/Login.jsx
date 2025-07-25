@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import rutaCamiones from '../assets/img/camiones.jpg';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 
 const Login = () => {
@@ -20,7 +21,7 @@ const Login = () => {
             });
             const data = await response.json();
             if (data.exitoso) {
-                localStorage.setItem("User", JSON.stringify(data));
+                localStorage.setItem("User", JSON.stringify(data.user));
                 localStorage.setItem("TOKEN", data.access_token);
                 Swal.fire({
                     title: '¡Welcome!',
@@ -41,6 +42,7 @@ const Login = () => {
             Swal.fire("Oops!", "Server error", error);
         }
     };
+
     return (
         <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ minHeight: '79.2vh' }}>
             <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '900px', width: '100%' }}>
@@ -75,9 +77,38 @@ const Login = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-                        <button type="submit" className="btn btn-danger w-100 fw-bold">
+                        <button type="submit" className="btn btn-danger w-100 fw-bold mb-2">
                             Log In
                         </button>
+                        <div>
+                            <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                                <GoogleLogin
+                                    onSuccess={async (credentialResponse) => {
+                                        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                                        const token = credentialResponse.credential;
+                                        const response = await fetch(`${backendUrl}/api/social-login/google`, {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ token })
+                                        });
+
+                                        const data = await response.json();
+                                        localStorage.setItem("User", JSON.stringify(data.user));
+                                        localStorage.setItem("TOKEN", data.access_token);
+                                        Swal.fire({
+                                            title: '¡Welcome!',
+                                            text: data.mensaje,
+                                            icon: 'success',
+                                            confirmButtonText: 'Accept'
+                                        }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
+
+                                    }}
+                                    onError={() => {
+                                        console.log("Login Failed");
+                                    }}
+                                />
+                            </GoogleOAuthProvider>
+                        </div>
                     </form>
                     <div className="mt-4 d-flex justify-content-between">
                         <Link to="/" className="text-decoration-none text-muted">
