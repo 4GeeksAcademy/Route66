@@ -395,6 +395,10 @@ def google_login():
             user = User(full_name=name, email=email)
             db.session.add(user)
             db.session.commit()
+            return jsonify({
+                "user": user.serialize(),
+                "msg": "New user created",
+            }), 201
         access_token = create_access_token(
             identity=str(user.id),
             additional_claims={"role": user.role.value}
@@ -402,6 +406,7 @@ def google_login():
         return jsonify({
             "user": user.serialize(),
             "access_token": access_token,
+            "msg": "Successfully logged in",
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
