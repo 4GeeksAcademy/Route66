@@ -388,15 +388,16 @@ def google_login():
     try:
         idinfo = id_token.verify_oauth2_token(token, google_requests.Request())
         email = idinfo['email']
+        picture = idinfo.get('picture', None)
         name = idinfo.get('name')
         user = db.session.execute(select(User).where(
             User.email == email)).scalar_one_or_none()
         if not user:
-            user = User(full_name=name, email=email)
-            db.session.add(user)
+            new_user = User(full_name=name, email=email, avatar_url=picture)
+            db.session.add(new_user)
             db.session.commit()
             return jsonify({
-                "user": user.serialize(),
+                "user": new_user.serialize(),
                 "msg": "New user created",
             }), 201
         access_token = create_access_token(
