@@ -16,6 +16,7 @@ import FormPasswordReset from "./pages/FormPasswordReset";
 import UserProfilesApp from "./pages/UserProfilesApp";
 import UserProfileViewer from "./pages/UserProfileViewer";
 import { BrokerLoadsBoard } from "./pages/BrokerLoadsBoard";
+import EditNewUser from "./pages/EditNewUser";
 
 export const router = createBrowserRouter(
       createRoutesFromElements(
@@ -38,6 +39,7 @@ export const router = createBrowserRouter(
                   <Route path="/users/:userId" element={<UserProfileViewer />} />
 
                   <Route path="/myloads" element={<BrokerLoadsBoard />} />
+                  <Route path="/myprofile" element={<EditNewUser />} />
             </Route>
       )
 );
