@@ -26,7 +26,7 @@ def now_utc():
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     company_name: Mapped[str] = mapped_column(
-        String(120), unique=True, nullable=False)
+        String(120), unique=True, nullable=True)
     full_name: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
@@ -97,7 +97,7 @@ class User(db.Model):
                 "usdot_number": self.usdot_number,
                 "type_of_transport": self.type_of_transport,
                 "number_of_trucks": self.number_of_trucks,
-                "role": self.role.value,
+                "role": self.role.value if self.role else None,
                 "is_active": self.is_active,
                 "rating": self.rating,
                 "broker_loads": [load.serialize() for load in self.broker_loads],
