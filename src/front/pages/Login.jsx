@@ -92,7 +92,7 @@ const Login = () => {
                                             body: JSON.stringify({ token })
                                         });
                                         const data = await response.json();
-                                        console.log(response.status);
+                                        console.log(data);
                                         if (response.status === 201) {
                                             localStorage.setItem("User", JSON.stringify(data.user));
                                             Swal.fire({
@@ -101,15 +101,17 @@ const Login = () => {
                                                 icon: 'success',
                                                 confirmButtonText: 'Accept'
                                             }).then(() => navigate("/myprofile"));
+                                            return;
+                                        } else if (response.status === 200) {
+                                            localStorage.setItem("User", JSON.stringify(data.user));
+                                            localStorage.setItem("TOKEN", data.access_token);
+                                            Swal.fire({
+                                                title: '¡Welcome!',
+                                                text: data.msg,
+                                                icon: 'success',
+                                                confirmButtonText: 'Accept'
+                                            }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
                                         }
-                                        localStorage.setItem("User", JSON.stringify(data.user));
-                                        localStorage.setItem("TOKEN", data.access_token);
-                                        Swal.fire({
-                                            title: '¡Welcome!',
-                                            text: data.msg,
-                                            icon: 'success',
-                                            confirmButtonText: 'Accept'
-                                        }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
 
                                     }}
                                     onError={() => {
