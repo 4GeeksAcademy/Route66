@@ -716,3 +716,91 @@ def get_user_profile_by_id(user_id):
         })
 
     return jsonify(profile_data), 200
+
+
+@api.route('/profile/<int:user_id>', methods=['GET', 'PUT'])
+def get_put_user_profile(user_id):
+    user = db.session.execute(select(User).where(
+        User.id == user_id)).scalar_one_or_none()
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    if request.method == 'GET':
+        return jsonify({
+            "fullName": user.full_name,
+            "companyName": user.company_name,
+            "email": user.email,
+            "phoneNumber": user.phone_number,
+            "address": user.address,
+            "city": user.city,
+            "state": user.state,
+            "zip": user.zip,
+            "role": user.role.value if user.role else None,
+            "usdotNumber": user.usdot_number,
+            "typeOfTransport": user.type_of_transport,
+            'numberOfTrucks': user.number_of_trucks
+        }), 200
+
+    elif request.method == 'PUT':
+        data = request.get_json()
+        if not data:
+            return jsonify({"msg": "No data received to update"}), 400
+
+        try:
+
+            if 'fullName' in data:
+                user.full_name = data['fullName']
+            if 'companyName' in data:
+                user.company_name = data['companyName']
+
+            if 'email' in data and data['email'] != user.email:
+                if not ("@" in data['email'] and "." in data['email']):
+                    return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
+                if User.query.filter(and_(User.email == data['email'], User.id != user.id)).first():
+                    return jsonify({"msg": "This email address is already registered by another user"}), 409
+                user.email = data['email']
+
+            if 'phoneNumber' in data:
+                user.phone_number = data['phoneNumber']
+            if 'address' in data:
+                user.address = data['address']
+            if 'city' in data:
+                user.city = data['city']
+            if 'state' in data:
+                user.state = data['state']
+            if 'zip' in data:
+                user.zip = data['zip']
+            if 'usdotNumber' in data:
+                user.usdot_number = data['usdotNumber']
+            if 'typeOfTransport' in data:
+                user.type_of_transport = data['typeOfTransport']
+            if 'numberOfTrucks' in data:
+                user.number_of_trucks = data['numberOfTrucks']
+
+            db.session.commit()
+
+            return jsonify({
+                "msg": "Carrier profile successfully updated",
+                "fullName": user.full_name,
+                "companyName": user.company_name,
+                "email": user.email,
+                "phoneNumber": user.phone_number,
+                "address": user.address,
+                "city": user.city,
+                "state": user.state,
+                "zip": user.zip,
+                "role": user.role.value,
+                "usdotNumber": user.usdot_number,
+                "typeOfTransport": user.type_of_transport,
+                "numberOfTrucks": user.number_of_trucks
+            }), 200
+
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating carrier profile: {e}")
+            import traceback
+            print(traceback.format_exc())
+            return jsonify({"msg": "Internal server error while updating carrier profile"}), 500
+
+    return jsonify({"msg": "Disallowed method"}), 405
