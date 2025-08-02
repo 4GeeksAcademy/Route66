@@ -39,7 +39,7 @@ export const router = createBrowserRouter(
                   <Route path="/users/:userId" element={<UserProfileViewer />} />
 
                   <Route path="/myloads" element={<BrokerLoadsBoard />} />
-                  <Route path="/myprofile" element={<EditNewUser />} />
+                  <Route path="/myprofile/:userId" element={<EditNewUser />} />
             </Route>
       )
 );
