@@ -92,7 +92,6 @@ const Login = () => {
                                             body: JSON.stringify({ token })
                                         });
                                         const data = await response.json();
-                                        console.log(data);
                                         if (response.status === 201) {
                                             localStorage.setItem("User", JSON.stringify(data.user));
                                             Swal.fire({
@@ -100,7 +99,7 @@ const Login = () => {
                                                 text: data.msg,
                                                 icon: 'success',
                                                 confirmButtonText: 'Accept'
-                                            }).then(() => navigate("/myprofile"));
+                                            }).then(() => navigate(`/myprofile/${data.user.id}`));
                                             return;
                                         } else if (response.status === 200) {
                                             localStorage.setItem("User", JSON.stringify(data.user));
