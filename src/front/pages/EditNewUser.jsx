@@ -22,15 +22,13 @@ import {
     CircularProgress
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
-
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
 const EditNewUser = () => {
     const { userId } = useParams();
+
     const [userData, setUserData] = useState({
         fullName: '',
         companyName: '',
@@ -40,8 +38,14 @@ const EditNewUser = () => {
         city: '',
         state: '',
         zip: '',
-        role: 'broker',
-        avatar_url: '',
+        role: '',
+        numberUsdot: '',
+        trucks: '',
+        isOpen: false,
+        isEnclose: false,
+        isBoth: false,
+        typeOfTransport: '',
+        avatarUrl: ''
     });
     const [initialUserData, setInitialUserData] = useState({});
     const [isEditing, setIsEditing] = useState(false);
@@ -52,14 +56,11 @@ const EditNewUser = () => {
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
     const fileInputRef = React.useRef(null);
     const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
-
     const showSnackbar = useCallback((message, severity) => {
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
     }, []);
-
-
     const handleCloseSnackbar = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -90,17 +91,7 @@ const EditNewUser = () => {
 
             const uploadData = await uploadResponse.json();
             const newAvatarUrl = uploadData.secure_url;
-            console.log(uploadData);
             setUserData({ ...userData, avatar_url: newAvatarUrl })
-
-
-
-            const token = localStorage.getItem('TOKEN');
-            if (!token) {
-                showSnackbar('You are not authenticated. Please log in', 'error');
-                setUploadingAvatar(false);
-                return;
-            }
 
             const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/broker`, {
                 method: 'PUT',
@@ -129,30 +120,20 @@ const EditNewUser = () => {
     };
 
     useEffect(() => {
-        const fetchBrokerData = async () => {
+        const fetchUserData = async () => {
             setLoading(true);
-            const token = localStorage.getItem('TOKEN');
 
-            const role = 'broker';
-            if (!token) {
-                console.error('Token not found in localStorage.');
-                showSnackbar('You are not authenticated. Please log in.', 'error');
-                setLoading(false);
-                return;
-            }
             try {
-                const response = await fetch(`${backendUrl}/api/profile/broker`, {
+                const response = await fetch(`${backendUrl}/api/profile/${userId}`, {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                    headers: { 'Content-Type': 'application/json' }
                 });
                 if (!response.ok) {
                     const error = await response.json();
-                    throw new Error(error.msg || 'Error getting data from broker.');
+                    throw new Error(error.msg || 'Error getting carrier data.');
                 }
                 const data = await response.json();
+
                 setUserData({
                     fullName: data.fullName || '',
                     companyName: data.companyName || '',
@@ -162,38 +143,33 @@ const EditNewUser = () => {
                     city: data.city || '',
                     state: data.state || '',
                     zip: data.zip || '',
-                    role: 'broker',
-                    avatar_url: data.avatar_url || '',
+                    role: data.role || '',
+                    numberUsdot: data.numberUsdot || '',
+                    trucks: data.trucks || '',
+                    isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
+                    isEnclose: typeof data.isEnclose === 'boolean' ? data.isEnclose : false,
+                    isBoth: typeof data.isBoth === 'boolean' ? data.isBoth : false,
+                    typeOfTransport: data.typeOfTransport || ''
                 });
                 setInitialUserData(data);
             } catch (err) {
-                console.error('Error getting data from broker:', err.message);
-                showSnackbar(`Error getting data from broker: ${err.message}`, 'error');
+                console.error(`Error getting user data: ${err.message}`);
+                showSnackbar(`Error getting user data: ${err.message}`, 'error');
             } finally {
                 setLoading(false);
             }
         };
-        fetchBrokerData();
+        fetchUserData();
     }, [userId, showSnackbar]);
-
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setUserData(prevData => ({
             ...prevData,
-            [name]: value
+            [name]: type === 'checkbox' ? checked : value
         }));
     };
     const handleUpdateProfile = async () => {
         setLoading(true);
-        const token = localStorage.getItem('TOKEN');
-
-        if (!token) {
-            console.error('User token not found.');
-            showSnackbar('The authentication token was not found. Please log in again.', 'error');
-            setLoading(false);
-            return;
-        }
-
 
         const dataToSend = {
             fullName: userData.fullName,
@@ -204,10 +180,15 @@ const EditNewUser = () => {
             city: userData.city,
             state: userData.state,
             zip: userData.zip,
+            numberUsdot: userData.numberUsdot,
+            trucks: userData.trucks,
+            isOpen: userData.isOpen,
+            isEnclose: userData.isEnclose,
+            isBoth: userData.isBoth,
+            typeOfTransport: userData.typeOfTransport,
         };
-        console.log(dataToSend)
         try {
-            const response = await fetch(`${backendUrl}/api/profile/broker`, {
+            const response = await fetch(`${backendUrl}/api/profile/carrier`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -217,7 +198,7 @@ const EditNewUser = () => {
             });
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.msg || 'Error updating broker profile.');
+                throw new Error(errorData.msg || 'Error updating carrier profile.');
             }
             const updatedData = await response.json();
             setUserData({
@@ -229,33 +210,37 @@ const EditNewUser = () => {
                 city: updatedData.city || '',
                 state: updatedData.state || '',
                 zip: updatedData.zip || '',
-                role: 'broker',
-                avatar_url: updatedData.avatar_url || '',
+                role: updatedData.role || '',
+                numberUsdot: updatedData.numberUsdot || '',
+                trucks: updatedData.trucks || '',
+                isOpen: typeof updatedData.isOpen === 'boolean' ? updatedData.isOpen : false,
+                isEnclose: typeof updatedData.isEnclose === 'boolean' ? updatedData.isEnclose : false,
+                isBoth: typeof updatedData.isBoth === 'boolean' ? updatedData.isBoth : false,
+                typeOfTransport: updatedData.typeOfTransport || ''
             });
             setInitialUserData(updatedData);
             setIsEditing(false);
-            showSnackbar('Broker profile successfully updated.', 'success');
+            showSnackbar('Carrier profile successfully updated.', 'success');
         } catch (err) {
-            console.error('Error updating broker profile:', err.message);
-            showSnackbar(`Error updating broker profile: ${err.message}`, 'error');
+            console.error('Error updating carrier profile:', err.message);
+            showSnackbar(`Error updating carrier profile: ${err.message}`, 'error');
         } finally {
             setLoading(false);
         }
     };
-
     const handleCancelEdit = () => {
         setUserData(initialUserData);
         setIsEditing(false);
     };
-
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '79.2vh' }}>
                 <CircularProgress />
-                <Typography variant="h6" sx={{ ml: 2 }}>Loading broker profile...</Typography>
+                <Typography variant="h6" sx={{ ml: 2 }}>Loading carrier profile...</Typography>
             </Box>
         );
     }
+
 
     return (
         <Box sx={{
@@ -273,6 +258,7 @@ const EditNewUser = () => {
                 width: '90%',
                 boxShadow: 3,
             }}>
+
                 <CardHeader
                     sx={{
                         backgroundColor: '#002244',
@@ -287,7 +273,7 @@ const EditNewUser = () => {
                             textAlign: 'left',
                             color: 'white',
                         }}>
-                            My profile (Broker)
+                            My profile (Carrier)
                         </Typography>
                     }
                     action={
@@ -299,9 +285,9 @@ const EditNewUser = () => {
                                     width: 80,
                                     height: 80,
                                 }}
-                                src={userData.avatar_url || undefined}
+                                src={userData.avatarUrl || undefined}
                             >
-                                {!userData.avatar_url && userInitial}
+                                {!userData.avatarUrl && userInitial}
                             </Avatar>
                             {isEditing && (
                                 <>
@@ -326,11 +312,11 @@ const EditNewUser = () => {
                                                 '&:hover': {
                                                     backgroundColor: 'rgba(255,255,255,1)',
                                                 },
-                                                color: blue[800],
+                                                color: '#002244',
                                             }}
                                             disabled={uploadingAvatar}
                                         >
-                                            {uploadingAvatar ? <CircularProgress size={24} sx={{ color: blue[800] }} /> : <PhotoCamera />}
+                                            {uploadingAvatar ? <CircularProgress size={24} sx={{ color: '#002244' }} /> : <PhotoCamera />}
                                         </IconButton>
                                     </label>
                                 </>
@@ -338,6 +324,7 @@ const EditNewUser = () => {
                         </Box>
                     }
                 />
+
 
                 <CardContent>
                     <Grid container spacing={2}>
@@ -435,8 +422,85 @@ const EditNewUser = () => {
                                 variant="standard"
                                 fullWidth
                                 name="role"
-                                value="Broker"
+                                value={userData.role}
                                 disabled
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="USDOT Number"
+                                variant="standard"
+                                fullWidth
+                                name="numberUsdot"
+                                value={userData.numberUsdot}
+                                onChange={handleInputChange}
+                                disabled={!isEditing}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Number of Trucks"
+                                variant="standard"
+                                fullWidth
+                                name="trucks"
+                                type="number"
+                                value={userData.trucks}
+                                onChange={handleInputChange}
+                                disabled={!isEditing}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
+                                label="Type of Transport"
+                                variant="standard"
+                                fullWidth
+                                name="typeOfTransport"
+                                value={userData.typeOfTransport}
+                                onChange={handleInputChange}
+                                disabled={!isEditing}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={userData.isOpen}
+                                        onChange={handleInputChange}
+                                        name="isOpen"
+                                        color="primary"
+                                        disabled={!isEditing}
+                                    />
+                                }
+                                label="Open"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={userData.isEnclose}
+                                        onChange={handleInputChange}
+                                        name="isEnclose"
+                                        color="primary"
+                                        disabled={!isEditing}
+                                    />
+                                }
+                                label="Enclose"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={userData.isBoth}
+                                        onChange={handleInputChange}
+                                        name="isBoth"
+                                        color="primary"
+                                        disabled={!isEditing}
+                                    />
+                                }
+                                label="Both"
                             />
                         </Grid>
                     </Grid>
@@ -454,7 +518,13 @@ const EditNewUser = () => {
                         </Button>
                     ) : (
                         <>
-                            <Button size="small" onClick={handleUpdateProfile} variant="contained" color="primary" disabled={loading || uploadingAvatar}>
+                            <Button
+                                size="small"
+                                onClick={handleUpdateProfile}
+                                variant="contained"
+                                color="primary"
+                                disabled={loading || uploadingAvatar} // Deshabilita el botón mientras se sube el avatar
+                            >
                                 {loading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
                             </Button>
                             <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading || uploadingAvatar}>
