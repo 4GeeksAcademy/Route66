@@ -8,6 +8,10 @@ import MuiAlert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import IconButton from '@mui/material/IconButton';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
 import {
     Box,
     Card,
@@ -55,7 +59,13 @@ const EditNewUser = () => {
     const [loading, setLoading] = useState(true);
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
     const fileInputRef = React.useRef(null);
-    const userInitial = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : '';
+    const userInitial = userData.fullName
+        ? userData.fullName
+            .split(' ')
+            .slice(0, 2)
+            .map(name => name.charAt(0).toUpperCase())
+            .join('')
+        : '';
     const showSnackbar = useCallback((message, severity) => {
         setSnackbarMessage(message);
         setSnackbarSeverity(severity);
@@ -175,6 +185,7 @@ const EditNewUser = () => {
             fullName: userData.fullName,
             companyName: userData.companyName,
             email: userData.email,
+            role: userData.role,
             phoneNumber: userData.phoneNumber,
             address: userData.address,
             city: userData.city,
@@ -187,12 +198,13 @@ const EditNewUser = () => {
             isBoth: userData.isBoth,
             typeOfTransport: userData.typeOfTransport,
         };
+        console.log(dataToSend);
+
         try {
-            const response = await fetch(`${backendUrl}/api/profile/carrier`, {
+            const response = await fetch(`${backendUrl}/api/profile/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(dataToSend)
             });
@@ -220,10 +232,10 @@ const EditNewUser = () => {
             });
             setInitialUserData(updatedData);
             setIsEditing(false);
-            showSnackbar('Carrier profile successfully updated.', 'success');
+            showSnackbar('Profile successfully updated.', 'success');
         } catch (err) {
-            console.error('Error updating carrier profile:', err.message);
-            showSnackbar(`Error updating carrier profile: ${err.message}`, 'error');
+            console.error('Error updating profile:', err.message);
+            showSnackbar(`Error updating profile: ${err.message}`, 'error');
         } finally {
             setLoading(false);
         }
@@ -273,7 +285,7 @@ const EditNewUser = () => {
                             textAlign: 'left',
                             color: 'white',
                         }}>
-                            My profile (Carrier)
+                            My Profile
                         </Typography>
                     }
                     action={
@@ -417,14 +429,21 @@ const EditNewUser = () => {
                             />
                         </Grid>
                         <Grid item xs={12} sm={6} md={4}>
-                            <TextField
-                                label="Rol"
-                                variant="standard"
-                                fullWidth
-                                name="role"
-                                value={userData.role}
-                                disabled
-                            />
+                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                <InputLabel id="role-select-label">Role</InputLabel>
+                                <Select
+                                    labelId="role-select-label"
+                                    id="role-select"
+                                    value={userData.role}
+                                    label="Role"
+                                    onChange={handleInputChange}
+                                    name="role"
+                                    disabled={!isEditing}
+                                >
+                                    <MenuItem value="broker">Broker</MenuItem>
+                                    <MenuItem value="carrier">Carrier</MenuItem>
+                                </Select>
+                            </FormControl>
                         </Grid>
 
                         <Grid item xs={12} sm={6} md={4}>
