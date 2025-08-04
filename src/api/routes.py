@@ -761,6 +761,9 @@ def get_put_user_profile(user_id):
                     return jsonify({"msg": "This email address is already registered by another user"}), 409
                 user.email = data['email']
 
+            if 'role' in data:
+                user.role = data['role']
+
             if 'phoneNumber' in data:
                 user.phone_number = data['phoneNumber']
             if 'address' in data:
@@ -790,7 +793,7 @@ def get_put_user_profile(user_id):
                 "city": user.city,
                 "state": user.state,
                 "zip": user.zip,
-                "role": user.role.value,
+                "role": user.role.value if user.role else None,
                 "usdotNumber": user.usdot_number,
                 "typeOfTransport": user.type_of_transport,
                 "numberOfTrucks": user.number_of_trucks
@@ -798,9 +801,9 @@ def get_put_user_profile(user_id):
 
         except Exception as e:
             db.session.rollback()
-            print(f"Error updating carrier profile: {e}")
+            print(f"Error updating profile: {e}")
             import traceback
             print(traceback.format_exc())
-            return jsonify({"msg": "Internal server error while updating carrier profile"}), 500
+            return jsonify({"msg": "Internal server error while updating profile"}), 500
 
     return jsonify({"msg": "Disallowed method"}), 405
