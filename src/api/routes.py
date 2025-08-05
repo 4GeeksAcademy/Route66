@@ -737,6 +737,7 @@ def get_put_user_profile(user_id):
             "state": user.state,
             "zip": user.zip,
             "role": user.role.value if user.role else None,
+            "mcNumber": user.mc_number,
             "usdotNumber": user.usdot_number,
             "typeOfTransport": user.type_of_transport,
             'numberOfTrucks': user.number_of_trucks
@@ -774,6 +775,8 @@ def get_put_user_profile(user_id):
                 user.state = data['state']
             if 'zip' in data:
                 user.zip = data['zip']
+            if 'mcNumber' in data:
+                user.mc_number = data['mcNumber']
             if 'usdotNumber' in data:
                 user.usdot_number = data['usdotNumber']
             if 'typeOfTransport' in data:
@@ -784,7 +787,7 @@ def get_put_user_profile(user_id):
             db.session.commit()
 
             return jsonify({
-                "msg": "Carrier profile successfully updated",
+                "msg": "Profile successfully updated",
                 "fullName": user.full_name,
                 "companyName": user.company_name,
                 "email": user.email,
@@ -794,6 +797,7 @@ def get_put_user_profile(user_id):
                 "state": user.state,
                 "zip": user.zip,
                 "role": user.role.value if user.role else None,
+                "mcNumber": user.mc_number,
                 "usdotNumber": user.usdot_number,
                 "typeOfTransport": user.type_of_transport,
                 "numberOfTrucks": user.number_of_trucks
