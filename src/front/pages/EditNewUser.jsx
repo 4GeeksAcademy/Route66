@@ -2,7 +2,7 @@ import * as React from 'react';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
@@ -26,12 +26,14 @@ import {
     CircularProgress
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
+import { use } from 'react';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 const EditNewUser = () => {
     const { userId } = useParams();
+    const navigate = useNavigate();
 
     const [userData, setUserData] = useState({
         fullName: '',
@@ -155,6 +157,7 @@ const EditNewUser = () => {
                     zip: data.zip || '',
                     role: data.role || '',
                     numberUsdot: data.numberUsdot || '',
+                    mcNumber: data.mcNumber || '',
                     trucks: data.trucks || '',
                     isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
                     isEnclose: typeof data.isEnclose === 'boolean' ? data.isEnclose : false,
@@ -191,6 +194,7 @@ const EditNewUser = () => {
             city: userData.city,
             state: userData.state,
             zip: userData.zip,
+            mcNumber: userData.mcNumber,
             numberUsdot: userData.numberUsdot,
             trucks: userData.trucks,
             isOpen: userData.isOpen,
@@ -198,7 +202,6 @@ const EditNewUser = () => {
             isBoth: userData.isBoth,
             typeOfTransport: userData.typeOfTransport,
         };
-        console.log(dataToSend);
 
         try {
             const response = await fetch(`${backendUrl}/api/profile/${userId}`, {
@@ -223,6 +226,7 @@ const EditNewUser = () => {
                 state: updatedData.state || '',
                 zip: updatedData.zip || '',
                 role: updatedData.role || '',
+                mcNumber: updatedData.mcNumber || '',
                 numberUsdot: updatedData.numberUsdot || '',
                 trucks: updatedData.trucks || '',
                 isOpen: typeof updatedData.isOpen === 'boolean' ? updatedData.isOpen : false,
@@ -233,6 +237,7 @@ const EditNewUser = () => {
             setInitialUserData(updatedData);
             setIsEditing(false);
             showSnackbar('Profile successfully updated.', 'success');
+            navigate(updatedData.role === 'broker' ? '/myloads' : '/loadsboard');
         } catch (err) {
             console.error('Error updating profile:', err.message);
             showSnackbar(`Error updating profile: ${err.message}`, 'error');
@@ -448,6 +453,18 @@ const EditNewUser = () => {
 
                         <Grid item xs={12} sm={6} md={4}>
                             <TextField
+                                label="MC Number"
+                                variant="standard"
+                                fullWidth
+                                name="mcNumber"
+                                value={userData.mcNumber}
+                                onChange={handleInputChange}
+                                disabled={!isEditing}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={4}>
+                            <TextField
                                 label="USDOT Number"
                                 variant="standard"
                                 fullWidth
@@ -542,9 +559,9 @@ const EditNewUser = () => {
                                 onClick={handleUpdateProfile}
                                 variant="contained"
                                 color="primary"
-                                disabled={loading || uploadingAvatar} // Deshabilita el botón mientras se sube el avatar
+                                disabled={loading || uploadingAvatar}
                             >
-                                {loading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
+                                {loading ? <CircularProgress size={24} /> : 'Save Changes'}
                             </Button>
                             <Button size="small" onClick={handleCancelEdit} variant="outlined" color="secondary" disabled={loading || uploadingAvatar}>
                                 Cancel
