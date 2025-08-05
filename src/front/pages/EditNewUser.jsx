@@ -188,7 +188,7 @@ const EditNewUser = () => {
             fullName: userData.fullName,
             companyName: userData.companyName,
             email: userData.email,
-            role: userData.role,
+            role: userData.role === "" ? null : userData.role,
             phoneNumber: userData.phoneNumber,
             address: userData.address,
             city: userData.city,
@@ -213,31 +213,36 @@ const EditNewUser = () => {
             });
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.msg || 'Error updating carrier profile.');
+                throw new Error(errorData.msg || 'Error updating profile.');
             }
             const updatedData = await response.json();
+
             setUserData({
-                fullName: updatedData.fullName || '',
-                companyName: updatedData.companyName || '',
-                email: updatedData.email || '',
-                phoneNumber: updatedData.phoneNumber || '',
-                address: updatedData.address || '',
-                city: updatedData.city || '',
-                state: updatedData.state || '',
-                zip: updatedData.zip || '',
-                role: updatedData.role || '',
-                mcNumber: updatedData.mcNumber || '',
-                numberUsdot: updatedData.numberUsdot || '',
-                trucks: updatedData.trucks || '',
-                isOpen: typeof updatedData.isOpen === 'boolean' ? updatedData.isOpen : false,
-                isEnclose: typeof updatedData.isEnclose === 'boolean' ? updatedData.isEnclose : false,
-                isBoth: typeof updatedData.isBoth === 'boolean' ? updatedData.isBoth : false,
-                typeOfTransport: updatedData.typeOfTransport || ''
+                fullName: updatedData.user.full_name || '',
+                companyName: updatedData.user.company_name || '',
+                email: updatedData.user.email || '',
+                phoneNumber: updatedData.user.phone_number || '',
+                address: updatedData.user.address || '',
+                city: updatedData.user.city || '',
+                state: updatedData.user.state || '',
+                zip: updatedData.user.zip || '',
+                role: updatedData.user.role || '',
+                mcNumber: updatedData.user.mc_number || '',
+                numberUsdot: updatedData.user.usdot_number || '',
+                trucks: updatedData.user.number_of_trucks || '',
+                isOpen: typeof updatedData.user.isOpen === 'boolean' ? updatedData.isOpen : false,
+                isEnclose: typeof updatedData.user.isEnclose === 'boolean' ? updatedData.isEnclose : false,
+                isBoth: typeof updatedData.user.isBoth === 'boolean' ? updatedData.isBoth : false,
+                typeOfTransport: updatedData.user.type_of_transport || ''
             });
             setInitialUserData(updatedData);
             setIsEditing(false);
             showSnackbar('Profile successfully updated.', 'success');
-            navigate(updatedData.role === 'broker' ? '/myloads' : '/loadsboard');
+            if (updatedData.user.role) {
+                localStorage.setItem("User", JSON.stringify(updatedData.user));
+                localStorage.setItem("TOKEN", updatedData.access_token);
+                navigate(updatedData.user.role === 'broker' ? '/myloads' : '/loadsboard');
+            }
         } catch (err) {
             console.error('Error updating profile:', err.message);
             showSnackbar(`Error updating profile: ${err.message}`, 'error');
