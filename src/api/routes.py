@@ -764,7 +764,10 @@ def get_put_user_profile(user_id):
 
             if 'role' in data:
                 user.role = data['role']
-
+                access_token = create_access_token(
+                identity=str(user.id),
+                additional_claims={"role": user.role}
+                )
             if 'phoneNumber' in data:
                 user.phone_number = data['phoneNumber']
             if 'address' in data:
@@ -788,19 +791,8 @@ def get_put_user_profile(user_id):
 
             return jsonify({
                 "msg": "Profile successfully updated",
-                "fullName": user.full_name,
-                "companyName": user.company_name,
-                "email": user.email,
-                "phoneNumber": user.phone_number,
-                "address": user.address,
-                "city": user.city,
-                "state": user.state,
-                "zip": user.zip,
-                "role": user.role.value if user.role else None,
-                "mcNumber": user.mc_number,
-                "usdotNumber": user.usdot_number,
-                "typeOfTransport": user.type_of_transport,
-                "numberOfTrucks": user.number_of_trucks
+                "user": user.serialize(),
+                "access_token": access_token if 'role' in data else None
             }), 200
 
         except Exception as e:
