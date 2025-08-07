@@ -48,7 +48,7 @@ const EditNewUser = () => {
         zip: '',
         role: '',
         usdotNumber: '',
-        trucks: '',
+        numberOfTrucks: '',
         isOpen: false,
         isEnclose: false,
         isBoth: false,
@@ -160,7 +160,7 @@ const EditNewUser = () => {
                     role: data.role || '',
                     usdotNumber: data.usdotNumber || '',
                     mcNumber: data.mcNumber || '',
-                    trucks: data.trucks || '',
+                    numberOfTrucks: data.numberOfTrucks || '',
                     isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
                     isEnclose: typeof data.isEnclose === 'boolean' ? data.isEnclose : false,
                     isBoth: typeof data.isBoth === 'boolean' ? data.isBoth : false,
@@ -198,7 +198,7 @@ const EditNewUser = () => {
             zip: userData.zip,
             mcNumber: userData.mcNumber,
             usdotNumber: userData.usdotNumber,
-            trucks: userData.trucks,
+            numberOfTrucks: userData.numberOfTrucks,
             isOpen: userData.isOpen,
             isEnclose: userData.isEnclose,
             isBoth: userData.isBoth,
@@ -231,7 +231,7 @@ const EditNewUser = () => {
                 role: updatedData.user.role || '',
                 mcNumber: updatedData.user.mc_number || '',
                 usdotNumber: updatedData.user.usdot_number || '',
-                trucks: updatedData.user.number_of_trucks || '',
+                numberOfTrucks: updatedData.user.number_of_trucks || '',
                 isOpen: typeof updatedData.user.isOpen === 'boolean' ? updatedData.isOpen : false,
                 isEnclose: typeof updatedData.user.isEnclose === 'boolean' ? updatedData.isEnclose : false,
                 isBoth: typeof updatedData.user.isBoth === 'boolean' ? updatedData.isBoth : false,
@@ -486,9 +486,9 @@ const EditNewUser = () => {
                                 label="Number of Trucks"
                                 variant="standard"
                                 fullWidth
-                                name="trucks"
+                                name="numberOfTrucks"
                                 type="number"
-                                value={userData.trucks}
+                                value={userData.numberOfTrucks}
                                 onChange={handleInputChange}
                                 disabled={!isEditing}
                             />
