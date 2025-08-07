@@ -12,6 +12,8 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormLabel from '@mui/material/FormLabel';
 import {
     Box,
     Card,
@@ -45,7 +47,7 @@ const EditNewUser = () => {
         state: '',
         zip: '',
         role: '',
-        numberUsdot: '',
+        usdotNumber: '',
         trucks: '',
         isOpen: false,
         isEnclose: false,
@@ -156,7 +158,7 @@ const EditNewUser = () => {
                     state: data.state || '',
                     zip: data.zip || '',
                     role: data.role || '',
-                    numberUsdot: data.numberUsdot || '',
+                    usdotNumber: data.usdotNumber || '',
                     mcNumber: data.mcNumber || '',
                     trucks: data.trucks || '',
                     isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
@@ -195,7 +197,7 @@ const EditNewUser = () => {
             state: userData.state,
             zip: userData.zip,
             mcNumber: userData.mcNumber,
-            numberUsdot: userData.numberUsdot,
+            usdotNumber: userData.usdotNumber,
             trucks: userData.trucks,
             isOpen: userData.isOpen,
             isEnclose: userData.isEnclose,
@@ -228,7 +230,7 @@ const EditNewUser = () => {
                 zip: updatedData.user.zip || '',
                 role: updatedData.user.role || '',
                 mcNumber: updatedData.user.mc_number || '',
-                numberUsdot: updatedData.user.usdot_number || '',
+                usdotNumber: updatedData.user.usdot_number || '',
                 trucks: updatedData.user.number_of_trucks || '',
                 isOpen: typeof updatedData.user.isOpen === 'boolean' ? updatedData.isOpen : false,
                 isEnclose: typeof updatedData.user.isEnclose === 'boolean' ? updatedData.isEnclose : false,
@@ -473,8 +475,8 @@ const EditNewUser = () => {
                                 label="USDOT Number"
                                 variant="standard"
                                 fullWidth
-                                name="numberUsdot"
-                                value={userData.numberUsdot}
+                                name="usdotNumber"
+                                value={userData.usdotNumber}
                                 onChange={handleInputChange}
                                 disabled={!isEditing}
                             />
@@ -491,7 +493,7 @@ const EditNewUser = () => {
                                 disabled={!isEditing}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
+                        {/* <Grid item xs={12} sm={6} md={4}>
                             <TextField
                                 label="Type of Transport"
                                 variant="standard"
@@ -501,9 +503,9 @@ const EditNewUser = () => {
                                 onChange={handleInputChange}
                                 disabled={!isEditing}
                             />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <FormControlLabel
+                        </Grid> */}
+                        <Grid item xs={12} sm={6} md={4} lg={12}>
+                            {/* <FormControlLabel
                                 control={
                                     <Checkbox
                                         checked={userData.isOpen}
@@ -514,9 +516,15 @@ const EditNewUser = () => {
                                     />
                                 }
                                 label="Open"
-                            />
+                            /> */}
+                            <FormGroup aria-label="position" row style={{ justifyContent: 'center' }}>
+                                <FormLabel component="legend">Type of transport</FormLabel>
+                                <FormControlLabel control={<Checkbox />} label="Open" disabled={!isEditing} />
+                                <FormControlLabel control={<Checkbox />} label="Enclose" disabled={!isEditing} />
+                                <FormControlLabel control={<Checkbox />} label="Both" disabled={!isEditing} />
+                            </FormGroup>
                         </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
+                        {/* <Grid item xs={12} sm={6} md={4}>
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -543,7 +551,7 @@ const EditNewUser = () => {
                                 }
                                 label="Both"
                             />
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'flex-end', padding: 2 }}>
