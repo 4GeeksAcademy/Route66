@@ -49,9 +49,6 @@ const EditNewUser = () => {
         role: '',
         usdotNumber: '',
         numberOfTrucks: '',
-        isOpen: false,
-        isEnclose: false,
-        isBoth: false,
         typeOfTransport: '',
         avatarUrl: ''
     });
@@ -161,9 +158,6 @@ const EditNewUser = () => {
                     usdotNumber: data.usdotNumber || '',
                     mcNumber: data.mcNumber || '',
                     numberOfTrucks: data.numberOfTrucks || '',
-                    isOpen: typeof data.isOpen === 'boolean' ? data.isOpen : false,
-                    isEnclose: typeof data.isEnclose === 'boolean' ? data.isEnclose : false,
-                    isBoth: typeof data.isBoth === 'boolean' ? data.isBoth : false,
                     typeOfTransport: data.typeOfTransport || ''
                 });
                 setInitialUserData(data);
@@ -199,9 +193,6 @@ const EditNewUser = () => {
             mcNumber: userData.mcNumber,
             usdotNumber: userData.usdotNumber,
             numberOfTrucks: userData.numberOfTrucks,
-            isOpen: userData.isOpen,
-            isEnclose: userData.isEnclose,
-            isBoth: userData.isBoth,
             typeOfTransport: userData.typeOfTransport,
         };
 
@@ -493,65 +484,41 @@ const EditNewUser = () => {
                                 disabled={!isEditing}
                             />
                         </Grid>
-                        {/* <Grid item xs={12} sm={6} md={4}>
-                            <TextField
-                                label="Type of Transport"
-                                variant="standard"
-                                fullWidth
-                                name="typeOfTransport"
-                                value={userData.typeOfTransport}
-                                onChange={handleInputChange}
-                                disabled={!isEditing}
-                            />
-                        </Grid> */}
                         <Grid item xs={12} sm={6} md={4} lg={12}>
-                            {/* <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={userData.isOpen}
-                                        onChange={handleInputChange}
-                                        name="isOpen"
-                                        color="primary"
-                                        disabled={!isEditing}
-                                    />
-                                }
-                                label="Open"
-                            /> */}
                             <FormGroup aria-label="position" row style={{ justifyContent: 'center' }}>
                                 <FormLabel component="legend">Type of transport</FormLabel>
-                                <FormControlLabel control={<Checkbox />} label="Open" disabled={!isEditing} />
-                                <FormControlLabel control={<Checkbox />} label="Enclose" disabled={!isEditing} />
-                                <FormControlLabel control={<Checkbox />} label="Both" disabled={!isEditing} />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={userData.typeOfTransport === 'open'}
+                                            onChange={() => setUserData({ ...userData, typeOfTransport: 'open' })}
+                                            disabled={!isEditing}
+                                        />
+                                    }
+                                    label="Open"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={userData.typeOfTransport === 'enclose'}
+                                            onChange={() => setUserData({ ...userData, typeOfTransport: 'enclose' })}
+                                            disabled={!isEditing}
+                                        />
+                                    }
+                                    label="Enclose"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={userData.typeOfTransport === 'both'}
+                                            onChange={() => setUserData({ ...userData, typeOfTransport: 'both' })}
+                                            disabled={!isEditing}
+                                        />
+                                    }
+                                    label="Both"
+                                />
                             </FormGroup>
                         </Grid>
-                        {/* <Grid item xs={12} sm={6} md={4}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={userData.isEnclose}
-                                        onChange={handleInputChange}
-                                        name="isEnclose"
-                                        color="primary"
-                                        disabled={!isEditing}
-                                    />
-                                }
-                                label="Enclose"
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={userData.isBoth}
-                                        onChange={handleInputChange}
-                                        name="isBoth"
-                                        color="primary"
-                                        disabled={!isEditing}
-                                    />
-                                }
-                                label="Both"
-                            />
-                        </Grid> */}
                     </Grid>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'flex-end', padding: 2 }}>
