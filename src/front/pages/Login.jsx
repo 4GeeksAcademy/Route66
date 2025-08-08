@@ -92,7 +92,7 @@ const Login = () => {
                                             body: JSON.stringify({ token })
                                         });
                                         const data = await response.json();
-                                        if (response.status === 201) {
+                                        if (data.msg === "New user created" || data.msg === "User logged in successfully, please complete your profile") {
                                             localStorage.setItem("User", JSON.stringify(data.user));
                                             Swal.fire({
                                                 title: '¡Welcome!',
@@ -101,7 +101,7 @@ const Login = () => {
                                                 confirmButtonText: 'Accept'
                                             }).then(() => navigate(`/myprofile/${data.user.id}`));
                                             return;
-                                        } else if (response.status === 200) {
+                                        } else if (data.msg === "User logged in successfully") {
                                             localStorage.setItem("User", JSON.stringify(data.user));
                                             localStorage.setItem("TOKEN", data.access_token);
                                             Swal.fire({
