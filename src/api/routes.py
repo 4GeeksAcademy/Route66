@@ -400,6 +400,11 @@ def google_login():
                 "user": new_user.serialize(),
                 "msg": "New user created",
             }), 201
+        if not user.role:
+            return jsonify({
+                "user": user.serialize(),
+                "msg": "User logged in successfully, please complete your profile",
+            }), 200
         access_token = create_access_token(
             identity=str(user.id),
             additional_claims={"role": user.role.value}
@@ -407,7 +412,7 @@ def google_login():
         return jsonify({
             "user": user.serialize(),
             "access_token": access_token,
-            "msg": "Successfully logged in",
+            "msg": "User logged in successfully",
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
