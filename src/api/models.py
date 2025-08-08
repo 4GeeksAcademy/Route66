@@ -104,6 +104,7 @@ class User(db.Model):
                 "requests_accepted": [load.serialize() for load in self.requests_accepted],
                 "load_requests_sent": [req.serialize() for req in self.load_requests_sent],
                 "subscription": self.subscription.serialize() if self.subscription else None,
+                "avatar_url": self.avatar_url
             }
 
 
