@@ -192,7 +192,7 @@ const EditNewUser = () => {
             zip: userData.zip,
             mcNumber: userData.mcNumber,
             usdotNumber: userData.usdotNumber,
-            numberOfTrucks: userData.numberOfTrucks,
+            numberOfTrucks: userData.numberOfTrucks === "" ? null : userData.numberOfTrucks,
             typeOfTransport: userData.typeOfTransport,
         };
 
@@ -234,7 +234,7 @@ const EditNewUser = () => {
             if (updatedData.user.role) {
                 localStorage.setItem("User", JSON.stringify(updatedData.user));
                 localStorage.setItem("TOKEN", updatedData.access_token);
-                navigate(updatedData.user.role === 'broker' ? '/myloads' : '/loadsboard');
+                navigate(updatedData?.user?.role === 'broker' ? '/myloads' : '/loadsboard');
             }
         } catch (err) {
             console.error('Error updating profile:', err.message);
