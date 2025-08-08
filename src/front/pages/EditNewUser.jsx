@@ -223,9 +223,6 @@ const EditNewUser = () => {
                 mcNumber: updatedData.user.mc_number || '',
                 usdotNumber: updatedData.user.usdot_number || '',
                 numberOfTrucks: updatedData.user.number_of_trucks || '',
-                isOpen: typeof updatedData.user.isOpen === 'boolean' ? updatedData.isOpen : false,
-                isEnclose: typeof updatedData.user.isEnclose === 'boolean' ? updatedData.isEnclose : false,
-                isBoth: typeof updatedData.user.isBoth === 'boolean' ? updatedData.isBoth : false,
                 typeOfTransport: updatedData.user.type_of_transport || ''
             });
             setInitialUserData(updatedData);
