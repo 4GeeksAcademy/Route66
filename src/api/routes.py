@@ -733,19 +733,8 @@ def get_put_user_profile(user_id):
 
     if request.method == 'GET':
         return jsonify({
-            "fullName": user.full_name,
-            "companyName": user.company_name,
-            "email": user.email,
-            "phoneNumber": user.phone_number,
-            "address": user.address,
-            "city": user.city,
-            "state": user.state,
-            "zip": user.zip,
-            "role": user.role.value if user.role else None,
-            "mcNumber": user.mc_number,
-            "usdotNumber": user.usdot_number,
-            "typeOfTransport": user.type_of_transport,
-            'numberOfTrucks': user.number_of_trucks
+            "user": user.serialize(),
+            "msg": "User profile retrieved successfully"
         }), 200
 
     elif request.method == 'PUT':
