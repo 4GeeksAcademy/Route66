@@ -1,8 +1,8 @@
-"""empty message
+"""Initial migration
 
-Revision ID: 94e4a98998b6
+Revision ID: b7160ecfc845
 Revises: 
-Create Date: 2025-07-08 05:03:21.691434
+Create Date: 2025-08-03 19:22:02.767383
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '94e4a98998b6'
+revision = 'b7160ecfc845'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -34,22 +34,22 @@ def upgrade():
     )
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('company_name', sa.String(length=120), nullable=False),
+    sa.Column('company_name', sa.String(length=120), nullable=True),
     sa.Column('full_name', sa.String(length=120), nullable=False),
     sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('phone_number', sa.String(length=15), nullable=False),
-    sa.Column('address', sa.String(length=120), nullable=False),
-    sa.Column('city', sa.String(length=120), nullable=False),
-    sa.Column('state', sa.String(length=120), nullable=False),
-    sa.Column('zip', sa.String(length=120), nullable=False),
-    sa.Column('mc_number', sa.String(length=120), nullable=False),
+    sa.Column('phone_number', sa.String(length=15), nullable=True),
+    sa.Column('address', sa.String(length=120), nullable=True),
+    sa.Column('city', sa.String(length=120), nullable=True),
+    sa.Column('state', sa.String(length=120), nullable=True),
+    sa.Column('zip', sa.String(length=120), nullable=True),
+    sa.Column('mc_number', sa.String(length=120), nullable=True),
     sa.Column('usdot_number', sa.String(length=120), nullable=True),
     sa.Column('type_of_transport', sa.String(length=120), nullable=True),
     sa.Column('number_of_trucks', sa.Integer(), nullable=True),
-    sa.Column('role', sa.Enum('carrier', 'broker', 'admin', name='roles'), nullable=False),
+    sa.Column('role', sa.Enum('carrier', 'broker', 'admin', name='roles'), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('rating', sa.Float(), nullable=False),
-    sa.Column('password_hash', sa.String(length=300), nullable=False),
+    sa.Column('password_hash', sa.String(length=300), nullable=True),
     sa.Column('avatar_url', sa.String(length=300), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('company_name'),

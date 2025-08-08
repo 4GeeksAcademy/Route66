@@ -388,13 +388,23 @@ def google_login():
     try:
         idinfo = id_token.verify_oauth2_token(token, google_requests.Request())
         email = idinfo['email']
+        picture = idinfo.get('picture', None)
         name = idinfo.get('name')
         user = db.session.execute(select(User).where(
             User.email == email)).scalar_one_or_none()
         if not user:
-            user = User(full_name=name, email=email)
-            db.session.add(user)
+            new_user = User(full_name=name, email=email, avatar_url=picture)
+            db.session.add(new_user)
             db.session.commit()
+            return jsonify({
+                "user": new_user.serialize(),
+                "msg": "New user created",
+            }), 201
+        if not user.role:
+            return jsonify({
+                "user": user.serialize(),
+                "msg": "User logged in successfully, please complete your profile",
+            }), 200
         access_token = create_access_token(
             identity=str(user.id),
             additional_claims={"role": user.role.value}
@@ -402,6 +412,7 @@ def google_login():
         return jsonify({
             "user": user.serialize(),
             "access_token": access_token,
+            "msg": "User logged in successfully",
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -710,3 +721,90 @@ def get_user_profile_by_id(user_id):
         })
 
     return jsonify(profile_data), 200
+
+
+@api.route('/profile/<int:user_id>', methods=['GET', 'PUT'])
+def get_put_user_profile(user_id):
+    user = db.session.execute(select(User).where(
+        User.id == user_id)).scalar_one_or_none()
+
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    if request.method == 'GET':
+        return jsonify({
+            "fullName": user.full_name,
+            "companyName": user.company_name,
+            "email": user.email,
+            "phoneNumber": user.phone_number,
+            "address": user.address,
+            "city": user.city,
+            "state": user.state,
+            "zip": user.zip,
+            "role": user.role.value if user.role else None,
+            "mcNumber": user.mc_number,
+            "usdotNumber": user.usdot_number,
+            "typeOfTransport": user.type_of_transport,
+            'numberOfTrucks': user.number_of_trucks
+        }), 200
+
+    elif request.method == 'PUT':
+        data = request.get_json()
+        if not data:
+            return jsonify({"msg": "No data received to update"}), 400
+
+        try:
+
+            if 'fullName' in data:
+                user.full_name = data['fullName']
+            if 'companyName' in data:
+                user.company_name = data['companyName']
+
+            if 'email' in data and data['email'] != user.email:
+                if not ("@" in data['email'] and "." in data['email']):
+                    return jsonify({"msg": "Formato de correo electrónico inválido"}), 400
+                if User.query.filter(and_(User.email == data['email'], User.id != user.id)).first():
+                    return jsonify({"msg": "This email address is already registered by another user"}), 409
+                user.email = data['email']
+
+            if 'role' in data:
+                user.role = data['role']
+                access_token = create_access_token(
+                identity=str(user.id),
+                additional_claims={"role": user.role}
+                )
+            if 'phoneNumber' in data:
+                user.phone_number = data['phoneNumber']
+            if 'address' in data:
+                user.address = data['address']
+            if 'city' in data:
+                user.city = data['city']
+            if 'state' in data:
+                user.state = data['state']
+            if 'zip' in data:
+                user.zip = data['zip']
+            if 'mcNumber' in data:
+                user.mc_number = data['mcNumber']
+            if 'usdotNumber' in data:
+                user.usdot_number = data['usdotNumber']
+            if 'typeOfTransport' in data:
+                user.type_of_transport = data['typeOfTransport']
+            if 'numberOfTrucks' in data:
+                user.number_of_trucks = data['numberOfTrucks']
+
+            db.session.commit()
+
+            return jsonify({
+                "msg": "Profile successfully updated",
+                "user": user.serialize(),
+                "access_token": access_token if 'role' in data else None
+            }), 200
+
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating profile: {e}")
+            import traceback
+            print(traceback.format_exc())
+            return jsonify({"msg": "Internal server error while updating profile"}), 500
+
+    return jsonify({"msg": "Disallowed method"}), 405
