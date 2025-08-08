@@ -398,7 +398,7 @@ def google_login():
             db.session.commit()
             return jsonify({
                 "user": new_user.serialize(),
-                "msg": "New user created",
+                "msg": "New user created, please complete your profile",
             }), 201
         if not user.role:
             return jsonify({
