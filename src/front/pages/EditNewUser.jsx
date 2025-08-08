@@ -143,21 +143,23 @@ const EditNewUser = () => {
                     throw new Error(error.msg || 'Error getting carrier data.');
                 }
                 const data = await response.json();
+                console.log(data);
 
                 setUserData({
-                    fullName: data.fullName || '',
-                    companyName: data.companyName || '',
-                    email: data.email || '',
-                    phoneNumber: data.phoneNumber || '',
-                    address: data.address || '',
-                    city: data.city || '',
-                    state: data.state || '',
-                    zip: data.zip || '',
-                    role: data.role || '',
-                    usdotNumber: data.usdotNumber || '',
-                    mcNumber: data.mcNumber || '',
-                    numberOfTrucks: data.numberOfTrucks || '',
-                    typeOfTransport: data.typeOfTransport || ''
+                    fullName: data.user.full_name || '',
+                    companyName: data.user.company_name || '',
+                    email: data.user.email || '',
+                    phoneNumber: data.user.phone_number || '',
+                    address: data.user.address || '',
+                    city: data.user.city || '',
+                    state: data.user.state || '',
+                    zip: data.user.zip || '',
+                    role: data.user.role || '',
+                    usdotNumber: data.user.usdot_number || '',
+                    mcNumber: data.user.mc_number || '',
+                    numberOfTrucks: data.user.number_of_trucks || '',
+                    typeOfTransport: data.user.type_of_transport || '',
+                    avatarUrl: data.user.avatar_url || ''
                 });
                 setInitialUserData(data);
             } catch (err) {
