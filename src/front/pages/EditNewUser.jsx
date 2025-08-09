@@ -143,9 +143,8 @@ const EditNewUser = () => {
                     throw new Error(error.msg || 'Error getting carrier data.');
                 }
                 const data = await response.json();
-                console.log(data);
 
-                setUserData({
+                const userInitial = {
                     fullName: data.user.full_name || '',
                     companyName: data.user.company_name || '',
                     email: data.user.email || '',
@@ -160,8 +159,10 @@ const EditNewUser = () => {
                     numberOfTrucks: data.user.number_of_trucks || '',
                     typeOfTransport: data.user.type_of_transport || '',
                     avatarUrl: data.user.avatar_url || ''
-                });
-                setInitialUserData(data);
+                }
+
+                setUserData(userInitial);
+                setInitialUserData(userInitial);
             } catch (err) {
                 console.error(`Error getting user data: ${err.message}`);
                 showSnackbar(`Error getting user data: ${err.message}`, 'error');
@@ -180,6 +181,20 @@ const EditNewUser = () => {
     };
     const handleUpdateProfile = async () => {
         setLoading(true);
+
+        let hasChanges = false;
+        for (const key in userData) {
+            if (userData[key] !== initialUserData[key]) {
+                hasChanges = true;
+                break;
+            }
+        }
+
+        if (!hasChanges) {
+            showSnackbar(`No fields have been edited.`, 'error');
+            setLoading(false);
+            return;
+        }
 
         const dataToSend = {
             fullName: userData.fullName,
