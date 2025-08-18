@@ -103,11 +103,10 @@ const EditNewUser = () => {
             const newAvatarUrl = uploadData.secure_url;
             setUserData({ ...userData, avatarUrl: newAvatarUrl })
 
-            const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/broker`, {
+            const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/${userId}  `, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ avatarUrl: newAvatarUrl })
             });
@@ -120,7 +119,7 @@ const EditNewUser = () => {
             setUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
             setInitialUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
             showSnackbar('Avatar updated successfully.', 'success');
-
+            setIsEditing(false);
         } catch (err) {
             console.error('Error uploading or updating avatar:', err.message);
             showSnackbar(`Error uploading or updating avatar: ${err.message}`, 'error');
@@ -210,6 +209,7 @@ const EditNewUser = () => {
             usdotNumber: userData.usdotNumber,
             numberOfTrucks: userData.numberOfTrucks === "" ? null : userData.numberOfTrucks,
             typeOfTransport: userData.typeOfTransport,
+            avatarUrl: userData.avatarUrl
         };
 
         try {
@@ -226,7 +226,7 @@ const EditNewUser = () => {
             }
             const updatedData = await response.json();
 
-            setUserData({
+            const userInitial = {
                 fullName: updatedData.user.full_name || '',
                 companyName: updatedData.user.company_name || '',
                 email: updatedData.user.email || '',
@@ -239,9 +239,12 @@ const EditNewUser = () => {
                 mcNumber: updatedData.user.mc_number || '',
                 usdotNumber: updatedData.user.usdot_number || '',
                 numberOfTrucks: updatedData.user.number_of_trucks || '',
-                typeOfTransport: updatedData.user.type_of_transport || ''
-            });
-            setInitialUserData(updatedData);
+                typeOfTransport: updatedData.user.type_of_transport || '',
+                avatarUrl: updatedData.user.avatar_url || ''
+            };
+
+            setUserData(userInitial);
+            setInitialUserData(userInitial);
             setIsEditing(false);
             showSnackbar('Profile successfully updated.', 'success');
             if (updatedData.user.role) {
@@ -289,7 +292,7 @@ const EditNewUser = () => {
 
                 <CardHeader
                     sx={{
-                        backgroundColor: '#002244',
+                        backgroundColor: '#0E397F',
                         color: 'white',
                         borderBottom: '2px solid white',
                         paddingBottom: 2,
@@ -344,7 +347,7 @@ const EditNewUser = () => {
                                             }}
                                             disabled={uploadingAvatar}
                                         >
-                                            {uploadingAvatar ? <CircularProgress size={24} sx={{ color: '#002244' }} /> : <PhotoCamera />}
+                                            {uploadingAvatar ? <CircularProgress size={24} sx={{ color: '#0E397F' }} /> : <PhotoCamera />}
                                         </IconButton>
                                     </label>
                                 </>
