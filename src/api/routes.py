@@ -65,7 +65,7 @@ def update_image():
         return jsonify({"secure_url": result['secure_url']}), 200
 
     except Exception as e:
-        print(f"Image loading error: {str(e)}")
+        logging.error(f"Image loading error: {str(e)}")
         return jsonify({"error": f"Image loading error: {str(e)}"}), 500
 
 
