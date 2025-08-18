@@ -268,7 +268,7 @@ export const Register = () => {
                         localStorage.setItem("User", JSON.stringify(data.user));
                         localStorage.setItem("TOKEN", data.access_token);
                         Swal.fire({
-                          title: '¡Welcome!',
+                          title: 'Welcome!',
                           text: data.msg,
                           icon: 'success',
                           confirmButtonText: 'Accept'
