@@ -258,7 +258,7 @@ export const Register = () => {
                       if (data.msg === "New user created, please complete your profile" || data.msg === "User logged in successfully, please complete your profile") {
                         localStorage.setItem("User", JSON.stringify(data.user));
                         Swal.fire({
-                          title: '¡Welcome!',
+                          title: 'Welcome!',
                           text: data.msg,
                           icon: 'success',
                           confirmButtonText: 'Accept'
