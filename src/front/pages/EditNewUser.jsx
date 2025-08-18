@@ -103,11 +103,10 @@ const EditNewUser = () => {
             const newAvatarUrl = uploadData.secure_url;
             setUserData({ ...userData, avatarUrl: newAvatarUrl })
 
-            const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/broker`, {
+            const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ avatarUrl: newAvatarUrl })
             });
@@ -120,7 +119,7 @@ const EditNewUser = () => {
             setUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
             setInitialUserData(prevData => ({ ...prevData, avatarUrl: newAvatarUrl }));
             showSnackbar('Avatar updated successfully.', 'success');
-
+            setIsEditing(false);
         } catch (err) {
             console.error('Error uploading or updating avatar:', err.message);
             showSnackbar(`Error uploading or updating avatar: ${err.message}`, 'error');
@@ -144,22 +143,25 @@ const EditNewUser = () => {
                 }
                 const data = await response.json();
 
-                setUserData({
-                    fullName: data.fullName || '',
-                    companyName: data.companyName || '',
-                    email: data.email || '',
-                    phoneNumber: data.phoneNumber || '',
-                    address: data.address || '',
-                    city: data.city || '',
-                    state: data.state || '',
-                    zip: data.zip || '',
-                    role: data.role || '',
-                    usdotNumber: data.usdotNumber || '',
-                    mcNumber: data.mcNumber || '',
-                    numberOfTrucks: data.numberOfTrucks || '',
-                    typeOfTransport: data.typeOfTransport || ''
-                });
-                setInitialUserData(data);
+                const userInitial = {
+                    fullName: data.user.full_name || '',
+                    companyName: data.user.company_name || '',
+                    email: data.user.email || '',
+                    phoneNumber: data.user.phone_number || '',
+                    address: data.user.address || '',
+                    city: data.user.city || '',
+                    state: data.user.state || '',
+                    zip: data.user.zip || '',
+                    role: data.user.role || '',
+                    usdotNumber: data.user.usdot_number || '',
+                    mcNumber: data.user.mc_number || '',
+                    numberOfTrucks: data.user.number_of_trucks || '',
+                    typeOfTransport: data.user.type_of_transport || '',
+                    avatarUrl: data.user.avatar_url || ''
+                }
+
+                setUserData(userInitial);
+                setInitialUserData(userInitial);
             } catch (err) {
                 console.error(`Error getting user data: ${err.message}`);
                 showSnackbar(`Error getting user data: ${err.message}`, 'error');
@@ -179,6 +181,20 @@ const EditNewUser = () => {
     const handleUpdateProfile = async () => {
         setLoading(true);
 
+        let hasChanges = false;
+        for (const key in userData) {
+            if (userData[key] !== initialUserData[key]) {
+                hasChanges = true;
+                break;
+            }
+        }
+
+        if (!hasChanges) {
+            showSnackbar(`No fields have been edited.`, 'error');
+            setLoading(false);
+            return;
+        }
+
         const dataToSend = {
             fullName: userData.fullName,
             companyName: userData.companyName,
@@ -193,6 +209,7 @@ const EditNewUser = () => {
             usdotNumber: userData.usdotNumber,
             numberOfTrucks: userData.numberOfTrucks === "" ? null : userData.numberOfTrucks,
             typeOfTransport: userData.typeOfTransport,
+            avatarUrl: userData.avatarUrl
         };
 
         try {
@@ -209,7 +226,7 @@ const EditNewUser = () => {
             }
             const updatedData = await response.json();
 
-            setUserData({
+            const userInitial = {
                 fullName: updatedData.user.full_name || '',
                 companyName: updatedData.user.company_name || '',
                 email: updatedData.user.email || '',
@@ -222,9 +239,12 @@ const EditNewUser = () => {
                 mcNumber: updatedData.user.mc_number || '',
                 usdotNumber: updatedData.user.usdot_number || '',
                 numberOfTrucks: updatedData.user.number_of_trucks || '',
-                typeOfTransport: updatedData.user.type_of_transport || ''
-            });
-            setInitialUserData(updatedData);
+                typeOfTransport: updatedData.user.type_of_transport || '',
+                avatarUrl: updatedData.user.avatar_url || ''
+            };
+
+            setUserData(userInitial);
+            setInitialUserData(userInitial);
             setIsEditing(false);
             showSnackbar('Profile successfully updated.', 'success');
             if (updatedData.user.role) {
@@ -272,7 +292,7 @@ const EditNewUser = () => {
 
                 <CardHeader
                     sx={{
-                        backgroundColor: '#002244',
+                        backgroundColor: '#0E397F',
                         color: 'white',
                         borderBottom: '2px solid white',
                         paddingBottom: 2,
@@ -327,7 +347,7 @@ const EditNewUser = () => {
                                             }}
                                             disabled={uploadingAvatar}
                                         >
-                                            {uploadingAvatar ? <CircularProgress size={24} sx={{ color: '#002244' }} /> : <PhotoCamera />}
+                                            {uploadingAvatar ? <CircularProgress size={24} sx={{ color: '#0E397F' }} /> : <PhotoCamera />}
                                         </IconButton>
                                     </label>
                                 </>

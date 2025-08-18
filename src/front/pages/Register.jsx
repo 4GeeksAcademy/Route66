@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import rutaCamiones from '../assets/img/camiones.jpg';
-import { State, City }  from 'country-state-city';
+import { State, City } from 'country-state-city';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import Swal from 'sweetalert2';
 
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -83,18 +85,18 @@ export const Register = () => {
   const [cities, setCities] = useState([]);
   const US_COUNTRY_CODE = 'US';
 
-   useEffect(() => {
+  useEffect(() => {
     setStates(State.getStatesOfCountry(US_COUNTRY_CODE));
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     if (formulario.state) {
       setCities(City.getCitiesOfState(US_COUNTRY_CODE, formulario.state));
-      setFormulario(prevForm => ({ ...prevForm, city: '' })); 
+      setFormulario(prevForm => ({ ...prevForm, city: '' }));
     } else {
       setCities([]);
     }
-  }, [formulario.state]); 
+  }, [formulario.state]);
 
 
   function handleChange(e) {
@@ -121,7 +123,7 @@ export const Register = () => {
     };
     if (role === "carrier") {
       userData.usdot_number = formulario.usdotNumber;
-      userData.type_of_transport = typeOfTransport ;
+      userData.type_of_transport = typeOfTransport;
       userData.trucks = formulario.trucks;
     }
     try {
@@ -150,7 +152,7 @@ export const Register = () => {
     }
   }
 
-  
+
   return (
     <div className="container-fluid bg-light d-flex align-items-center justify-content-center" style={{ minHeight: '79.2vh' }}>
       <div className="row shadow-lg bg-white rounded-4 overflow-hidden" style={{ maxWidth: '1200px', width: '100%' }}>
@@ -201,7 +203,7 @@ export const Register = () => {
                 <input type="text" className="form-control shadow-sm" id="inputAddress" name="address" value={formulario.address} onChange={handleChange} />
               </div>
 
-               
+
               <div className="col-md-6">
                 <label htmlFor="inputState" className="form-label text-light">State</label>
                 <select id="inputState" className="form-control shadow-sm" name="state" value={formulario.state} onChange={handleChange}>
@@ -214,7 +216,7 @@ export const Register = () => {
                 </select>
               </div>
 
-              
+
               <div className="col-md-6">
                 <label htmlFor="inputCity" className="form-label text-light">City</label>
                 <select id="inputCity" className="form-control shadow-sm" name="city" value={formulario.city} onChange={handleChange} disabled={!formulario.state}>
@@ -226,7 +228,7 @@ export const Register = () => {
                   ))}
                 </select>
               </div>
-            
+
               <div className="col-md-6">
                 <label htmlFor="inputZip" className="form-label text-light">Zip</label>
                 <input type="text" className="form-control shadow-sm" id="inputZip" name="zip" value={formulario.zip} onChange={handleChange} />
@@ -235,13 +237,96 @@ export const Register = () => {
               <div className="col-12 text-center mt-3">
                 <button
                   type="button"
-                  className="btn btn-danger btn-lg fw-bold px-5"
+                  className="btn btn-danger btn-md fw-bold px-5 w-100"
                   onClick={handleRegister}
                   disabled={loading}
                 >
                   {loading ? 'Processing...' : 'Get Started'}
                 </button>
               </div>
+              <div>
+                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                  <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+                      const token = credentialResponse.credential;
+                      const response = await fetch(`${backendUrl}/api/social-login/google`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ token })
+                      });
+                      const data = await response.json();
+                      if (data.msg === "New user created, please complete your profile" || data.msg === "User logged in successfully, please complete your profile") {
+                        localStorage.setItem("User", JSON.stringify(data.user));
+                        Swal.fire({
+                          title: 'Welcome!',
+                          text: data.msg,
+                          icon: 'success',
+                          confirmButtonText: 'Accept'
+                        }).then(() => navigate(`/myprofile/${data.user.id}`));
+                        return;
+                      } else if (data.msg === "User logged in successfully") {
+                        localStorage.setItem("User", JSON.stringify(data.user));
+                        localStorage.setItem("TOKEN", data.access_token);
+                        Swal.fire({
+                          title: 'Welcome!',
+                          text: data.msg,
+                          icon: 'success',
+                          confirmButtonText: 'Accept'
+                        }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
+                      }
+                      try {
+                        const response = await fetch(`${backendUrl}/api/social-login/google`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ token })
+                        });
+                        if (!response.ok) {
+                          throw new Error(`Server responded with status ${response.status}`);
+                        }
+                        const data = await response.json();
+                        if (data.msg === "New user created, please complete your profile" || data.msg === "User logged in successfully, please complete your profile") {
+                          localStorage.setItem("User", JSON.stringify(data.user));
+                          Swal.fire({
+                            title: '¡Welcome!',
+                            text: data.msg,
+                            icon: 'success',
+                            confirmButtonText: 'Accept'
+                          }).then(() => navigate(`/myprofile/${data.user.id}`));
+                          return;
+                        } else if (data.msg === "User logged in successfully") {
+                          localStorage.setItem("User", JSON.stringify(data.user));
+                          localStorage.setItem("TOKEN", data.access_token);
+                          Swal.fire({
+                            title: '¡Welcome!',
+                            text: data.msg,
+                            icon: 'success',
+                            confirmButtonText: 'Accept'
+                          }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
+                        } else {
+                          Swal.fire({
+                            title: 'Login failed',
+                            text: data.msg || 'An unknown error occurred during login.',
+                            icon: 'error',
+                            confirmButtonText: 'Accept'
+                          });
+                        }
+                      } catch (error) {
+                        console.error("Google login error:", error);
+                        Swal.fire({
+                          title: 'Login failed',
+                          text: error.message || 'An error occurred during login. Please try again.',
+                          icon: 'error',
+                          confirmButtonText: 'Accept'
+                        });
+                      }
+                    }}
+                    onError={() => {
+                      console.log("Login Failed");
+                    }}
+                  />
+                </GoogleOAuthProvider>
+              </div>
+
             </form>
           </div>
         </div>

@@ -22,6 +22,8 @@ from dotenv import load_dotenv
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
+load_dotenv()
+
 
 api = Blueprint('api', __name__)
 
@@ -29,23 +31,42 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINATY_CLOUD_NAME"),
-    api_key=os.environ.get("CLOUDINATY_API_KEY"),
-    api_secret=os.environ.get("CLOUDINATY_API_SECRET"),
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
 
 
 @api.route('/upload', methods=['POST'])
 def update_image():
-    file = request.files.get("image")
-    if not file:
-        return jsonify({"error": "the file is required"}), 400
-    result = cloudinary.uploader.upload(file)
+    try:
+        if not cloudinary.config().cloud_name or not cloudinary.config().api_key or not cloudinary.config().api_secret:
+            print("Error: Cloudinary configuration incomplete")
+            missing_config = []
+            if not cloudinary.config().cloud_name:
+                missing_config.append("cloud_name")
+            if not cloudinary.config().api_key:
+                missing_config.append("api_key")
+            if not cloudinary.config().api_secret:
+                missing_config.append("api_secret")
+            return jsonify({
+                "error": f"Cloudinary configuration incomplete. Missing: {', '.join(missing_config)}"
+            }), 500
 
-    if "secure_url" not in result:
-        return jsonify({"error": "the image can not be uploader"}), 400
+        file = request.files.get("image")
+        if not file:
+            return jsonify({"error": "the file is required"}), 400
+            
+        result = cloudinary.uploader.upload(file)
 
-    return jsonify({"secure_url": result["secure_url"]}), 200
+        if "secure_url" not in result:
+            return jsonify({"error": "the image cannot be uploaded"}), 400
+
+        return jsonify({"secure_url": result['secure_url']}), 200
+
+    except Exception as e:
+        logging.error(f"Image loading error: {str(e)}")
+        return jsonify({"error": f"Image loading error: {str(e)}"}), 500
 
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -398,7 +419,7 @@ def google_login():
             db.session.commit()
             return jsonify({
                 "user": new_user.serialize(),
-                "msg": "New user created",
+                "msg": "New user created, please complete your profile",
             }), 201
         if not user.role:
             return jsonify({
@@ -733,19 +754,8 @@ def get_put_user_profile(user_id):
 
     if request.method == 'GET':
         return jsonify({
-            "fullName": user.full_name,
-            "companyName": user.company_name,
-            "email": user.email,
-            "phoneNumber": user.phone_number,
-            "address": user.address,
-            "city": user.city,
-            "state": user.state,
-            "zip": user.zip,
-            "role": user.role.value if user.role else None,
-            "mcNumber": user.mc_number,
-            "usdotNumber": user.usdot_number,
-            "typeOfTransport": user.type_of_transport,
-            'numberOfTrucks': user.number_of_trucks
+            "user": user.serialize(),
+            "msg": "User profile retrieved successfully"
         }), 200
 
     elif request.method == 'PUT':
@@ -791,6 +801,8 @@ def get_put_user_profile(user_id):
                 user.type_of_transport = data['typeOfTransport']
             if 'numberOfTrucks' in data:
                 user.number_of_trucks = data['numberOfTrucks']
+            if 'avatarUrl' in data:
+                user.avatar_url = data['avatarUrl']
 
             db.session.commit()
 
