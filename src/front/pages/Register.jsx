@@ -248,7 +248,6 @@ export const Register = () => {
                 <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
                   <GoogleLogin
                     onSuccess={async (credentialResponse) => {
-                      const backendUrl = import.meta.env.VITE_BACKEND_URL;
                       const token = credentialResponse.credential;
                       const response = await fetch(`${backendUrl}/api/social-login/google`, {
                         method: "POST",
