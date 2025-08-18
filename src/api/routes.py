@@ -60,7 +60,7 @@ def update_image():
         result = cloudinary.uploader.upload(file)
 
         if "secure_url" not in result:
-            return jsonify({"error": "the image can not be uploaded"}), 400
+            return jsonify({"error": "the image cannot be uploaded"}), 400
 
         return jsonify({"secure_url": result['secure_url']}), 200
 
