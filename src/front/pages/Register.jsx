@@ -274,7 +274,51 @@ export const Register = () => {
                           confirmButtonText: 'Accept'
                         }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
                       }
-
+                      try {
+                        const response = await fetch(`${backendUrl}/api/social-login/google`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ token })
+                        });
+                        if (!response.ok) {
+                          throw new Error(`Server responded with status ${response.status}`);
+                        }
+                        const data = await response.json();
+                        if (data.msg === "New user created, please complete your profile" || data.msg === "User logged in successfully, please complete your profile") {
+                          localStorage.setItem("User", JSON.stringify(data.user));
+                          Swal.fire({
+                            title: '¡Welcome!',
+                            text: data.msg,
+                            icon: 'success',
+                            confirmButtonText: 'Accept'
+                          }).then(() => navigate(`/myprofile/${data.user.id}`));
+                          return;
+                        } else if (data.msg === "User logged in successfully") {
+                          localStorage.setItem("User", JSON.stringify(data.user));
+                          localStorage.setItem("TOKEN", data.access_token);
+                          Swal.fire({
+                            title: '¡Welcome!',
+                            text: data.msg,
+                            icon: 'success',
+                            confirmButtonText: 'Accept'
+                          }).then(() => data.user.role === 'carrier' ? navigate("/loadsboard") : navigate("/myloads"));
+                        } else {
+                          Swal.fire({
+                            title: 'Login failed',
+                            text: data.msg || 'An unknown error occurred during login.',
+                            icon: 'error',
+                            confirmButtonText: 'Accept'
+                          });
+                        }
+                      } catch (error) {
+                        console.error("Google login error:", error);
+                        Swal.fire({
+                          title: 'Login failed',
+                          text: error.message || 'An error occurred during login. Please try again.',
+                          icon: 'error',
+                          confirmButtonText: 'Accept'
+                        });
+                      }
                     }}
                     onError={() => {
                       console.log("Login Failed");
