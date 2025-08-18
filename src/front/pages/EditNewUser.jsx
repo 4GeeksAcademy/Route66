@@ -103,7 +103,7 @@ const EditNewUser = () => {
             const newAvatarUrl = uploadData.secure_url;
             setUserData({ ...userData, avatarUrl: newAvatarUrl })
 
-            const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/${userId}  `, {
+            const backendUpdateResponse = await fetch(`${backendUrl}/api/profile/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
